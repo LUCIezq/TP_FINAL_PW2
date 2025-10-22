@@ -2,13 +2,11 @@
 
 class NewRouter
 {
-
-
     private $configFactory;
     private $defaultController;
     private $defaultMethod;
 
-    public function __construct($configFactory, $defaultController,$defaultMethod)
+    public function __construct($configFactory, $defaultController, $defaultMethod)
     {
 
         $this->configFactory = $configFactory;

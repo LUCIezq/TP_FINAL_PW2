@@ -1,4 +1,5 @@
 var map = L.map('map').setView([-34.579, -58.381], 7);
+
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 map.on('click', async function (e) {
@@ -10,12 +11,19 @@ map.on('click', async function (e) {
     } else {
         marker = L.marker(e.latlng).addTo(map);
     }
-    console.log(await getLocation(lat, lon));
+    const data = await getLocation(lat, lon);
+    const paisInput = document.getElementById('pais');
+    const ciudadInput = document.getElementById('ciudad');
+
+    if (data) {
+        paisInput.value = data.address.country || 'Desconocido';
+        ciudadInput.value = data.address.state || 'Desconocida';
+    }
 });
 
 const getLocation = async (lat, lon) => {
 
-    const baseUrl = "http://localhost/services/proxy_nominatim.php";
+    const baseUrl = "http://localhost/service/get_location.php";
 
     if (typeof lat !== 'number' || typeof lon !== 'number') {
         throw new Error("Las latitudes y longitudes deben ser números");

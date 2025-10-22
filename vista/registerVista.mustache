@@ -24,6 +24,7 @@
     <input type="file" id="foto" name="foto" >
 
     <label for="gender">Género:</label>
+    
     <select id="gender" name="gender" required>
         {{#genders}}
             <option value="{{id}}">{{nombre}}</option>
@@ -32,6 +33,9 @@
 
     <div id="map" style="height: 400px; width: 100%; margin-top: 20px; max-width: 600px;">
     </div>
+
+    <input disabled placeholder="Argentina" type="text" id="pais" name="pais">
+    <input disabled placeholder="Buenos Aires" type="text" id="ciudad" name="ciudad">
 
     <button type="submit">Registrarse</button>
     

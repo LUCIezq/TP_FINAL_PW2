@@ -113,3 +113,4 @@ create table direccion(
 );
 
 
+select * from sexo;
