@@ -28,13 +28,17 @@ class RegisterController
                 ['name' => 'apellido', 'type' => 'text', 'placeholder' => '@alguien', 'required' => true, 'id' => 'apellido'],
                 ['name' => 'anio_nacimiento', 'type' => 'date', 'required' => true, 'id' => 'anio_nacimiento'],
                 ['name' => 'usuario', 'type' => 'text', 'placeholder' => '@alguien', 'required' => true, 'id' => 'usuario'],
-                ['name' => 'email', 'type' => 'email', 'placeholder' => '', 'id' => 'email'],
+                ['name' => 'email', 'type' => 'email', 'placeholder' => 'alguien@alguien.com', 'id' => 'email'],
                 ['name' => 'password', 'type' => 'password', 'placeholder' => '**********', 'required' => true, 'id' => 'password'],
                 ['name' => 'confirm_password', 'type' => 'password', 'placeholder' => '**********', 'required' => true, 'id' => 'confirm_password'],
                 ['name' => 'foto', 'type' => 'file', 'id' => 'foto'],
-
             ]
         ];
         return $formData;
+    }
+
+    public function userRegister()
+    {
+        print_r($_POST);
     }
 }
