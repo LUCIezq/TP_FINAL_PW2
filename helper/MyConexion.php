@@ -10,7 +10,7 @@ class MyConexion
         $this->logger = $logger;
 
         $this->conexion = new mysqli($server, $user, $password, $database);
-        
+
         if ($this->conexion->connect_error) {
             $this->logger->error("Error de conexión: " . $this->conexion->connect_error);
             throw new Exception("Error de conexión: " . $this->conexion->connect_error);
@@ -67,5 +67,14 @@ class MyConexion
         }
 
         return true;
+    }
+
+    public function processData($result)
+    {
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
     }
 }

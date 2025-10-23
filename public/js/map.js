@@ -12,6 +12,7 @@ map.on('click', async function (e) {
         marker = L.marker(e.latlng).addTo(map);
     }
     const data = await getLocation(lat, lon);
+    
     const paisInput = document.getElementById('pais');
     const ciudadInput = document.getElementById('ciudad');
 

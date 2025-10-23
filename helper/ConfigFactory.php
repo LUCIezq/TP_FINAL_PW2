@@ -7,6 +7,7 @@ include_once("helper/MustacheRenderer.php");
 include_once('helper/Logger.php');
 include_once("controller/RegisterController.php");
 include_once("model/dao/GeneroDao.php");
+include_once("model/dao/UsuarioDao.php");
 
 class ConfigFactory
 {
@@ -39,6 +40,7 @@ class ConfigFactory
 
         $this->objetos["RegisterController"] = new RegisterController(
             new GeneroDao($this->conexion, $this->logger),
+            new UsuarioDao($this->conexion),
             $this->renderer
         );
     }

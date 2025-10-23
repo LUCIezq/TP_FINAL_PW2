@@ -1,6 +1,7 @@
 
 <h2>{{data.titulo}}</h2>
 
+
 <form action= '/register/userRegister' method="POST" enctype="multipart/form-data">
 
     {{#data.campos}}
@@ -16,17 +17,18 @@
             <option value="{{id}}">{{nombre}}</option>
         {{/genders}}
     </select>
-
+    <h2>
+        Seleccione su ubicación en el mapa
+    </h2>
     <div id="map" style="height: 400px; width: 100%; margin-top: 20px; max-width: 600px;">
+    
     </div> 
-        <input disabled placeholder="Argentina" type="text" id="pais" name="pais">
-    <input disabled placeholder="Buenos Aires" type="text" id="ciudad" name="ciudad"> 
+    <input readonly value = "Argentina" placeholder="Argentina" type="text" id="pais" name="pais">
+    <input readonly value = "Buenos Aires" placeholder="Buenos Aires" type="text" id="ciudad" name="ciudad"> 
 
     <button type="submit">Registrarse</button>
     
 </form>
-
-
 
 
 
