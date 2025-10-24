@@ -1,0 +1,118 @@
+/* ===== Paleta ===== */
+:root{
+  --violet-dark: #6f56e8;     /* fondo pantalla */
+  --violet-deeper: #5b45cf;
+  --peach: #f6c08a;           /* card + header-bar */
+  --ink: #212121;
+  --paper: #ffffff;
+  --naranjita:#f2973c;
+}
+
+html, body{
+  height: 100%;
+  background: var(--violet-deeper); /* un solo violeta */
+  color: var(--ink);
+}
+
+/* =======================
+   HEADER
+   ======================= */
+/* Banda durazno dentro del container del header */
+.header-peach{
+  background: var(--peach);
+  border-radius: 1rem;
+}
+
+/* “Preguntados” más chico */
+.brand-title{
+  font-weight: 800;
+  font-size: 1.25rem;   /* tamaño reducido */
+  color: #1f1a2e;
+  line-height: 1;
+  text-decoration: none;
+}
+
+/* “Registro de usuario” centrado en la banda */
+/* Título en MAIN (Registro de usuario) */
+.page-title{
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: #ffffff;          /* blanco */
+  margin: 3.25rem 0 1rem;  /* MÁS espacio desde el header */
+  text-align: center;
+}
+
+/* En pantallas ≥768px centramos manteniendo una línea */
+@media (min-width: 768px){
+  .page-title{ width: auto; margin-left: auto; margin-right: auto; }
+}
+
+/* =======================
+   Card / Form naranja
+   ======================= */
+.card-peach{
+  background: var(--peach);
+  border: none;
+  border-radius: 1rem;
+}
+
+.card-peach .card-body{
+  background: rgba(255,255,255,.65); /* contraste interno */
+  border-radius: .8rem;
+}
+
+/* =======================
+   Labels & Inputs
+   ======================= */
+.form-label{
+  font-weight: 600;
+  color: #2a2a2a;
+}
+
+.form-control,
+.form-select{
+  border-radius: .7rem;
+  border-color: rgba(0,0,0,.08);
+  background-color: var(--paper);
+}
+
+.form-control:focus,
+.form-select:focus{
+  border-color: rgba(91,69,207,.45);
+  box-shadow: 0 0 0 .25rem rgba(111,86,232,.25);
+}
+
+/* =======================
+   Secciones / Mapa
+   ======================= */
+.section-title{
+  font-weight: 700;
+  color: #3a2f69;
+  margin-bottom: .5rem;
+}
+
+.map-box{
+  height: 400px;
+  width: 100%;
+  max-width: 720px;
+  border-radius: .75rem;
+  border: 2px solid rgba(0,0,0,.08);
+  overflow: hidden;
+  background: #e9e6ff; /* fallback si el mapa tarda */
+}
+
+/* =======================
+   Botón Registrar (violeta dark)
+   ======================= */
+.btn-palette{
+  background: var(--violet-dark);
+  border: none;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: .8rem;
+}
+
+.btn-palette:hover{  background: #644de0; }
+.btn-palette:active{ background: #5a44d6; }
+.btn-palette:focus{  box-shadow: 0 0 0 .25rem rgba(111,86,232,.35); }
+.btn-palette:disabled{ opacity: .65; cursor: not-allowed; }

@@ -1,0 +1,29 @@
+:root{
+  --peach: #f6c08a;
+  --ink:   #212121;
+  --naranjita:#f2973c;
+}
+
+
+/* La barra ya es peach; le damos “tarjetita” al container interno */
+
+/* Barra full-width */
+.site-header__bar{
+  width: 100%;
+  background: var(--naranjita);
+  
+}
+/* La barra ya es peach; le damos “tarjetita” al container interno */
+
+
+/* Título h3 */
+.site-title{
+  color: #1f1a2e;
+  font-weight: 800;
+  font-size: 1.25rem; /* h3 moderado */
+  line-height: 1.1;
+}
+
+/* Escala sutil en pantallas mayores */
+@media (min-width: 576px){ .site-title{ font-size: 1.35rem; } }
+@media (min-width: 992px){ .site-title{ font-size: 1.5rem; } }
