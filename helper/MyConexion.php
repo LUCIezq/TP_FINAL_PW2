@@ -43,7 +43,6 @@ class MyConexion
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
         $result = $stmt->get_result();
-        $stmt->close();
 
         $this->logger->info("Consulta preparada y ejecutada correctamente.");
 
