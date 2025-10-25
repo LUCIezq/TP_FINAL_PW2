@@ -10,6 +10,8 @@ include_once("model/dao/GeneroDao.php");
 include_once("model/dao/UsuarioDao.php");
 include_once("controller/LoginController.php");
 include_once("controller/ValidatorController.php");
+include_once("model/dao/ValidatorModelDao.php");
+include_once("model/dao/RegisterModelDao.php");
 class ConfigFactory
 {
     private $config;
@@ -39,7 +41,8 @@ class ConfigFactory
         $this->objetos["RegisterController"] = new RegisterController(
             new GeneroDao($this->conexion, $this->logger),
             new UsuarioDao($this->conexion),
-            $this->renderer
+            $this->renderer,
+            new RegisterModelDao($this->conexion, new UsuarioDao($this->conexion))
         );
         $this->objetos['LoginController'] = new LoginController(
             new UsuarioDao($this->conexion),
@@ -48,8 +51,7 @@ class ConfigFactory
         );
 
         $this->objetos['ValidatorController'] = new ValidatorController(
-            $this->renderer,
-            new UsuarioDao($this->conexion)
+            new ValidatorModelDao(new UsuarioDao($this->conexion))
         );
     }
 

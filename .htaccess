@@ -1,4 +1,4 @@
-Options -Indexes
+    Options -Indexes
 
 <FilesMatch ".*\.(log|ini|htaccess)$">
     deny from all
@@ -7,7 +7,11 @@ Options -Indexes
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
+    
+    RewriteRule ^$ index.php?controller=login&method=index [L,QSA]
+    
     RewriteRule ^(public|service)($|/) - [L,NC]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/(.*)/(.*)$ index.php?controller=$1&method=$2&$3 [L,QSA]

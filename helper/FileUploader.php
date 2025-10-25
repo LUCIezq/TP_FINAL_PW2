@@ -4,6 +4,7 @@ class FileUploader
 {
     private static string $uploadFileDir = 'uploads/profiles/';
     private static array $allowedfileExtensions = ['jpg', 'gif', 'png', 'jpeg'];
+    public static string $defaultImgPath = 'uploads/profiles/default.png';
 
     public static function uploadFile(string $inputName, string $uniqueIdentifier): ?string
     {
