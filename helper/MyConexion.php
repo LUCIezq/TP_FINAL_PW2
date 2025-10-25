@@ -36,17 +36,16 @@ class MyConexion
         $stmt = $this->conexion->prepare($sql);
 
         if (!$stmt) {
-            $this->logger->error("Error en la preparación de la consulta: " . $this->conexion->error);
             throw new Exception("Error en la preparación de la consulta: " . $this->conexion->error);
         }
 
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
-        $result = $stmt->get_result();
 
-        $this->logger->info("Consulta preparada y ejecutada correctamente.");
-
-        return $result ?? true;
+        if (str_starts_with(strtoupper(trim($sql)), 'SELECT')) {
+            return $stmt->get_result();
+        }
+        return $stmt->affected_rows;
     }
 
     public function close()

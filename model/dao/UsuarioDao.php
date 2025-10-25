@@ -8,7 +8,7 @@ class UsuarioDao
         $this->dbConnection = $dbConnection;
     }
 
-    public function createUser($nombre, $apellido, $fecha_nacimiento, $email, $hashedPassword, $nombre_usuario, $foto, $token_verificacion, $sexo_id)
+    public function createUser($params)
     {
         $sql = "INSERT INTO usuario (
         nombre,
@@ -25,9 +25,23 @@ class UsuarioDao
         ) VALUES ( ?, ?, ?, ?, ?, ?, ? , ? , ? , ? , ? )";
 
         $types = "ssssssssiii";
-        $params = [$nombre, $apellido, $fecha_nacimiento, $email, $hashedPassword, $nombre_usuario, $foto, $token_verificacion, $sexo_id, 2, 1];
+        $params = [
+            $params['nombre'],
+            $params['apellido'],
+            $params['fecha_nacimiento'],
+            $params['email'],
+            $params['contrasena'],
+            $params['nombre_usuario'],
+            $params['foto_perfil'],
+            $params['token_verificacion'],
+            $params['sexo_id'],
+            $params['rol_id'] ?? 1,
+            $params['nivel_id'] ?? 1
+        ];
 
-        $this->dbConnection->executePrepared($sql, $types, $params);
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $result === 1;
     }
 
     public function findByUsername($username)
@@ -52,6 +66,16 @@ class UsuarioDao
         return $this->dbConnection->processData($result);
     }
 
+    public function getUserByUsername($username)
+    {
+        $sql = "SELECT * FROM usuario WHERE nombre_usuario = ?";
+        $types = "s";
+        $params = [$username];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+        return $this->dbConnection->processData($result);
+    }
+
     public function findByEmail($email)
     {
         $sql = "SELECT * FROM usuario WHERE email = ?";
@@ -61,5 +85,16 @@ class UsuarioDao
         $result = $this->dbConnection->executePrepared($sql, $types, $params);
 
         return $this->dbConnection->processData($result);
+    }
+
+    public function activateUser($username)
+    {
+        $sql = "UPDATE usuario SET verificado = 1, token_verificacion = NULL WHERE nombre_usuario = ?";
+        $types = "s";
+        $params = [$username];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $result === 1;
     }
 }

@@ -3,7 +3,7 @@
         'name' => 'mustache/mustache',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '3e6a1ea18fe0659b256dd3a8c711cca1ea8bf185',
+        'reference' => '24232653aeccb401a3686ed73e898ebca3b95bfe',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -31,7 +31,7 @@
         'mustache/mustache' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '3e6a1ea18fe0659b256dd3a8c711cca1ea8bf185',
+            'reference' => '24232653aeccb401a3686ed73e898ebca3b95bfe',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -54,6 +54,15 @@
             'install_path' => __DIR__ . '/../phpdocumentor/reflection-docblock',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.12.0',
+            'version' => '6.12.0.0',
+            'reference' => 'd1ac35d784bf9f5e61b424901d5a014967f15b12',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'phpspec/prophecy' => array(
             'pretty_version' => 'v1.5.0',

@@ -8,7 +8,8 @@ include_once('helper/Logger.php');
 include_once("controller/RegisterController.php");
 include_once("model/dao/GeneroDao.php");
 include_once("model/dao/UsuarioDao.php");
-
+include_once("controller/LoginController.php");
+include_once("controller/ValidatorController.php");
 class ConfigFactory
 {
     private $config;
@@ -20,14 +21,14 @@ class ConfigFactory
 
     public function __construct()
     {
-        $this->config = parse_ini_file("config/config.ini");
+        $this->config = parse_ini_file("config/config.ini", true);
         $this->logger = new Logger();
 
         $this->conexion = new MyConexion(
-            $this->config["server"],
-            $this->config["user"],
-            $this->config["password"],
-            $this->config["database"],
+            $this->config['database']["server"],
+            $this->config['database']["user"],
+            $this->config['database']["password"],
+            $this->config['database']["database"],
             $this->logger
         );
 
@@ -35,13 +36,20 @@ class ConfigFactory
 
         $this->objetos["router"] = new NewRouter($this, "PokemonController", "base");
 
-        // $this->objetos["LoginController"] = new LoginController(new LoginModel($this->conexion), $this->renderer);
-        // $this->objetos["PokemonController"] = new PokemonController(new PokemonModel($this->conexion), $this->renderer);
-
         $this->objetos["RegisterController"] = new RegisterController(
             new GeneroDao($this->conexion, $this->logger),
             new UsuarioDao($this->conexion),
             $this->renderer
+        );
+        $this->objetos['LoginController'] = new LoginController(
+            new UsuarioDao($this->conexion),
+            $this->renderer,
+            $this->config
+        );
+
+        $this->objetos['ValidatorController'] = new ValidatorController(
+            $this->renderer,
+            new UsuarioDao($this->conexion)
         );
     }
 

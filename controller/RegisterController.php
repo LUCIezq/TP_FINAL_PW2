@@ -4,6 +4,7 @@ include_once './helper/ShowData.php';
 include_once './helper/ValidatorForm.php';
 include_once './helper/FileUploader.php';
 include_once './helper/HashGenerator.php';
+include_once './helper/SendValidationEmail.php';
 
 class RegisterController
 {
@@ -20,7 +21,9 @@ class RegisterController
 
     public function index($errors = [])
     {
+
         $data = $this->getDataFormRegister();
+
         $this->renderer->render("register", [
             "data" => $data,
             "genders" => $this->generoDao->getAllGenders(),
@@ -56,7 +59,6 @@ class RegisterController
         $usuario = $_POST['usuario'] ?? '';
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
-        $photo = $_FILES['foto'] ?? '';
         $confirm_password = $_POST['confirm_password'] ?? '';
         $genero_id = $_POST['gender'] ?? '';
         $pais = $_POST['pais'] ?? '';
@@ -88,7 +90,7 @@ class RegisterController
                 return;
             }
 
-            $defaultImgPath = __DIR__ . '/uploads/profiles/default.png';
+            $defaultImgPath = 'uploads/profiles/default.png';
 
             $uploadedFilePath = FileUploader::uploadFile('foto', $usuario);
 
@@ -99,17 +101,38 @@ class RegisterController
             $hashedPassword = HashGenerator::generateHash($password);
             $token = bin2hex(random_bytes(16));
 
-            $this->usuarioDao->createUser(
-                $nombre,
-                $apellido,
-                $fecha,
-                $email,
-                $hashedPassword,
-                $usuario,
-                $uploadedFilePath,
-                $token,
-                (int)$genero_id
-            );
+            $params = [
+                'nombre' => $nombre,
+                'apellido' => $apellido,
+                'fecha_nacimiento' => $fecha,
+                'email' => $email,
+                'contrasena' => $hashedPassword,
+                'nombre_usuario' => $usuario,
+                'foto_perfil' => $uploadedFilePath,
+                'token_verificacion' => $token,
+                'sexo_id' => (int)$genero_id
+            ];
+
+
+            try {
+                $result = $this->usuarioDao->createUser($params);
+
+                if ($result) {
+
+                    $url = "http://localhost/validator/validate";
+
+                    SendValidationEmail::sendValidationEmail($email, $usuario, $token, $url);
+
+                    $_SESSION['message'] = "Registro exitoso! Por favor, revisa tu correo para activar tu cuenta.";
+                    header("Location: /login/index");
+                    exit();
+                }
+            } catch (Exception $e) {
+                $errors[] = "Error al registrar el usuario. Por favor, intenta nuevamente.";
+            }
         }
+
+        $this->index($errors);
+        return;
     }
 }

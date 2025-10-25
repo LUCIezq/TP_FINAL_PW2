@@ -2,48 +2,26 @@
 
 class LoginController
 {
-    private $model;
-    private $renderer;
+    private UsuarioDao $usuarioDao;
+    private MustacheRenderer $renderer;
+    private $config;
 
-    public function __construct($model, $renderer)
+    public function __construct(UsuarioDao $usuarioDao, MustacheRenderer $renderer, $config)
     {
-        $this->model = $model;
+        $this->usuarioDao = $usuarioDao;
         $this->renderer = $renderer;
+        $this->config = $config;
     }
 
-    public function base()
+    public function index($errors = [])
     {
-        $this->login();
+        $message = $_SESSION['message'] ?? '';
+        unset($_SESSION['message']);
+
+        $this->renderer->render("login", [
+            "errors" => $errors,
+            "message" => $message,
+            "hasMessage" => !empty($message),
+        ]);
     }
-
-    public function loginForm()
-    {
-        $this->renderer->render("login");
-    }
-
-    public function login()
-    {
-        $resultado = $this->model->getUserWith($_POST["usuario"], $_POST["password"]);
-
-        if (sizeof($resultado) > 0) {
-            $_SESSION["usuario"] = $_POST["usuario"];
-            $this->redirectToIndex();
-        } else {
-            $this->renderer->render("login", ["error" => "Usuario o clave incorrecta"]);
-        }
-    }
-
-    public function logout()
-    {
-        session_destroy();
-        $this->redirectToIndex();
-    }
-
-    public function redirectToIndex()
-    {
-        header("Location: /");
-        exit;
-    }
-
 }
-
