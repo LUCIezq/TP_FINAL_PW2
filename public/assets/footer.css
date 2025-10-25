@@ -1,0 +1,35 @@
+:root{
+  /* ya lo tenés, lo incluyo por claridad */
+  --peach: #f6c08a;
+  --ink:   #212121;
+  --naranjita:#f2973c;
+}
+
+/* Barra full-width del footer (igual a header) */
+.site-footer__bar{
+  width: 100%;
+  background: var(--naranjita);
+  box-shadow: 0 -2px 8px rgba(0,0,0,.08); /* sombra hacia arriba */
+  margin-top: 2.5rem;                     /* separación del contenido */
+}
+
+/* “Tarjetita” al container interno del footer */
+.site-footer__bar .container{
+  background: var(--naranjita);
+  border-radius: 16px 16px 0 0;           /* esquinas superiores redondeadas */
+  box-shadow: 0 -10px 24px rgba(0,0,0,.12);
+  padding-top: .8rem;
+  padding-bottom: .8rem;
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+/* Texto del footer */
+.site-footer__text{
+  color: #1f1a2e;
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+/* Escala suave en pantallas grandes */
+@media (min-width: 576px){ .site-footer__text{ font-size: 1rem; } }
+@media (min-width: 992px){ .site-footer__text{ font-size: 1.05rem; } }
