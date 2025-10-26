@@ -69,8 +69,7 @@ class RegisterController
         if (!empty($errors)) {
             $this->index($errors);
         } else {
-            $url = "http://localhost/validator/validate";
-            SendValidationEmail::sendValidationEmail($inputs['email'], $inputs['usuario'], $this->getTokenByUsername($inputs['usuario']), $url);
+            SendValidationEmail::sendValidationEmail($inputs['email'], $inputs['usuario'], $this->getTokenByUsername($inputs['usuario']));
 
             $_SESSION['message'] = "Registro exitoso! Por favor, revisa tu correo para activar tu cuenta.";
             header("Location: /login/index");

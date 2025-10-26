@@ -9,12 +9,14 @@ require_once __DIR__ . '/../vendor/autoload.php';
 class SendValidationEmail
 {
 
-    public static function sendValidationEmail($userEmail,  $userName, $token, $url)
+    private static $url = "http://localhost/validator/validate";
+
+    public static function sendValidationEmail($userEmail,  $userName, $token)
     {
         $mail = new PHPMailer(true);
         $config = parse_ini_file("config/config.ini", true);
 
-        $validationLink = $url . "?usuario=" . urlencode($userName) . "&token=" . urlencode($token);
+        $validationLink = self::$url . "?usuario=" . urlencode($userName) . "&token=" . urlencode($token);
 
         try {
 

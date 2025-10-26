@@ -55,7 +55,7 @@ class RegisterModelDao
         $params = [
             'nombre' => $inputs['nombre'],
             'apellido' => $inputs['apellido'],
-            'fecha_nacimiento' => $inputs['fecha'],
+        'fecha_nacimiento' => $inputs['fecha'],
             'email' => $inputs['email'],
             'contrasena' => $hashedPassword,
             'nombre_usuario' => $inputs['usuario'],

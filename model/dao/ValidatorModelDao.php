@@ -34,9 +34,7 @@ class ValidatorModelDao
 
         if (strtotime($user[0]['token_expiracion']) < time()) {
             $token = $this->generateNewToken($user[0]);
-            $url = "http://localhost/validator/validate";
-            SendValidationEmail::sendValidationEmail($user[0]['email'], $user[0]['nombre_usuario'], $token, $url);
-
+            SendValidationEmail::sendValidationEmail($user[0]['email'], $user[0]['nombre_usuario'], $token);
             return "El token ha expirado. Se ha enviado un nuevo correo de verificación.";
         }
 
