@@ -1,16 +1,17 @@
 <?php
 
+include_once './helper/HashGenerator.php';
+
 class LoginController
 {
-    private UsuarioDao $usuarioDao;
     private MustacheRenderer $renderer;
-    private $config;
+    private LoginModelDao $loginModel;
 
-    public function __construct(UsuarioDao $usuarioDao, MustacheRenderer $renderer, $config)
+
+    public function __construct(MustacheRenderer $renderer, LoginModelDao $loginModel)
     {
-        $this->usuarioDao = $usuarioDao;
         $this->renderer = $renderer;
-        $this->config = $config;
+        $this->loginModel = $loginModel;
     }
 
     public function index($errors = [])
@@ -23,5 +24,20 @@ class LoginController
             "message" => $message,
             "hasMessage" => !empty($message),
         ]);
+    }
+
+    public function login()
+    {
+        $email = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
+        $password = $_POST['password'] ?? '';
+
+        $errors = $this->loginModel->login($email, $password);
+
+        if (!empty($errors)) {
+            $this->index($errors);
+        } else {
+            header("Location: /dashboard");
+            exit();
+        }
     }
 }

@@ -6,4 +6,9 @@ class HashGenerator
     {
         return password_hash($input, PASSWORD_BCRYPT);
     }
+
+    public static function verifyHash(string $input, string $hash): bool
+    {
+        return password_verify($input, $hash);
+    }
 }

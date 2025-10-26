@@ -5,27 +5,32 @@
                     <div class="card-header">
                         Login
                     </div>
+
+                         {{#errors}}
+              <div class="alert alert-danger" role="alert">
+                <ul class="mb-0" style="list-style:none;">
+                    <li>{{.}}</li>
+                </ul>
+              </div>
+              {{/errors}}
+
                     <div class="card-body">
                         {{#hasMessage}}
                         <div class="alert alert-info">
                             {{message}}
                         </div>
                         {{/hasMessage}}
+                        
 
-                        <form action="/login" method="POST">
+                        <form action="/login/login" method="POST">
                             <div class="form-group">
-                                <label for="username">Usuario:</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <label for="email">Direccion de correo:</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Contraseña:</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
-                            {{#error}}
-                            <div class="alert alert-danger">
-                                {{error}}
-                            </div>
-                            {{/error}}
                             <button type="submit" class="btn btn-primary">Ingresar</button>
                         </form>
                     </div>

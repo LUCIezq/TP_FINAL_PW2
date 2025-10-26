@@ -12,6 +12,8 @@ include_once("controller/LoginController.php");
 include_once("controller/ValidatorController.php");
 include_once("model/dao/ValidatorModelDao.php");
 include_once("model/dao/RegisterModelDao.php");
+include_once("model/dao/LoginModelDao.php");
+
 class ConfigFactory
 {
     private $config;
@@ -45,9 +47,8 @@ class ConfigFactory
             new RegisterModelDao($this->conexion, new UsuarioDao($this->conexion))
         );
         $this->objetos['LoginController'] = new LoginController(
-            new UsuarioDao($this->conexion),
             $this->renderer,
-            $this->config
+            new LoginModelDao(new UsuarioDao($this->conexion))
         );
 
         $this->objetos['ValidatorController'] = new ValidatorController(
