@@ -64,13 +64,22 @@ class RegisterController
         $inputs['pais'] = $_POST['pais'] ?? '';
         $inputs['ciudad'] = $_POST['ciudad'] ?? '';
 
-        $errors[] = $this->registerModelDao->userRegister($inputs);
+        $errors = $this->registerModelDao->userRegister($inputs);
 
-        if (!empty($errors[0])) {
+        if (!empty($errors)) {
             $this->index($errors);
         } else {
+            $url = "http://localhost/validator/validate";
+            SendValidationEmail::sendValidationEmail($inputs['email'], $inputs['usuario'], $this->getTokenByUsername($inputs['usuario']), $url);
+
+            $_SESSION['message'] = "Registro exitoso! Por favor, revisa tu correo para activar tu cuenta.";
             header("Location: /login/index");
             exit();
         }
+    }
+    public function getTokenByUsername($username)
+    {
+        $user = $this->usuarioDao->getUserByUsername($username);
+        return $user ? $user['token_verificacion'] : null;
     }
 }

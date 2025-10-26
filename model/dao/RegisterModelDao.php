@@ -34,10 +34,6 @@ class RegisterModelDao
             }
         }
 
-        if (!empty($error)) {
-            return $error;
-        }
-
         $existingUser = $this->usuarioDao->getUserByUsernameOrEmail($inputs['usuario'], $inputs['email']);
 
         if ($existingUser) {
@@ -67,18 +63,9 @@ class RegisterModelDao
         ];
 
         try {
-            $result = $this->usuarioDao->createUser($params);
-
-            if ($result) {
-
-                $url = "http://localhost/validator/validate";
-
-                SendValidationEmail::sendValidationEmail($inputs['email'], $inputs['usuario'], $token, $url);
-
-                $_SESSION['message'] = "Registro exitoso! Por favor, revisa tu correo para activar tu cuenta.";
-            }
+            $this->usuarioDao->createUser($params);
         } catch (Exception $e) {
-            $errors[] = "Error al registrar el usuario. Por favor, intenta nuevamente.";
+            $errors[] = "Error al registrar el usuario. Por favor, intenta nuevamente. ->" . $e->getMessage();
         }
         return $errors;
     }

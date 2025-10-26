@@ -23,10 +23,21 @@
         <div class="card card-peach shadow-lg">
           <div class="card-body p-4 p-lg-5">
 
+
+              {{#errors}}
+              <div class="alert alert-danger" role="alert">
+                <ul class="mb-0" style="list-style:none;">
+                    <li>{{.}}</li>
+                </ul>
+              </div>
+              {{/errors}}
+              
+
+
             <form action="/register/userRegister" method="POST" enctype="multipart/form-data" class="row g-3">
 
               {{#data.campos}}
-              <div class="col-12">
+              <div class="col-6 md-6">
                 <label for="{{id}}" class="form-label">{{name}}</label>
                 <input
                   placeholder="{{placeholder}}"
@@ -47,7 +58,7 @@
                 </select>
               </div>
 
-              <div class="col-12 mt-2">
+              <div class="col-100 mt-2">
                 <h6 class="section-title">Seleccione su ubicación en el mapa</h6>
                 <div id="map" class="map-box"></div>
               </div>
