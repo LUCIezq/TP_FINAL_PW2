@@ -17,6 +17,8 @@ class LoginController
     public function index($errors = [])
     {
         $message = $_SESSION['message'] ?? '';
+        $errors = $_SESSION['errors'] ?? [];
+        unset($_SESSION['errors']);
         unset($_SESSION['message']);
 
         $this->renderer->render("login", [
@@ -30,13 +32,15 @@ class LoginController
     {
         $email = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
         $password = $_POST['password'] ?? '';
+        $errors = [];
 
         $errors = $this->loginModel->login($email, $password);
 
         if (!empty($errors)) {
-            $this->index($errors);
+            $_SESSION['errors'] = $errors;
+            $this->index();
         } else {
-            header("Location: /dashboard");
+            header("Location: /home/index");
             exit();
         }
     }

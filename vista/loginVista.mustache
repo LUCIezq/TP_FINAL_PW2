@@ -6,15 +6,16 @@
                         Login
                     </div>
 
-                         {{#errors}}
-              <div class="alert alert-danger" role="alert">
-                <ul class="mb-0" style="list-style:none;">
-                    <li>{{.}}</li>
-                </ul>
-              </div>
-              {{/errors}}
+                    {{#errors}}
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0" style="list-style:none;">
+                                <li>{{.}}</li>
+                            </ul>
+                        </div>
+                    {{/errors}}
 
                     <div class="card-body">
+                    
                         {{#hasMessage}}
                         <div class="alert alert-info">
                             {{message}}
@@ -31,6 +32,9 @@
                                 <label for="password">Contraseña:</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
+                            
+                            <a href="/register/index" class="btn btn-link">¿No tienes una cuenta?</a>
+
                             <button type="submit" class="btn btn-primary">Ingresar</button>
                         </form>
                     </div>

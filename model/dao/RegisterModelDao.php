@@ -48,7 +48,9 @@ class RegisterModelDao
         }
 
         $hashedPassword = HashGenerator::generateHash($inputs['password']);
+
         $token = bin2hex(random_bytes(16));
+        $tokenExpiracion = date('Y-m-d H:i:s', strtotime('+1 day'));
 
         $params = [
             'nombre' => $inputs['nombre'],
@@ -59,6 +61,7 @@ class RegisterModelDao
             'nombre_usuario' => $inputs['usuario'],
             'foto_perfil' => $uploadedFilePath,
             'token_verificacion' => $token,
+            'token_expiracion' => $tokenExpiracion,
             'sexo_id' => (int)$inputs['gender']
         ];
 
