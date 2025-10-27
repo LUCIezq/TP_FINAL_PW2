@@ -1,6 +1,6 @@
 <?php
 
-include_once("model/Genero.php");
+include_once "model/Genero.php";
 
 class GeneroDao
 {

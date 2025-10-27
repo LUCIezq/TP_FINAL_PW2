@@ -69,7 +69,9 @@ class RegisterController
         if (!empty($errors)) {
             $this->index($errors);
         } else {
-            SendValidationEmail::sendValidationEmail($inputs['email'], $inputs['usuario'], $this->getTokenByUsername($inputs['usuario']));
+            $token = $this->getTokenByUsername($inputs['usuario']);
+
+            SendValidationEmail::sendValidationEmail($inputs['email'], $inputs['usuario'], $token);
 
             $_SESSION['message'] = "Registro exitoso! Por favor, revisa tu correo para activar tu cuenta.";
             header("Location: /login/index");
@@ -79,6 +81,6 @@ class RegisterController
     public function getTokenByUsername($username)
     {
         $user = $this->usuarioDao->getUserByUsername($username);
-        return $user ? $user['token_verificacion'] : null;
+        return $user ? $user[0]['token_verificacion'] : null;
     }
 }

@@ -34,6 +34,10 @@ class RegisterModelDao
             }
         }
 
+        if (!empty($error)) {
+            return $error;
+        }
+
         $existingUser = $this->usuarioDao->getUserByUsernameOrEmail($inputs['usuario'], $inputs['email']);
 
         if ($existingUser) {
@@ -55,14 +59,14 @@ class RegisterModelDao
         $params = [
             'nombre' => $inputs['nombre'],
             'apellido' => $inputs['apellido'],
-        'fecha_nacimiento' => $inputs['fecha'],
+            'fecha_nacimiento' => $inputs['fecha'],
             'email' => $inputs['email'],
             'contrasena' => $hashedPassword,
             'nombre_usuario' => $inputs['usuario'],
             'foto_perfil' => $uploadedFilePath,
             'token_verificacion' => $token,
             'token_expiracion' => $tokenExpiracion,
-            'sexo_id' => (int)$inputs['gender']
+            'sexo_id' => (int) $inputs['gender']
         ];
 
         try {
