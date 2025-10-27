@@ -1,18 +1,19 @@
 <?php
-include_once("helper/MyConexion.php");
-include_once("helper/IncludeFileRenderer.php");
-include_once("helper/NewRouter.php");
-include_once('vendor/mustache/src/Mustache/Autoloader.php');
-include_once("helper/MustacheRenderer.php");
-include_once('helper/Logger.php');
-include_once("controller/RegisterController.php");
-include_once("model/dao/GeneroDao.php");
-include_once("model/dao/UsuarioDao.php");
-include_once("controller/LoginController.php");
-include_once("controller/ValidatorController.php");
-include_once("model/dao/ValidatorModelDao.php");
-include_once("model/dao/RegisterModelDao.php");
-include_once("model/dao/LoginModelDao.php");
+include_once "helper/MyConexion.php";
+include_once "helper/IncludeFileRenderer.php";
+include_once "helper/NewRouter.php";
+include_once 'vendor/mustache/src/Mustache/Autoloader.php';
+include_once "helper/MustacheRenderer.php";
+include_once 'helper/Logger.php';
+include_once "controller/RegisterController.php";
+include_once "model/dao/GeneroDao.php";
+include_once "model/dao/UsuarioDao.php";
+include_once "controller/LoginController.php";
+include_once "controller/ValidatorController.php";
+include_once "model/dao/ValidatorModelDao.php";
+include_once "model/dao/RegisterModelDao.php";
+include_once "model/dao/LoginModelDao.php";
+include_once "controller/HomeController.php";
 
 class ConfigFactory
 {
@@ -54,6 +55,8 @@ class ConfigFactory
         $this->objetos['ValidatorController'] = new ValidatorController(
             new ValidatorModelDao(new UsuarioDao($this->conexion))
         );
+
+        $this->objetos['HomeController'] = new HomeController($this->renderer);
     }
 
     public function get($objectName)

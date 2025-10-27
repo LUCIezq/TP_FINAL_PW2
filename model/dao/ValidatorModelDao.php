@@ -23,13 +23,12 @@ class ValidatorModelDao
         if (!$user) {
             return "Usuario no encontrado.";
         }
+        if ($user[0]['activo'] == 1) {
+            return "La cuenta ya ha sido verificada.";
+        }
 
         if ($user[0]['token_verificacion'] !== $token) {
             return "Token de verificación inválido.";
-        }
-
-        if ($user[0]['activo'] == 1) {
-            return "La cuenta ya ha sido verificada.";
         }
 
         if (strtotime($user[0]['token_expiracion']) < time()) {

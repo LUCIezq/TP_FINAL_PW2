@@ -24,9 +24,9 @@ class LoginModelDao
                 return ["Credenciales inválidas."];
             }
 
-            if (!HashGenerator::verifyHash($password, $user['contrasena'])) {
-                return ["Credenciales inválidas."];
-            }
+            // if (!HashGenerator::verifyHash($password, $user['contrasena'])) {
+            //     return ["Credenciales inválidas."];
+            // }
 
             if ($user['token_verificacion'] !== null) {
                 return ["Debes activar tu cuenta antes de iniciar sesión. Revisa tu correo electrónico."];
@@ -40,9 +40,10 @@ class LoginModelDao
     }
     private function createUserSession($user)
     {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_name'] = $user['nombre_usuario'];
+        unset($user['contrasena']);
+        unset($user['token_verificacion']);
+
+        $_SESSION['user'] = $user;
         $_SESSION['logged_in'] = true;
     }
 }

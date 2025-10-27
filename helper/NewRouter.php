@@ -16,7 +16,7 @@ class NewRouter
 
     public function executeController($controllerParam, $methodParam)
     {
-        $controller = $this->getControllerFrom($controllerParam);
+        $controller = $this->getControllerFrom($controllerParam); //  Recibe home --> HomeController
         $this->executeMethodFromController($controller, $methodParam);
     }
 

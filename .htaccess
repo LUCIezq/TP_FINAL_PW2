@@ -10,7 +10,7 @@
     
     RewriteRule ^$ index.php?controller=login&method=index [L,QSA]
     
-    RewriteRule ^(public|service)($|/) - [L,NC]
+    RewriteRule ^(public|service|uploads)($|/) - [L,NC]
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

@@ -44,4 +44,10 @@ class LoginController
             exit();
         }
     }
+    public function logout()
+    {
+        $_SESSION['logged_in'] = false;
+        header("Location: /login/index");
+        exit();
+    }
 }
