@@ -66,6 +66,8 @@ class RegisterController
 
         $errors = $this->registerModelDao->userRegister($inputs);
 
+        CreateUserSession::create($this->usuarioDao->findByUsername($inputs['usuario'])[0]);
+
         if (!empty($errors)) {
             $this->index($errors);
         } else {

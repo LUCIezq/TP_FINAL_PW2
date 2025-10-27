@@ -1,6 +1,8 @@
 <?php
 
 include_once 'helper/IsLogged.php';
+include_once 'helper/StartSession.php';
+
 
 class HomeController
 {
@@ -11,8 +13,11 @@ class HomeController
         $this->mustacheRenderer = $mustacheRenderer;
     }
 
-    public function index()
+    public function index(): void
     {
+
+        StartSession::start();
+
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
             exit;

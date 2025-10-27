@@ -1,6 +1,6 @@
 <?php
-include_once './helper/ValidatorForm.php';
-include_once './helper/FileUploader.php';
+include_once 'helper/ValidatorForm.php';
+include_once 'helper/FileUploader.php';
 
 class RegisterModelDao
 {
@@ -34,13 +34,9 @@ class RegisterModelDao
             }
         }
 
-        if (!empty($error)) {
-            return $error;
-        }
-
         $existingUser = $this->usuarioDao->getUserByUsernameOrEmail($inputs['usuario'], $inputs['email']);
 
-        if ($existingUser) {
+        if ($existingUser || !empty($error)) {
             $error[] = "El nombre de usuario o email ya está en uso.";
             return $error;
         }

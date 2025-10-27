@@ -93,15 +93,24 @@ insert into
         email,
         contrasena,
         nombre_usuario,
+        foto_perfil,
         verificado,
         rol_id
     )
 values
-    ('admin@admin.com', 'adminadmin', 'admin', 1, 2),
+    (
+        'admin@admin.com',
+        'adminadmin',
+        'admin',
+        "/uploads/default/default.png",
+        1,
+        2
+    ),
     (
         'editor@editor.com',
         'editoeditor',
         'editor',
+        "/uploads/default/default.png",
         1,
         3
     );

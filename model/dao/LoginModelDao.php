@@ -21,29 +21,19 @@ class LoginModelDao
             $user = $this->usuarioDao->findByEmail($email)[0];
 
             if (!$user || empty($user)) {
-                return ["Credenciales inválidas."];
+                return ["Usuario/contraseña inválidos."];
             }
 
-            // if (!HashGenerator::verifyHash($password, $user['contrasena'])) {
-            //     return ["Credenciales inválidas."];
-            // }
+            if (!HashGenerator::verifyHash($password, $user['contrasena'])) {
+                return ["Usuario/contraseña inválidos."];
+            }
 
             if ($user['token_verificacion'] !== null) {
                 return ["Debes activar tu cuenta antes de iniciar sesión. Revisa tu correo electrónico."];
             }
-
-            $this->createUserSession($user);
             return [];
         } catch (Exception $e) {
             return ["Error interno. Por favor, intenta nuevamente."];
         }
-    }
-    private function createUserSession($user)
-    {
-        unset($user['contrasena']);
-        unset($user['token_verificacion']);
-
-        $_SESSION['user'] = $user;
-        $_SESSION['logged_in'] = true;
     }
 }

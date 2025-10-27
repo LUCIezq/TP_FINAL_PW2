@@ -49,7 +49,8 @@ class ConfigFactory
         );
         $this->objetos['LoginController'] = new LoginController(
             $this->renderer,
-            new LoginModelDao(new UsuarioDao($this->conexion))
+            new LoginModelDao(new UsuarioDao($this->conexion)),
+            new UsuarioDao($this->conexion)
         );
 
         $this->objetos['ValidatorController'] = new ValidatorController(
