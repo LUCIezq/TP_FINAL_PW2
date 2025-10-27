@@ -44,7 +44,7 @@ class RegisterModelDao
         $uploadedFilePath = FileUploader::uploadFile('foto', $inputs['usuario']);
 
         if ($uploadedFilePath === null) {
-            $uploadedFilePath = FileUploader::$defaultImgPath;
+            $uploadedFilePath = FileUploader::$defaultWebPath;
         }
 
         $hashedPassword = HashGenerator::generateHash($inputs['password']);

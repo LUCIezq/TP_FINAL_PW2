@@ -1,5 +1,7 @@
 <?php
 
+include_once 'helper/StartSession.php';
+
 class ValidatorController
 {
 
@@ -12,6 +14,7 @@ class ValidatorController
 
     public function validate()
     {
+        StartSession::start();
         $usuario = $_GET['usuario'] ?? '';
         $token = $_GET['token'] ?? '';
         $error = [];

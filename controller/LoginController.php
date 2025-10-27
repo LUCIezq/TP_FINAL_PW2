@@ -3,13 +3,14 @@
 include_once 'helper/HashGenerator.php';
 include_once 'helper/StartSession.php';
 include_once 'helper/CreateUserSession.php';
-
+include_once 'helper/StartSession.php';
 class LoginController
 {
     private MustacheRenderer $renderer;
     private LoginModelDao $loginModel;
 
     private UsuarioDao $usuarioDao;
+
 
     public function __construct(MustacheRenderer $renderer, LoginModelDao $loginModel, UsuarioDao $usuarioDao)
     {
@@ -20,6 +21,7 @@ class LoginController
 
     public function index($errors = [])
     {
+        StartSession::start();
         $message = $_SESSION['message'] ?? '';
         $errors = $_SESSION['errors'] ?? [];
 

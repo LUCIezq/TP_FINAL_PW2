@@ -9,7 +9,7 @@ class FileUploader
 
     // Rutas WEB (para mostrar en HTML)
     private static string $uploadWebPath = '/uploads/profiles/';
-    private static string $defaultWebPath = '/uploads/default/default.png';
+    public static string $defaultWebPath = '/uploads/default/default.png';
 
     private static array $allowedfileExtensions = ['jpg', 'gif', 'png', 'jpeg'];
 
