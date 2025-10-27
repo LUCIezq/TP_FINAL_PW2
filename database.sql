@@ -136,7 +136,5 @@ create table direccion (
     constraint fk_direccion_usuario foreign key (usuario_id) references usuario (id) on delete cascade on update cascade
 );
 
-select
-    *
-from
-    sexo;
+
+

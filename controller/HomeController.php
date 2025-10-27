@@ -20,7 +20,7 @@ class HomeController
 
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
-            exit;
+            exit();
         }
 
         $this->mustacheRenderer->render(
@@ -28,7 +28,8 @@ class HomeController
 
             [
                 "usuario" => $_SESSION['user']['nombre_usuario'],
-                "url_profile" => $_SESSION['user']['foto_perfil']
+                "url_profile" => $_SESSION['user']['foto_perfil'],
+                "isLogged" => $_SESSION['logged_in']
             ]
         );
     }

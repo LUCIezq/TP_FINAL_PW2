@@ -8,8 +8,8 @@ class FileUploader
 
 
     // Rutas WEB (para mostrar en HTML)
-    // private static string $uploadWebPath = '/uploads/profiles/';
-    // private static string $defaultWebPath = '/uploads/default/default.png';
+    private static string $uploadWebPath = '/uploads/profiles/';
+    private static string $defaultWebPath = '/uploads/default/default.png';
 
     private static array $allowedfileExtensions = ['jpg', 'gif', 'png', 'jpeg'];
 
@@ -36,9 +36,10 @@ class FileUploader
 
         $newFileName = md5($uniqueIdentifier . time()) . '.' . $fileExtension;
         $dest_path = self::$uploadFileDir . $newFileName;
+        $web_path = self::$uploadWebPath . $newFileName;
 
         if (move_uploaded_file($fileTmpPath, $dest_path)) {
-            return $dest_path;
+            return $web_path;
         }
 
         return null;
