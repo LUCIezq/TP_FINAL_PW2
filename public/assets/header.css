@@ -24,6 +24,15 @@
   line-height: 1.1;
 }
 
+.btn-logout{
+  /* mantiene el color del botón en hover y da feedback */
+  transition: transform .08s ease, box-shadow .2s ease;
+}
+.btn-logout:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+}
+
 /* Escala sutil en pantallas mayores */
 @media (min-width: 576px){ .site-title{ font-size: 1.35rem; } }
 @media (min-width: 992px){ .site-title{ font-size: 1.5rem; } }

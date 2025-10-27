@@ -1,0 +1,41 @@
+.brand-title{
+      font-family:"Luckiest Guy", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size:clamp(2.2rem, 6vw, 3.2rem);
+      line-height:1.05;
+      color:#fff;
+      text-shadow:0 2px 0 rgba(0,0,0,.25), 0 6px 16px rgba(0,0,0,.25);
+      margin-bottom: 1.25rem;
+    }
+    /* base del botón durazno */
+.btn-peach{
+  background: var(--peach, #f6c08a);
+  border: none;
+  color: #212121;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  text-decoration: none;
+  transition: transform .08s ease, box-shadow .2s ease;
+}
+
+/* HOVER: NO cambia color */
+.btn-peach:hover,
+.btn-peach:focus {
+  background: var(--peach, #f6c08a);    /* mantiene color */
+  border-color: transparent ;
+  color: #212121; 
+  transform: translateY(-1px);                     /* levita un poquito */
+  box-shadow: 0 14px 36px rgba(0,0,0,.28);         /* sombra más fuerte */
+  text-decoration: none;
+}
+
+/* Accesibilidad: anillo al enfocar con teclado */
+.btn-peach:focus-visible{
+  outline: 3px solid rgba(33,33,33,.25);
+  outline-offset: 2px;
+}
+
+/* Click (active) */
+.btn-peach:active{
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+}
