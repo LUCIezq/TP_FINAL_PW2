@@ -1,6 +1,6 @@
 <?php
 
-include_once("/model/Token.php");
+include_once "model/Token.php";
 class ValidatorModelDao
 {
 
@@ -33,6 +33,7 @@ class ValidatorModelDao
         }
 
         if (strtotime($user[0]['token_expiracion']) < time()) {
+
             $token = $this->generateNewToken($user[0]);
             SendValidationEmail::sendValidationEmail($user[0]['email'], $user[0]['nombre_usuario'], $token);
             return "El token ha expirado. Se ha enviado un nuevo correo de verificación.";
