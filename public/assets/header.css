@@ -1,7 +1,7 @@
 :root{
   --peach: #f6c08a;
   --ink:   #212121;
-  --naranjita:#f2973c;
+  --VerdeTur: #2AB3B0;
 }
 
 
@@ -10,10 +10,10 @@
 /* Barra full-width */
 .site-header__bar{
   width: 100%;
-  background: var(--naranjita);
+  background-color: var(--VerdeTur);
   
 }
-/* La barra ya es peach; le damos “tarjetita” al container interno */
+
 
 
 /* Título h3 */

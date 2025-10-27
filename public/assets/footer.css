@@ -1,35 +1,43 @@
 :root{
-  /* ya lo tenés, lo incluyo por claridad */
-  --peach: #f6c08a;
-  --ink:   #212121;
-  --naranjita:#f2973c;
+  --peach:    #f6c08a;
+  --ink:      #212121;
+  --VerdeTur: #2AB3B0;
 }
 
-/* Barra full-width del footer (igual a header) */
+/* Sticky footer base */
+html, body { height: 100%; }
+body.layout{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+main.flex-fill{ flex: 1 0 auto; }   /* el main ocupa el alto disponible */
+.site-footer{ margin-top: auto; }   /* empuja el footer al fondo */
+
+/* Barra full-width (igual al header) */
 .site-footer__bar{
   width: 100%;
-  background: var(--naranjita);
-  box-shadow: 0 -2px 8px rgba(0,0,0,.08); /* sombra hacia arriba */
-  margin-top: 2.5rem;                     /* separación del contenido */
+  background: var(--VerdeTur);
+  box-shadow: 0 -10px 30px rgba(0,0,0,.08) inset; /* sombra hacia arriba */
+  /* sin margin-top aquí para no levantar el footer */
 }
 
-/* “Tarjetita” al container interno del footer */
+/* “Tarjetita” interna opcional */
 .site-footer__bar .container{
-  background: var(--naranjita);
-  border-radius: 16px 16px 0 0;           /* esquinas superiores redondeadas */
+  background: var(--VerdeTur);
+  border-radius: 16px 16px 0 0;
   box-shadow: 0 -10px 24px rgba(0,0,0,.12);
-  padding-top: .8rem;
-  padding-bottom: .8rem;
+  padding-block: .8rem;
   border-top: 1px solid rgba(0,0,0,.06);
 }
 
-/* Texto del footer */
+/* Texto */
 .site-footer__text{
   color: #1f1a2e;
   font-weight: 600;
   font-size: .95rem;
 }
 
-/* Escala suave en pantallas grandes */
 @media (min-width: 576px){ .site-footer__text{ font-size: 1rem; } }
 @media (min-width: 992px){ .site-footer__text{ font-size: 1.05rem; } }
