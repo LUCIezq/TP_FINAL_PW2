@@ -19,13 +19,12 @@ class UsuarioDao
         nombre_usuario,
         foto_perfil,
         token_verificacion,
-        token_expiracion,
         sexo_id,
         rol_id,
         nivel_id
-        ) VALUES ( ?, ?, ?, ?, ?, ?, ? , ? , ? , ? , ?,? )";
+        ) VALUES ( ?, ?, ?, ?, ?, ?, ? , ? , ? , ?,? )";
 
-        $types = "sssssssssiii";
+        $types = "ssssssssiii";
         $params = [
             $params['nombre'],
             $params['apellido'],
@@ -35,7 +34,6 @@ class UsuarioDao
             $params['nombre_usuario'],
             $params['foto_perfil'],
             $params['token_verificacion'],
-            $params['token_expiracion'],
             $params['sexo_id'],
             $params['rol_id'] ?? 1,
             $params['nivel_id'] ?? 1
@@ -91,7 +89,7 @@ class UsuarioDao
 
     public function activateUser($username)
     {
-        $sql = "UPDATE usuario SET verificado = 1, token_verificacion = NULL, token_expiracion = NULL WHERE nombre_usuario = ?";
+        $sql = "UPDATE usuario SET verificado = 1, token_verificacion = NULL, token_expiracion = CURRENT_TIMESTAMP WHERE nombre_usuario = ?";
         $types = "s";
         $params = [$username];
 
@@ -100,11 +98,11 @@ class UsuarioDao
         return $result === 1;
     }
 
-    public function updateUserToken($username, $token, $tokenExpiracion)
+    public function updateUserToken($username, $token)
     {
-        $sql = "UPDATE usuario SET token_verificacion = ?, token_expiracion = ? WHERE nombre_usuario = ?";
-        $types = "sss";
-        $params = [$token, $tokenExpiracion, $username];
+        $sql = "UPDATE usuario SET token_verificacion = ? WHERE nombre_usuario = ?";
+        $types = "ss";
+        $params = [$token, $username];
 
         $result = $this->dbConnection->executePrepared($sql, $types, $params);
 

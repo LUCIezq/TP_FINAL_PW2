@@ -48,7 +48,7 @@ class ValidatorModelDao
     public function generateNewToken($user)
     {
         $token = new Token();
-        $this->usuarioDao->updateUserToken($user['nombre_usuario'], $token->getToken(), $token->getExpiracion());
+        $this->usuarioDao->updateUserToken($user['nombre_usuario'], $token->getToken());
         return $token;
     }
 }
