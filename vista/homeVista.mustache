@@ -23,15 +23,65 @@
   <main class="container my-4">
     <h2 class="brand-title text-center">Preguntados</h2>
 
-    <div class="row justify-content-center">
-      <div class="col-12 col-lg-6">
-        <div class="d-grid">
-          <!-- Cambiá el href a la ruta real para crear/entrar a la partida -->
-          <a href="/jugar" class="btn btn-peach btn-lg">Jugar partida</a>
+
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-center mb-4">
+                <i class="bi bi-people-fill"></i> Jugadores Disponibles
+            </h2>
         </div>
-      </div>
     </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {{#jugadores}}
+        <div class="col">
+        <div>
+            <div class="card h-100 shadow-sm hover-shadow">
+                <div class="card-body text-center">
+                    
+                    <div class="mb-3">
+                        <img src="{{foto_perfil}}" 
+                            alt="{{nombre}}" 
+                            width="100" 
+                            height="100"
+                            style="object-fit: cover;">
+                    </div>
+
+                    <h5 class="card-title mb-2">{{{apellido}}},{{{nombre}}}</h5>
+                    <p class="card-text text-muted small mb-3">
+                        <i class="bi bi-envelope"></i> {{email}}
+                    </p>
+                      <button type="button" 
+                            class="btn btn-primary w-100 btn-desafiar" 
+                            data-destinatario-id="{{id}}" >
+                        <i class="bi bi-sword"></i> Desafiar
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{/jugadores}}
+
+        <form action="/solicitudPartida/crearSolicitudPartida" 
+                          method="POST" 
+                          class="form-desafiar">
+                        <input type="hidden" name="destinatario_id" id="destinatario_id">
+        </form>
+        </div>
+
+        {{^jugadores}}
+        <div class="col-12">
+            <div class="alert alert-info text-center" role="alert">
+                <i class="bi bi-info-circle"></i> No hay jugadores disponibles en este momento.
+            </div>
+        </div>
+        {{/jugadores}}
+    </div>
+</div>
   </main>
+
+  <script src="/public/js/SaveUserId.js"></script>
 
 </body>
 </html>

@@ -14,6 +14,8 @@ include_once "model/dao/ValidatorModelDao.php";
 include_once "model/dao/RegisterModelDao.php";
 include_once "model/dao/LoginModelDao.php";
 include_once "controller/HomeController.php";
+include_once "controller/SolicitudPartidaController.php";
+include_once "model/dao/SolicitudPartidaDao.php";
 
 class ConfigFactory
 {
@@ -57,7 +59,9 @@ class ConfigFactory
             new ValidatorModelDao(new UsuarioDao($this->conexion))
         );
 
-        $this->objetos['HomeController'] = new HomeController($this->renderer);
+        $this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion));
+
+        $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion));
     }
 
     public function get($objectName)

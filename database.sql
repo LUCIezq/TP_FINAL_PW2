@@ -136,5 +136,33 @@ create table direccion (
     constraint fk_direccion_usuario foreign key (usuario_id) references usuario (id) on delete cascade on update cascade
 );
 
+CREATE TABLE estado_solicitud (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(255),
+)
+INSERT INTO
+    estado_solicitud (nombre)
+VALUES
+    ('pendiente'),
+    ('aceptada'),
+    ('rechazada');
 
-
+CREATE TABLE solicitud_partida (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_remitente_id INT NOT NULL,
+    usuario_destinatario_id INT NOT NULL,
+    estado_solicitud_id INT NOT NULL DEFAULT 1,
+    mensaje VARCHAR(255),
+    fecha_envio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_remitente_id) REFERENCES usuario (id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_destinatario_id) REFERENCES usuario (id) ON DELETE CASCADE,
+    FOREIGN KEY (estado_solicitud_id) REFERENCES estado_solicitud (id),
+    -- Índices para mejorar rendimiento
+    INDEX idx_remitente (usuario_remitente_id),
+    INDEX idx_destinatario (usuario_destinatario_id),
+    INDEX idx_estado (estado_solicitud_id),
+    INDEX idx_fecha_expiracion (fecha_expiracion),
+    -- Restricciones
+    CONSTRAINT chk_usuarios_diferentes CHECK (usuario_remitente_id != usuario_destinatario_id)
+);

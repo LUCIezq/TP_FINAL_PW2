@@ -108,4 +108,14 @@ class UsuarioDao
 
         return $result === 1;
     }
+
+    public function getAllPlayers($userId)
+    {
+        $sql = "SELECT id,foto_perfil,nombre,apellido,email FROM usuario where rol_id = ? and  id != ?";
+        $types = "ii";
+        $params = [1, $userId];
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($result);
+    }
 }
