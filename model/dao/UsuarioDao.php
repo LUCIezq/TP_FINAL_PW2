@@ -1,4 +1,6 @@
 <?php
+
+include_once '/model/constants/UserRole.php';
 class UsuarioDao
 {
     private $dbConnection;
@@ -111,9 +113,9 @@ class UsuarioDao
 
     public function getAllPlayers($userId)
     {
-        $sql = "SELECT id,foto_perfil,nombre,apellido,nombre_usuario FROM usuario where rol_id = ? and  id != ?";
+        $sql = "SELECT id,foto_perfil,nombre,apellido,nombre_usuario FROM usuario where rol_id = ? and id != ? and verificado = true";
         $types = "ii";
-        $params = [1, $userId];
+        $params = [UserRole::JUGADOR, $userId];
         $result = $this->dbConnection->executePrepared($sql, $types, $params);
 
         return $this->dbConnection->processData($result);

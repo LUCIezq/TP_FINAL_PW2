@@ -60,7 +60,8 @@ class RegisterModelDao
             'nombre_usuario' => $inputs['usuario'],
             'foto_perfil' => $uploadedFilePath,
             'token_verificacion' => $token,
-            'sexo_id' => (int) $inputs['gender']
+            'sexo_id' => (int) $inputs['gender'],
+            'rol_id' => UserRole::JUGADOR,
         ];
 
         try {
