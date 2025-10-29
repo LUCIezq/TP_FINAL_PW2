@@ -23,7 +23,7 @@ class ValidatorModelDao
         if (!$user) {
             return "Usuario no encontrado.";
         }
-        if ($user[0]['activo'] == 1) {
+        if ($user[0]['verificado'] == 1) {
             return "La cuenta ya ha sido verificada.";
         }
 

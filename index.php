@@ -1,5 +1,10 @@
 <?php
+
+include_once "helper/StartSession.php";
+
 error_reporting(E_ERROR | E_PARSE);
+
+StartSession::start();
 
 $config = parse_ini_file("config/config.ini", true);
 

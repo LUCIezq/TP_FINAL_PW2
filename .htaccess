@@ -14,7 +14,7 @@
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)/(.*)/(.*)$ index.php?controller=$1&method=$2&$3 [L,QSA]
+    RewriteRule ^(.*)/(.*)/(.*)$ index.php?controller=$1&method=$2&id=$3 [L,QSA]
     RewriteRule ^(.*)/(.*)$ index.php?controller=$1&method=$2 [L,QSA]
     RewriteRule ^(.*)$ index.php?controller=$1 [L,QSA]
 </IfModule>

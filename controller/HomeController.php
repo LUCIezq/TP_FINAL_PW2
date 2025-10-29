@@ -1,8 +1,6 @@
 <?php
 
 include_once 'helper/IsLogged.php';
-include_once 'helper/StartSession.php';
-
 
 class HomeController
 {
@@ -17,8 +15,6 @@ class HomeController
 
     public function index(): void
     {
-
-        StartSession::start();
 
         if (!IsLogged::isLogged()) {
             header("location: /login/index");

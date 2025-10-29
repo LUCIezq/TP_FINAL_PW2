@@ -16,6 +16,7 @@ include_once "model/dao/LoginModelDao.php";
 include_once "controller/HomeController.php";
 include_once "controller/SolicitudPartidaController.php";
 include_once "model/dao/SolicitudPartidaDao.php";
+include_once "controller/UsuarioController.php";
 
 class ConfigFactory
 {
@@ -62,6 +63,11 @@ class ConfigFactory
         $this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion));
 
         $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion));
+
+        $this->objetos['UsuarioController'] = new UsuarioController(
+            new UsuarioDao($this->conexion),
+            $this->renderer
+        );
     }
 
     public function get($objectName)

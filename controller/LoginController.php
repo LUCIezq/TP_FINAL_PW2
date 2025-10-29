@@ -1,9 +1,7 @@
 <?php
 
 include_once 'helper/HashGenerator.php';
-include_once 'helper/StartSession.php';
 include_once 'helper/CreateUserSession.php';
-include_once 'helper/StartSession.php';
 class LoginController
 {
     private MustacheRenderer $renderer;
@@ -21,7 +19,6 @@ class LoginController
 
     public function index($errors = [])
     {
-        StartSession::start();
         $message = $_SESSION['message'] ?? '';
         $errors = $_SESSION['errors'] ?? [];
 
@@ -44,13 +41,11 @@ class LoginController
 
         $errors = $this->loginModel->login($email, $password);
 
-        CreateUserSession::create($this->usuarioDao->findByEmail($email)[0]);
-
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $this->index();
         } else {
-
+            CreateUserSession::create($this->usuarioDao->findByEmail($email)[0]);
             header("Location: /home/index");
             exit();
         }
@@ -58,7 +53,6 @@ class LoginController
     public function logout()
     {
 
-        StartSession::start();
         $_SESSION = [];
 
         if (isset($_COOKIE[session_name()])) {
