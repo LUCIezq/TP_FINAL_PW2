@@ -22,7 +22,19 @@
 
   <main class="container my-4">
     <h2 class="brand-title text-center">Preguntados</h2>
+       {{#solicitud_errors}}
+        <div class="alert alert-danger" role="alert">
+          <span class="mb-0">
+            {{.}}
+          </span>
+        </div>
+        {{/solicitud_errors}}
 
+        {{#solicitud_success}}
+        <div class="alert alert-success" role="alert">
+          {{solicitud_success}}
+        </div>
+        {{/solicitud_success}}
    
     <div class="container my-5">
 
@@ -32,6 +44,9 @@
           <header class="panel-sky__header">
             <span class="panel-sky__title">Partidas</span>
           </header>
+
+
+          
 
           <!-- Herramientas opcionales -->
           <div class="panel-sky__tools">
@@ -45,6 +60,8 @@
             </select>
             -->
           </div>
+
+          
 
           <!-- Lista de partidas -->
           <ul class="panel-sky__list">
@@ -85,6 +102,7 @@
           </ul>
         </section>
 
+
         <!-- = Últimos jugadores (derecha) = -->
         <section class="panel-beige shadow-sm">
           <header class="panel-beige__header">
@@ -110,6 +128,7 @@
                       data-destinatario-id="{{id}}">
                 Desafiar
               </button>
+              
             </li>
             {{/jugadores}}
 

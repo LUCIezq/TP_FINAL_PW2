@@ -62,7 +62,7 @@ class ConfigFactory
 
         $this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion));
 
-        $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion));
+        $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 
         $this->objetos['UsuarioController'] = new UsuarioController(
             new UsuarioDao($this->conexion),

@@ -131,4 +131,17 @@ class UsuarioDao
 
         return $this->dbConnection->processData($result)[0] ?? null;
     }
+
+    public function existsInBd($id)
+    {
+
+        $sql = "SELECT id FROM usuario WHERE id = ?";
+        $types = "i";
+        $params = [$id];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($result)[0] ?? null;
+
+    }
 }
