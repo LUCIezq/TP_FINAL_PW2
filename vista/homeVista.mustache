@@ -1,89 +1,142 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Preguntados</title>
-<!-- Bootstrap 5 -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preguntados</title>
 
-<!-- Reutilizamos el MISMO CSS del registro/login -->
-<link href="/public/assets/register.css" rel="stylesheet">
-<link href="/public/assets/home.css" rel="stylesheet">
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-<!-- Fuente estilo caricatura -->
-<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+  <!-- Reutilizamos el CSS del login/register -->
+  <link href="/public/assets/register.css" rel="stylesheet">
+  <!-- CSS de esta pantalla -->
+  <link href="/public/assets/home.css" rel="stylesheet">
 
+  <!-- Fuente estilo caricatura -->
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
 </head>
 <body>
 
-
-<!-- MAIN -->
-<main class="container my-4">
+  <main class="container my-4">
     <h2 class="brand-title text-center">Preguntados</h2>
 
+   
+    <div class="container my-5">
 
+      <div class="grid-home">
+        <!-- ============ Partidas (izquierda) ============ -->
+        <section class="panel-sky shadow-sm">
+          <header class="panel-sky__header">
+            <span class="panel-sky__title">Partidas</span>
+          </header>
 
-<div class="container my-5">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="text-center mb-4">
-                <i class="bi bi-people-fill"></i> Jugadores Disponibles
-            </h2>
-        </div>
-    </div>
+          <!-- Herramientas opcionales -->
+          <div class="panel-sky__tools">
+            <!-- ejemplo opcional de filtros -->
+            <!--
+            <select class="form-select form-select-sm w-auto">
+              <option value="">Todas</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="jugando">En juego</option>
+              <option value="finalizada">Finalizadas</option>
+            </select>
+            -->
+          </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {{#jugadores}}
-        <div class="col">
-        <div>
-            <div class="card h-100 shadow-sm hover-shadow">
-                <div class="card-body text-center">
-                    
-                    <div class="mb-3">
-                        <img src="{{foto_perfil}}" 
-                            alt="{{nombre}}" 
-                            width="100" 
-                            height="100"
-                            style="object-fit: cover;">
-                    </div>
+          <!-- Lista de partidas -->
+          <ul class="panel-sky__list">
+            {{#partidas}}
+            <li class="sky-item">
+              <div class="sky-item__avatar">
+                <img src="{{oponente_foto}}" alt="{{oponente_nombre}}">
+              </div>
 
-                    <a href="/usuario/perfil/{{id}}">
-                    {{nombre}} {{apellido}}
-                    </a>
-
-                    <p class="card-text text-muted small mb-3">
-                        <i class="bi bi-envelope"></i> {{nombre_usuario}}
-                    </p>
-                    <button type="button" 
-                            class="btn btn-primary w-100 btn-desafiar" 
-                            data-destinatario-id="{{id}}" >
-                        <i class="bi bi-sword"></i> Desafiar
-                    </button>
+              <div class="sky-item__body">
+                <div class="sky-item__topline">
+                  <span class="sky-item__time">Hace {{hace}}</span>
+                  {{#estado}}
+                  <span class="badge bg-secondary rounded-pill">{{estado}}</span>
+                  {{/estado}}
                 </div>
-            </div>
-        </div>
-        {{/jugadores}}
+                <div class="sky-item__title">
+                  {{titulo}} <span class="text-muted">vs {{oponente_usuario}}</span>
+                </div>
+              </div>
 
-        <form action="/solicitudPartida/crearSolicitudPartida" 
-                        method="POST" 
-                        class="form-desafiar">
-                        <input type="hidden" name="destinatario_id" id="destinatario_id">
-        </form>
-        </div>
+              <div class="sky-item__actions">
+                <button class="btn btn-light btn-icon" title="Aceptar / Continuar">
+                  <i class="bi bi-check2-square"></i>
+                </button>
+                <button class="btn btn-light btn-icon" title="Ver detalles">
+                  <i class="bi bi-camera"></i>
+                </button>
+              </div>
+            </li>
+            {{/partidas}}
 
-        {{^jugadores}}
-        <div class="col-12">
-            <div class="alert alert-info text-center" role="alert">
-                <i class="bi bi-info-circle"></i> No hay jugadores disponibles en este momento.
-            </div>
-        </div>
-        {{/jugadores}}
+            {{^partidas}}
+            <li class="sky-empty">
+              <span>No hay partidas todavía</span>
+            </li>
+            {{/partidas}}
+          </ul>
+        </section>
+
+        <!-- = Últimos jugadores (derecha) = -->
+        <section class="panel-beige shadow-sm">
+          <header class="panel-beige__header">
+            <span class="panel-beige__title">Jugadores Disponibles</span>
+          </header>
+
+          <ul class="panel-beige__list">
+            {{#jugadores}}
+            <li class="panel-beige__item">
+              <a class="panel-beige__avatar" href="/usuario/perfil/{{id}}">
+                <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
+              </a>
+
+              <div class="panel-beige__body">
+                <a class="panel-beige__name" href="/usuario/perfil/{{id}}">
+                  {{nombre}} {{apellido}}
+                </a>
+                <div class="panel-beige__meta">@{{nombre_usuario}}</div>
+              </div>
+
+              <button type="button"
+                      class="btn btn-peach btn-sm panel-beige__action btn-desafiar"
+                      data-destinatario-id="{{id}}">
+                Desafiar
+              </button>
+            </li>
+            {{/jugadores}}
+
+            {{^jugadores}}
+            <li class="panel-beige__empty">
+              <i class="bi bi-info-circle"></i> No hay jugadores disponibles en este momento.
+            </li>
+            {{/jugadores}}
+          </ul>
+        </section>
+      </div>
+
+      <!-- botón inferior crear preguntas -->
+      <div class="mt-3">
+        <a href="/preguntas/crear" class="btn btn-outline-primary btn-lg btn-create">
+          <i class="bi bi-plus-circle"></i> Crear preguntas
+        </a>
+      </div>
+
+      
+      <form action="/solicitudPartida/crearSolicitudPartida" method="POST" class="form-desafiar">
+        <input type="hidden" name="destinatario_id" id="destinatario_id">
+      </form>
     </div>
-</div>
-    </main>
+  </main>
 
-    <script src="/public/js/SaveUserId.js"></script>
-
+ 
+  <script src="/public/js/SaveUserId.js"></script>
 </body>
 </html>

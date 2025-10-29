@@ -1,12 +1,14 @@
+/* ===== Título estilo marca ===== */
 .brand-title{
-      font-family:"Luckiest Guy", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      font-size:clamp(2.2rem, 6vw, 3.2rem);
-      line-height:1.05;
-      color:#fff;
-      text-shadow:0 2px 0 rgba(0,0,0,.25), 0 6px 16px rgba(0,0,0,.25);
-      margin-bottom: 1.25rem;
-    }
-    /* base del botón durazno */
+  font-family:"Luckiest Guy", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size:clamp(2.2rem, 6vw, 3.2rem);
+  line-height:1.05;
+  color:#fff;
+  text-shadow:0 2px 0 rgba(0,0,0,.25), 0 6px 16px rgba(0,0,0,.25);
+  margin-bottom: 1.25rem;
+}
+
+/* ===== Botón peach reutilizable ===== */
 .btn-peach{
   background: var(--peach, #f6c08a);
   border: none;
@@ -16,26 +18,180 @@
   text-decoration: none;
   transition: transform .08s ease, box-shadow .2s ease;
 }
-
-/* HOVER: NO cambia color */
 .btn-peach:hover,
 .btn-peach:focus {
-  background: var(--peach, #f6c08a);    /* mantiene color */
-  border-color: transparent ;
-  color: #212121; 
-  transform: translateY(-1px);                     /* levita un poquito */
-  box-shadow: 0 14px 36px rgba(0,0,0,.28);         /* sombra más fuerte */
-  text-decoration: none;
+  background: var(--peach, #f6c08a);
+  color: #212121;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.28);
+}
+.btn-peach:active{ transform: translateY(0); }
+
+/* ===== Variables ===== */
+:root{
+  --ink:#212121;
+  --beige-bg:#f8e7d2;  /* beige tipo login/register */
+  --sky-bg:#d9ecff;    /* celeste suave del panel Partidas */
+  --sky-item:#ffffff;  /* fondo de ítems de partidas */
 }
 
-/* Accesibilidad: anillo al enfocar con teclado */
-.btn-peach:focus-visible{
-  outline: 3px solid rgba(33,33,33,.25);
-  outline-offset: 2px;
+/* ===== Layout 2 columnas ===== */
+.grid-home{
+  display:grid;
+  grid-template-columns: 1.6fr .9fr; /* partidas grande | jugadores angosto */
+  gap: 1.25rem;
+}
+@media (max-width: 992px){
+  .grid-home{ grid-template-columns: 1fr; }
 }
 
-/* Click (active) */
-.btn-peach:active{
+/* ===== Panel celeste (Partidas) ===== */
+.panel-sky{
+  background: var(--sky-bg);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.panel-sky__header{
+  padding:.9rem 1.25rem;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  background: rgba(255,255,255,.35);
+}
+.panel-sky__title{ font-weight:700; color:var(--ink); }
+.panel-sky__tools{ padding:.6rem 1rem .2rem; }
+
+/* Lista de partidas con scroll */
+.panel-sky__list{
+  list-style:none; margin:0; padding:.6rem;
+  max-height: 520px; overflow:auto;
+}
+.panel-sky__list::-webkit-scrollbar{ width:8px; }
+.panel-sky__list::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,.18); border-radius:999px;
+}
+
+.sky-item{
+  display:grid;
+  grid-template-columns: 44px 1fr auto; /* avatar | texto | acciones */
+  align-items:center;
+  gap:.75rem;
+  background: var(--sky-item);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px;
+  padding:.6rem .75rem;
+  margin:.5rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,.06);
+  transition: transform .06s ease, box-shadow .2s ease;
+}
+.sky-item:hover{ transform:translateY(-1px); box-shadow:0 10px 20px rgba(0,0,0,.12); }
+
+.sky-item__avatar{
+  width:44px; height:44px; border-radius:50%; overflow:hidden;
+  border:2px solid rgba(0,0,0,.06);
+}
+.sky-item__avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.sky-item__topline{
+  display:flex; align-items:center; gap:.5rem; margin-bottom:.15rem;
+  font-size:.85rem; color:#555;
+}
+.sky-item__time{ opacity:.85; }
+.sky-item__title{ font-weight:600; color:var(--ink); }
+
+.sky-item__actions{ display:flex; gap:.4rem; }
+.btn-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.06);
+}
+
+/* estado vacío */
+.sky-empty{
+  display:flex; justify-content:center; align-items:center;
+  height:160px; margin:.5rem; border-radius:14px;
+  color:#333; background:rgba(255,255,255,.45);
+  border:1px solid rgba(0,0,0,.06); font-weight:600;
+}
+
+/* ===== Panel beige (Últimos jugadores) ===== */
+.panel-beige{
+  background: var(--beige-bg);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:22px;
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.panel-beige__header{
+  padding:.9rem 1.25rem;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  background: rgba(255,255,255,.35);
+}
+.panel-beige__title{ font-weight:700; color:var(--ink); }
+
+/* Lista con scroll */
+.panel-beige__list{
+  list-style:none; margin:0; padding:.5rem;
+  max-height:520px; overflow:auto;
+}
+.panel-beige__list::-webkit-scrollbar{ width:8px; }
+.panel-beige__list::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,.18); border-radius:999px;
+}
+
+.panel-beige__item{
+  display:grid; grid-template-columns:52px 1fr auto;
+  align-items:center; gap:.8rem; margin:.5rem; padding:.65rem .8rem;
+  border-radius:16px; border:1px solid rgba(0,0,0,.05);
+  background: rgba(255,255,255,.45);
+  transition: transform .06s ease, box-shadow .2s ease;
+}
+.panel-beige__item:hover{ transform:translateY(-1px); box-shadow:0 10px 20px rgba(0,0,0,.12); }
+
+.panel-beige__avatar{
+  width:52px; height:52px; border-radius:50%; overflow:hidden;
+  border:2px solid rgba(0,0,0,.08); display:inline-flex;
+}
+.panel-beige__avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.panel-beige__name{ color:var(--ink); font-weight:600; text-decoration:none; }
+.panel-beige__name:hover{ text-decoration:underline; }
+.panel-beige__meta{ font-size:.85rem; opacity:.8; color:var(--ink); }
+.panel-beige__action{ border-radius:999px; padding:.35rem .9rem; white-space:nowrap; }
+.panel-beige__empty{ padding:1rem 1.25rem; color:var(--ink); opacity:.9; }
+.panel-beige img{ max-width:100%; height:auto; }
+
+:root{
+  --VerdeTur: #2AB3B0;        
+  --VerdeTur-600: #229A97;    
+  --VerdeTur-700: #1E8683;    
+}
+
+/* Botón "Crear preguntas" */
+.btn-create{
+  background: var(--VerdeTur);
+  color: #fff;
+  border: 0;
+  border-radius: 14px;
+  padding: .65rem 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+  transition: transform .08s ease, box-shadow .2s ease, background-color .15s ease;
+}
+.btn-create:hover,
+.btn-create:focus{
+  background: var(--VerdeTur-600);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px rgba(0,0,0,.2);
+}
+.btn-create:active{
+  background: var(--VerdeTur-700);
   transform: translateY(0);
-  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+
+.btn-create:focus-visible{
+  outline: 3px solid rgba(34,154,151,.35);
+  outline-offset: 2px;
 }
