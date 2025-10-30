@@ -60,7 +60,7 @@ class ConfigFactory
             new ValidatorModelDao(new UsuarioDao($this->conexion))
         );
 
-        $this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion));
+        $this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion), new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 
         $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 

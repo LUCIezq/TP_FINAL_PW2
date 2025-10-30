@@ -23,6 +23,7 @@ class SolicitudPartidaController
             'id_emisor' => $_SESSION['user']['id'],
             'id_receptor' => $_POST['destinatario_id']
         ];
+
         try {
             $errors = $this->solicitudPartidaDao->validarSolicitud($params);
 

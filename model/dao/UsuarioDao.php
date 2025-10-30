@@ -144,4 +144,35 @@ class UsuarioDao
         return $this->dbConnection->processData($result)[0] ?? null;
 
     }
+
+    public function getAllUserAndRequests($userLoggedId)
+    {
+        if (!$userLoggedId || $userLoggedId <= 0) {
+            return [];
+        }
+
+        $sql = "SELECT u.id as id_usuario,
+        u.foto_perfil,
+        u.nombre,
+        u.apellido,
+        u.nombre_usuario,
+        sp.id as id_solicitud,
+        sp.usuario_remitente_id ,
+        sp.usuario_destinatario_id,
+        sp.estado_solicitud_id
+
+        from usuario u left join solicitud_partida sp
+
+        on(sp.usuario_remitente_id = ? and sp.usuario_destinatario_id = u.id)||
+        (sp.usuario_destinatario_id = ? and sp.usuario_remitente_id = u.id)
+
+        where u.rol_id = ? and u.id != ? and u.verificado = 1";
+
+        $types = "iiii";
+        $params = [$userLoggedId, $userLoggedId, UserRole::JUGADOR, $userLoggedId];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($result);
+    }
 }

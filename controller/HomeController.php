@@ -6,11 +6,13 @@ class HomeController
 {
     private MustacheRenderer $mustacheRenderer;
     private UsuarioDao $usuarioDao;
+    private SolicitudPartidaDao $solicitudPartidaDao;
 
-    public function __construct(MustacheRenderer $mustacheRenderer, UsuarioDao $usuarioDao)
+    public function __construct(MustacheRenderer $mustacheRenderer, UsuarioDao $usuarioDao, SolicitudPartidaDao $solicitudPartidaDao)
     {
         $this->mustacheRenderer = $mustacheRenderer;
         $this->usuarioDao = $usuarioDao;
+        $this->solicitudPartidaDao = $solicitudPartidaDao;
     }
 
     public function index(): void
@@ -26,7 +28,7 @@ class HomeController
             exit();
         }
 
-        $players = $this->usuarioDao->getAllPlayers($_SESSION['user']['id']);
+        $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
         $this->mustacheRenderer->render(
             "home",

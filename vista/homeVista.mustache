@@ -111,24 +111,35 @@
 
           <ul class="panel-beige__list">
             {{#jugadores}}
+
+            
             <li class="panel-beige__item">
-              <a class="panel-beige__avatar" href="/usuario/perfil/{{id}}">
+              <a class="panel-beige__avatar" href="/usuario/perfil/{{id_usuario}}">
                 <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
               </a>
 
               <div class="panel-beige__body">
-                <a class="panel-beige__name" href="/usuario/perfil/{{id}}">
+                <a class="panel-beige__name" href="/usuario/perfil/{{id_usuario}}">
                   {{nombre}} {{apellido}}
                 </a>
                 <div class="panel-beige__meta">@{{nombre_usuario}}</div>
               </div>
-
+              
+              {{#puede_desafiar}}
               <button type="button"
                       class="btn btn-peach btn-sm panel-beige__action btn-desafiar"
-                      data-destinatario-id="{{id}}">
+                      data-destinatario-id="{{id_usuario}}">
                 Desafiar
               </button>
-              
+              {{/puede_desafiar}}
+
+              {{#solicitud_enviada}}
+              <span class="badge bg-warning text-dark panel-beige__status">
+                Solicitud Enviada 
+                <i class="bi bi-clock-history"></i>
+              </span>
+              {{/solicitud_enviada}}
+            
             </li>
             {{/jugadores}}
 
