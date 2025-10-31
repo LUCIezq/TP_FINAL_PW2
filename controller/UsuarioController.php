@@ -20,7 +20,7 @@ class UsuarioController
             exit();
         }
 
-        $id = trim($_GET['id'] ?? '');
+        $id = $_SESSION["user"]["id"];
 
         if (empty($id) || !is_numeric($id)) {
             header('location: /home/index');
@@ -34,17 +34,12 @@ class UsuarioController
             exit();
         }
 
-        // Metodo para visualizar datos(comentar)
-        ShowData::show($usuario);
-
-
-        //descomentar para renderizar la vista con los datos
-        // $this->mustacheRenderer->render(
-        //     "perfilUsuario",
-        //     [
-        //         "usuario" => $usuario
-        //     ]
-        // );
+        $this->mustacheRenderer->render(
+            "perfilUsuario",
+            [
+                "usuario" => $usuario
+            ]
+        );
 
     }
 }

@@ -123,7 +123,7 @@ class UsuarioDao
 
     public function findById($id)
     {
-        $sql = "SELECT nombre,apellido,email,nombre_usuario,foto_perfil FROM usuario WHERE id = ? and rol_id = ?";
+        $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil FROM usuario WHERE id = ? and rol_id = ?";
         $types = "ii";
         $params = [$id, 1];
 

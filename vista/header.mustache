@@ -22,8 +22,14 @@
       {{#isLogged}}
       <div class="d-flex align-items-center gap-3">
         <img src="{{url_profile}}" alt="Foto de perfil"
-             width="40" height="40" class="rounded-circle object-fit-cover">
-        <span class="fw-semibold">Bienvenido, {{usuario}}!</span>
+            width="40" height="40" class="rounded-circle object-fit-cover">
+        
+        <span class="fw-semibold">Bienvenido, 
+            <a href="/usuario/perfil/{{id}}" class="text-decoration-none">
+                  {{usuario}}!
+            </a>
+        </span>
+
         <a href="/login/logout" class="btn btn-sm btn-light shadow-sm btn-logout">
           Cerrar sesión
         </a>
