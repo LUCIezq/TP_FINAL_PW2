@@ -113,7 +113,8 @@
             {{#jugadores}}
 
             
-            <li class="panel-beige__item">
+            
+            <li class="panel-beige__item ">
               <a class="panel-beige__avatar" href="/usuario/perfil/{{id_usuario}}">
                 <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
               </a>
@@ -139,7 +140,32 @@
                 <i class="bi bi-clock-history"></i>
               </span>
               {{/solicitud_enviada}}
-            
+
+              {{#solicitud_recibida}}
+
+              <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
+              <span class="badge bg-success text-white panel-beige__status">
+                Solicitud Recibida
+                <i class="bi bi-check-circle"></i>
+              </span>
+
+              <div style="display: flex; gap: 5px;align-items: center;">
+                <form action="/solicitudPartida/aceptar" method="POST" class="panel-beige__form-aceptar">
+                <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
+                <button type="submit" class="btn btn-success btn-sm">
+                  <i class="bi bi-check"></i>
+                </button>
+                </form>
+
+                <form action="/solicitudPartida/rechazar" method="POST" class="panel-beige__form-rechazar">
+                  <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </form>
+              </div>
+              </div>
+              {{/solicitud_recibida}}
             </li>
             {{/jugadores}}
 

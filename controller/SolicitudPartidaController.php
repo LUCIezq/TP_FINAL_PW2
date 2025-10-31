@@ -40,4 +40,37 @@ class SolicitudPartidaController
         header("location: /home/index/");
         exit();
     }
+
+    public function rechazar()
+    {
+        if (!IsLogged::isLogged()) {
+            header("location: /login/index");
+            exit();
+        }
+
+        $solicitudId = (int) $_POST['solicitud_id'];
+
+        try {
+            $rechazada = $this->solicitudPartidaDao->rechazarSolicitud($solicitudId);
+
+            ShowData::show($rechazada);
+
+            if (!$rechazada) {
+                $_SESSION['solicitud_errors'] = "Error al rechazar la solicitud.";
+            } else {
+                $_SESSION['solicitud_success'] = "Solicitud rechazada correctamente.";
+            }
+
+            header("location: /home/index/");
+            exit();
+        } catch (Exception $e) {
+            $_SESSION['solicitud_errors'] = ["Error al procesar la solicitud: " . $e->getMessage()];
+        }
+    }
+
+    public function aceptar()
+    {
+        var_dump($_POST['solicitud_id']);
+
+    }
 }

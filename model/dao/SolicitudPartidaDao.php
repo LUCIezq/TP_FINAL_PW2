@@ -100,9 +100,10 @@ class SolicitudPartidaDao
             $player['solicitud_enviada'] = false;
             $player['solicitud_recibida'] = false;
 
-            if (!$player['id_solicitud']) {
+            if (!$player['id_solicitud'] || $player['estado_solicitud_id'] == RequestState::RECHAZADA) {
                 $player['puede_desafiar'] = true;
             } else {
+
                 $yoEnvie = (int) $player['usuario_remitente_id'] === (int) $idLoggedUser;
 
                 if ($yoEnvie) {
@@ -110,9 +111,93 @@ class SolicitudPartidaDao
                 } else {
                     $player['solicitud_recibida'] = true;
                 }
+
             }
         }
 
         return $players;
     }
+
+
+    public function rechazarSolicitud(int $solicitudId): array
+    {
+        $solicitud = $this->getSolicitudById($solicitudId);
+
+        $usuarioLogueadoId = (int) $_SESSION['user']['id'];
+
+
+        if (!$solicitud) {
+            return [
+                'success' => false,
+                'message' => 'La solicitud no existe.'
+            ];
+        }
+
+        if ((int) $solicitud['usuario_destinatario_id'] !== $usuarioLogueadoId) {
+            return [
+                'success' => false,
+                'message' => 'No tienes permiso para rechazar esta solicitud.'
+            ];
+        }
+
+        if ((int) $solicitud['estado_solicitud_id'] !== RequestState::PENDIENTE) {
+
+            return [
+                'success' => false,
+                'message' => "Esta solicitud ya fue procesada"
+            ];
+        }
+
+
+        $sql = "UPDATE solicitud_partida 
+                SET estado_solicitud_id = ?
+                WHERE id = ?
+                AND usuario_destinatario_id = ?
+                AND estado_solicitud_id = ?;";
+
+        $types = "iiii";
+
+        $params = [
+            RequestState::RECHAZADA,
+            $solicitudId,
+            $usuarioLogueadoId,
+            RequestState::PENDIENTE
+        ];
+
+
+
+        $affectedRows = $this->conexion->executePrepared($sql, $types, $params);
+
+
+        if ($affectedRows === 1) {
+            return [
+                'success' => true,
+                'message' => 'Solicitud rechazada correctamente.'
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Error al rechazar la solicitud. Intenta nuevamente.'
+        ];
+    }
+    private function getSolicitudById(int $solicitudId): ?array
+    {
+        $sql = "SELECT 
+                    id,
+                    usuario_remitente_id,
+                    usuario_destinatario_id,
+                    estado_solicitud_id
+                FROM solicitud_partida 
+                WHERE id = ?";
+
+        $types = "i";
+        $params = [$solicitudId];
+
+        $result = $this->conexion->executePrepared($sql, $types, $params);
+        $data = $this->conexion->processData($result);
+
+        return $data[0] ?? null;
+    }
+
 }

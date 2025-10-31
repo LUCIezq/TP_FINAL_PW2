@@ -151,7 +151,7 @@ class UsuarioDao
             return [];
         }
 
-        $sql = "SELECT u.id as id_usuario,
+        $sql = "SELECT  u.id as id_usuario,
         u.foto_perfil,
         u.nombre,
         u.apellido,
@@ -159,14 +159,17 @@ class UsuarioDao
         sp.id as id_solicitud,
         sp.usuario_remitente_id ,
         sp.usuario_destinatario_id,
-        sp.estado_solicitud_id
+        sp.estado_solicitud_id,
+        timestampdiff(MINUTE, sp.fecha_envio, NOW()) as minutos_desde_solicitud
 
         from usuario u left join solicitud_partida sp
 
-        on(sp.usuario_remitente_id = ? and sp.usuario_destinatario_id = u.id)||
-        (sp.usuario_destinatario_id = ? and sp.usuario_remitente_id = u.id)
+        on((sp.usuario_remitente_id = ? and sp.usuario_destinatario_id = u.id)||
+        (sp.usuario_destinatario_id = ? and sp.usuario_remitente_id = u.id)) and sp.estado_solicitud_id in (1,2)
 
-        where u.rol_id = ? and u.id != ? and u.verificado = 1";
+        where u.rol_id = ? 
+        and u.id != ? 
+        and u.verificado = 1";
 
         $types = "iiii";
         $params = [$userLoggedId, $userLoggedId, UserRole::JUGADOR, $userLoggedId];
