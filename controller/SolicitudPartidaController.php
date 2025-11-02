@@ -50,6 +50,11 @@ class SolicitudPartidaController
 
         $solicitudId = (int) $_POST['solicitud_id'];
 
+        if (empty($solicitudId) || !is_numeric($solicitudId)) {
+            header("location:/home/index/");
+            exit();
+        }
+
         try {
             $rechazada = $this->solicitudPartidaDao->rechazarSolicitud($solicitudId);
 
@@ -70,7 +75,24 @@ class SolicitudPartidaController
 
     public function aceptar()
     {
-        var_dump($_POST['solicitud_id']);
+        if (!IsLogged::isLogged()) {
+            header("location:/login/index");
+            exit();
+        }
+
+        $solicitudId = (int) $_POST["solicitud_id"];
+
+        if (empty($solicitudId) || !is_numeric($solicitudId)) {
+            header("location:/home/index/");
+            exit();
+        }
+
+        try {
+            
+
+        } catch (Exception $e) {
+
+        }
 
     }
 }

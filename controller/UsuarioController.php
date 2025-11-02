@@ -20,7 +20,7 @@ class UsuarioController
             exit();
         }
 
-        $id = $_SESSION["user"]["id"];
+        $id = $_GET["id"];
 
         if (empty($id) || !is_numeric($id)) {
             header('location: /home/index');
@@ -40,6 +40,5 @@ class UsuarioController
                 "usuario" => $usuario
             ]
         );
-
     }
 }

@@ -40,7 +40,7 @@ class HomeController
                 "jugadores" => $players,
                 "solicitud_errors" => $error_solicitud,
                 "solicitud_success" => $success_solicitud,
-                "id" => $_SESSION['user']['id']
+                "id" => $_SESSION["user"]["id"]
             ]
         );
     }
