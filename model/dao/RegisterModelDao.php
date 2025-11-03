@@ -60,6 +60,8 @@ class RegisterModelDao
             'token_verificacion' => $token,
             'sexo_id' => (int) $inputs['gender'],
             'rol_id' => UserRole::JUGADOR,
+            'pais' => $inputs['pais'],
+            'ciudad' => $inputs['ciudad'],
         ];
 
         try {

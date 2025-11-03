@@ -80,6 +80,8 @@ create table usuario (
     verificado boolean default false,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     token_expiracion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP + INTERVAL 24 HOUR),
+    pais varchar(100),
+    ciudad varchar(100),
     sexo_id int,
     constraint fk_usuario_sexo foreign key (sexo_id) references sexo (id),
     rol_id int,

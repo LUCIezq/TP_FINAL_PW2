@@ -43,4 +43,31 @@ class UsuarioController
             ]
         );
     }
+
+    public function getCountryAndCity()
+    {
+
+        if (!IsLogged::isLogged()) {
+            header('location: /login/index');
+            exit();
+        }
+
+        $id = $_SESSION['user']['id'] ?? null;
+
+        if (empty($id) || !is_numeric($id)) {
+            header('location: /home/index');
+            exit();
+        }
+
+        $data = $this->usuarioDao->getCountryAndCityById($id);
+
+        if (empty($data)) {
+            header('location: /home/index');
+            exit();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit();
+    }
 }

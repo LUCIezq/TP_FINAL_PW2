@@ -22,10 +22,12 @@ class UsuarioDao
         token_verificacion,
         sexo_id,
         rol_id,
-        nivel_id
-        ) VALUES ( ?, ?, ?, ?, ?, ?, ? , ? , ? , ?,? )";
+        nivel_id,
+        pais,
+        ciudad
+        ) VALUES ( ?, ?, ?, ?, ?, ?, ? , ? , ? , ?,?, ?, ? )";
 
-        $types = "ssssssssiii";
+        $types = "ssssssssiiiss";
         $params = [
             $params['nombre'],
             $params['apellido'],
@@ -37,12 +39,25 @@ class UsuarioDao
             $params['token_verificacion'],
             $params['sexo_id'],
             $params['rol_id'] ?? 1,
-            $params['nivel_id'] ?? 1
+            $params['nivel_id'] ?? 1,
+            $params['pais'],
+            $params['ciudad'],
         ];
 
         $result = $this->dbConnection->executePrepared($sql, $types, $params);
 
         return $result === 1;
+    }
+
+    public function getCountryAndCityById($id)
+    {
+        $sql = 'SELECT pais,ciudad from usuario where id=?';
+        $types = 'i';
+        $params = [$id];
+
+        $data = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($data)[0] ?? null;
     }
 
     public function findByUsername($username)
