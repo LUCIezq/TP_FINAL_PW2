@@ -1,4 +1,5 @@
 <?php
+
 class UsuarioController
 {
     private UsuarioDao $usuarioDao;
@@ -20,7 +21,7 @@ class UsuarioController
             exit();
         }
 
-        $id = $_GET["id"];
+        $id = $_GET["id"] ?? null;
 
         if (empty($id) || !is_numeric($id)) {
             header('location: /home/index');
@@ -37,7 +38,8 @@ class UsuarioController
         $this->mustacheRenderer->render(
             "perfilUsuario",
             [
-                "usuario" => $usuario
+                "usuario" => $usuario,
+                "qr" => QrGenerator::generateQr($usuario['id'])
             ]
         );
     }

@@ -1,22 +1,7 @@
 <?php
-include_once "helper/MyConexion.php";
-include_once "helper/IncludeFileRenderer.php";
-include_once "helper/NewRouter.php";
+
 include_once 'vendor/mustache/src/Mustache/Autoloader.php';
-include_once "helper/MustacheRenderer.php";
-include_once 'helper/Logger.php';
-include_once "controller/RegisterController.php";
-include_once "model/dao/GeneroDao.php";
-include_once "model/dao/UsuarioDao.php";
-include_once "controller/LoginController.php";
-include_once "controller/ValidatorController.php";
-include_once "model/dao/ValidatorModelDao.php";
-include_once "model/dao/RegisterModelDao.php";
-include_once "model/dao/LoginModelDao.php";
-include_once "controller/HomeController.php";
-include_once "controller/SolicitudPartidaController.php";
-include_once "model/dao/SolicitudPartidaDao.php";
-include_once "controller/UsuarioController.php";
+
 
 class ConfigFactory
 {

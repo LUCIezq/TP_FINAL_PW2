@@ -1,7 +1,5 @@
 <?php
 
-include_once 'helper/HashGenerator.php';
-include_once 'helper/CreateUserSession.php';
 class LoginController
 {
     private MustacheRenderer $renderer;

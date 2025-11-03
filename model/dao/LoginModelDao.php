@@ -1,6 +1,6 @@
 <?php
 
-include_once './helper/HashGenerator.php';
+
 
 class LoginModelDao
 {

@@ -1,10 +1,5 @@
 <?php
 
-include_once './helper/ShowData.php';
-include_once './helper/HashGenerator.php';
-include_once './helper/SendValidationEmail.php';
-include_once './model/constants/UserRole.php';
-
 class RegisterController
 {
     private GeneroDao $generoDao;

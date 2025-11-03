@@ -32,10 +32,19 @@ class ComposerStaticInit15964a098e241b282b9bfdb8a1328c13
             'Psr\\Log\\' => 8,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
+        'E' => 
+        array (
+            'Endroid\\QrCode\\' => 15,
+        ),
         'D' => 
         array (
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
+            'DASPRiD\\Enum\\' => 13,
+        ),
+        'B' => 
+        array (
+            'BaconQrCode\\' => 12,
         ),
     );
 
@@ -92,6 +101,10 @@ class ComposerStaticInit15964a098e241b282b9bfdb8a1328c13
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
+        'Endroid\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/endroid/qr-code/src',
+        ),
         'Doctrine\\Instantiator\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
@@ -99,6 +112,14 @@ class ComposerStaticInit15964a098e241b282b9bfdb8a1328c13
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'DASPRiD\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
+        ),
+        'BaconQrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
         ),
     );
 
@@ -128,9 +149,24 @@ class ComposerStaticInit15964a098e241b282b9bfdb8a1328c13
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'ConfigFactory' => __DIR__ . '/../..' . '/helper/ConfigFactory.php',
+        'CreateUserSession' => __DIR__ . '/../..' . '/helper/CreateUserSession.php',
+        'FileUploader' => __DIR__ . '/../..' . '/helper/FileUploader.php',
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Iterator.php',
         'File_Iterator_Facade' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Facade.php',
         'File_Iterator_Factory' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Factory.php',
+        'Genero' => __DIR__ . '/../..' . '/model/Genero.php',
+        'GeneroDao' => __DIR__ . '/../..' . '/model/dao/GeneroDao.php',
+        'HashGenerator' => __DIR__ . '/../..' . '/helper/HashGenerator.php',
+        'HomeController' => __DIR__ . '/../..' . '/controller/HomeController.php',
+        'IncludeFileRenderer' => __DIR__ . '/../..' . '/helper/IncludeFileRenderer.php',
+        'IsLogged' => __DIR__ . '/../..' . '/helper/IsLogged.php',
+        'Logger' => __DIR__ . '/../..' . '/helper/Logger.php',
+        'LoginController' => __DIR__ . '/../..' . '/controller/LoginController.php',
+        'LoginModelDao' => __DIR__ . '/../..' . '/model/dao/LoginModelDao.php',
+        'MustacheRenderer' => __DIR__ . '/../..' . '/helper/MustacheRenderer.php',
+        'MyConexion' => __DIR__ . '/../..' . '/helper/MyConexion.php',
+        'NewRouter' => __DIR__ . '/../..' . '/helper/NewRouter.php',
         'PHPUnit_Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
         'PHPUnit_Extensions_GroupTestSuite' => __DIR__ . '/..' . '/phpunit/phpunit/src/Extensions/GroupTestSuite.php',
         'PHPUnit_Extensions_PhptTestCase' => __DIR__ . '/..' . '/phpunit/phpunit/src/Extensions/PhptTestCase.php',
@@ -536,6 +572,10 @@ class ComposerStaticInit15964a098e241b282b9bfdb8a1328c13
         'PHP_Token_XOR_EQUAL' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_YIELD' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_YIELD_FROM' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'QrGenerator' => __DIR__ . '/../..' . '/helper/QrGenerator.php',
+        'RegisterController' => __DIR__ . '/../..' . '/controller/RegisterController.php',
+        'RegisterModelDao' => __DIR__ . '/../..' . '/model/dao/RegisterModelDao.php',
+        'RequestState' => __DIR__ . '/../..' . '/model/constants/RequestState.php',
         'SebastianBergmann\\CodeUnitReverseLookup\\Wizard' => __DIR__ . '/..' . '/sebastian/code-unit-reverse-lookup/src/Wizard.php',
         'SebastianBergmann\\Comparator\\ArrayComparator' => __DIR__ . '/..' . '/sebastian/comparator/src/ArrayComparator.php',
         'SebastianBergmann\\Comparator\\Comparator' => __DIR__ . '/..' . '/sebastian/comparator/src/Comparator.php',
@@ -580,7 +620,19 @@ class ComposerStaticInit15964a098e241b282b9bfdb8a1328c13
         'SebastianBergmann\\Timer\\TimeSinceStartOfRequestNotAvailableException' => __DIR__ . '/..' . '/phpunit/php-timer/src/exceptions/TimeSinceStartOfRequestNotAvailableException.php',
         'SebastianBergmann\\Timer\\Timer' => __DIR__ . '/..' . '/phpunit/php-timer/src/Timer.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'SendValidationEmail' => __DIR__ . '/../..' . '/helper/SendValidationEmail.php',
+        'ShowData' => __DIR__ . '/../..' . '/helper/ShowData.php',
+        'SolicitudPartidaController' => __DIR__ . '/../..' . '/controller/SolicitudPartidaController.php',
+        'SolicitudPartidaDao' => __DIR__ . '/../..' . '/model/dao/SolicitudPartidaDao.php',
+        'StartSession' => __DIR__ . '/../..' . '/helper/StartSession.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
+        'Token' => __DIR__ . '/../..' . '/model/Token.php',
+        'UserRole' => __DIR__ . '/../..' . '/model/constants/UserRole.php',
+        'UsuarioController' => __DIR__ . '/../..' . '/controller/UsuarioController.php',
+        'UsuarioDao' => __DIR__ . '/../..' . '/model/dao/UsuarioDao.php',
+        'ValidatorController' => __DIR__ . '/../..' . '/controller/ValidatorController.php',
+        'ValidatorForm' => __DIR__ . '/../..' . '/helper/ValidatorForm.php',
+        'ValidatorModelDao' => __DIR__ . '/../..' . '/model/dao/ValidatorModelDao.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

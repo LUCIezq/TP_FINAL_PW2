@@ -1,6 +1,4 @@
 <?php
-include_once 'helper/ValidatorForm.php';
-include_once 'helper/FileUploader.php';
 
 class RegisterModelDao
 {

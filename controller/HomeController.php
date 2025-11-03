@@ -1,7 +1,5 @@
 <?php
 
-include_once 'helper/IsLogged.php';
-
 class HomeController
 {
     private MustacheRenderer $mustacheRenderer;
@@ -30,6 +28,7 @@ class HomeController
 
         $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
+
         $this->mustacheRenderer->render(
             "home",
 
@@ -40,7 +39,7 @@ class HomeController
                 "jugadores" => $players,
                 "solicitud_errors" => $error_solicitud,
                 "solicitud_success" => $success_solicitud,
-                "id" => $_SESSION["user"]["id"]
+                "id" => $_SESSION["user"]["id"],
             ]
         );
     }
