@@ -1,7 +1,3 @@
-create database if not exists preguntados;
-
-use preguntados;
-
 DROP TABLE IF EXISTS direccion;
 
 DROP TABLE IF EXISTS usuario;

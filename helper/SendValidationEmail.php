@@ -6,7 +6,7 @@ use PHPMailer\PHPMailer\Exception;
 class SendValidationEmail
 {
 
-    private static $url = "http://localhost/validator/validate";
+    private static $url = "https://questify.infinityfreeapp.com/validator/validate";
 
     public static function sendValidationEmail($userEmail, $userName, $token)
     {
