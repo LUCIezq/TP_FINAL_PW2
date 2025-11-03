@@ -1,0 +1,36 @@
+name: 🚀 Deploy to InfinityFree via FTP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    name: 📤 Deploy del sitio PHP a InfinityFree
+
+    steps:
+      - name: 📦 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🚀 Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_PATH }}
+          local-dir: ./
+          protocol: ftps
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/**
+            **/README.md
+            **/.env
+            **/composer.lock
+            **/package*.json
+
+      - name: ✅ Confirmar despliegue
+        run: echo "✅ Deploy completado correctamente en InfinityFree!"
