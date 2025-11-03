@@ -2,9 +2,8 @@ var map = L.map('map').setView([-34.579, -58.381], 7);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-let marker;
-
 map.on('click', async function (e) {
+
     var lat = e.latlng.lat;
     var lon = e.latlng.lng;
 
@@ -13,6 +12,7 @@ map.on('click', async function (e) {
     } else {
         marker = L.marker(e.latlng).addTo(map);
     }
+
     const data = await getLocation(lat, lon);
 
     const paisInput = document.getElementById('pais');

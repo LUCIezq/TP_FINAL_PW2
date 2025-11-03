@@ -18,6 +18,9 @@ const fetchData = async () => {
     }
 }
 
+
+let marker;
+
 const setMap = async (data) => {
     const baseUrl = "http://localhost/service/get_location_reverse.php?";
 
@@ -41,7 +44,10 @@ const setMap = async (data) => {
         const lon = parseFloat(locationData[0].lon);
 
         map.setView([lat, lon], 7);
+
         L.marker([lat, lon]).addTo(map);
+
+        map.off('click');
 
     } catch (e) {
         console.log('There was a problem with the fetch operation: ' + e.message);
