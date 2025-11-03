@@ -8,8 +8,8 @@ use Endroid\QrCode\Writer\PngWriter;
 
 class QrGenerator
 {
-
-    private static string $BASE_URL = "http://localhost/usuario/perfil/";
+    private $config = parse_ini_file("config/config.ini", true);
+    private static string $BASE_URL = $config['appProd']['url'];
 
     public static function generateQr($data = "")
     {
