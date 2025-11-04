@@ -25,7 +25,7 @@ class MyConexion
         if (!$result || $result->num_rows <= 0) {
             return null;
         }
-        return $result;
+        return $this->processData($result);
     }
 
     public function executePrepared($sql, $types, $params)

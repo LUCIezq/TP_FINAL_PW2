@@ -56,6 +56,18 @@ class ConfigFactory
             new UsuarioDao($this->conexion),
             $this->renderer
         );
+
+        $this->objetos['PreguntasController'] = new PreguntasController(
+            $this->renderer,
+            $this->conexion,
+            new CategoryDao($this->conexion)
+        );
+
+        $this->objetos['CategoriaController'] = new CategoriaController(
+            new CategoryDao($this->conexion)
+        );
+
+
     }
 
     public function get($objectName)
