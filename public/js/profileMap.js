@@ -22,7 +22,7 @@ const fetchData = async () => {
 
 
 const setMap = async (data) => {
-    const baseUrl = "http://localhost/service/get_location_reverse.php";
+    const baseUrl = "/service/get_location_reverse.php";
 
     const params = new URLSearchParams({
         city: data.ciudad,

@@ -32,7 +32,7 @@ const getLocation = async (lat, lon) => {
         throw new Error("Las latitudes y longitudes deben ser números");
     }
 
-    const baseUrl = "http://localhost/service/get_location.php";
+    const baseUrl = "/service/get_location.php";
     const params = new URLSearchParams({
         lat: String(lat),
         lon: String(lon),
