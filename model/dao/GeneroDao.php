@@ -6,12 +6,10 @@ class GeneroDao
 {
 
     private MyConexion $db;
-    private Logger $logger;
 
-    public function __construct(MyConexion $dbConexion, Logger $logger)
+    public function __construct(MyConexion $dbConexion)
     {
         $this->db = $dbConexion;
-        $this->logger = $logger;
     }
 
     public function getAllGenders()
@@ -28,7 +26,6 @@ class GeneroDao
                     'nombre' => $row['nombre']
                 ];
             }
-            $this->logger->info("Géneros obtenidos correctamente desde la base de datos.");
         }
         return $genders;
     }

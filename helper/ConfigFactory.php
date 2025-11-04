@@ -7,22 +7,26 @@ class ConfigFactory
 {
     private $config;
     private $objetos;
-    private Logger $logger;
 
     private $conexion;
     private $renderer;
 
     public function __construct()
     {
-        $this->config = parse_ini_file("config/config.ini", true);
-        $this->logger = new Logger();
+
+        $env = ($_SERVER['SERVER_NAME'] === 'localhost') ? 'local' : 'prod';
+        $path = __DIR__ . '/../config/configDb.' . $env . '.ini';
+
+        if (!file_exists($path)) {
+            throw new Exception('Archivo no encontrado');
+        }
+        $this->config = parse_ini_file($path, true);
 
         $this->conexion = new MyConexion(
-            $this->config['database']["server"],
-            $this->config['database']["user"],
-            $this->config['database']["password"],
-            $this->config['database']["database"],
-            $this->logger
+            $this->config["server"],
+            $this->config["user"],
+            $this->config["password"],
+            $this->config["database"]
         );
 
         $this->renderer = new MustacheRenderer("vista");
@@ -30,7 +34,7 @@ class ConfigFactory
         $this->objetos["router"] = new NewRouter($this, "PokemonController", "base");
 
         $this->objetos["RegisterController"] = new RegisterController(
-            new GeneroDao($this->conexion, $this->logger),
+            new GeneroDao($this->conexion),
             new UsuarioDao($this->conexion),
             $this->renderer,
             new RegisterModelDao($this->conexion, new UsuarioDao($this->conexion))

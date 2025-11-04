@@ -13,8 +13,6 @@ class QrGenerator
     {
 
         $writer = new PngWriter();
-        // $config = parse_ini_file(__DIR__ . "/../../config/config.ini", true);
-
 
         $qrCode = new QrCode(
             data: "https://questify.infinityfreeapp.com/usuario/perfil/" . $data,
