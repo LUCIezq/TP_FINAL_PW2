@@ -24,6 +24,7 @@ class UsuarioController
         }
 
         $id = (int) $id;
+        $isOwner = IsLogged::isLogged() && isset($_SESSION['user']) && $_SESSION['user']['id'] === $id;
 
         $usuario = $this->usuarioDao->findById($id);
 
@@ -32,6 +33,7 @@ class UsuarioController
             exit();
         }
         $qr = null;
+
         try {
             if (!class_exists('QrGenerator')) {
                 throw new Exception('La clase QrGenerator no está disponible.');
@@ -45,7 +47,9 @@ class UsuarioController
             "perfilUsuario",
             [
                 "usuario" => $usuario,
-                "qr" => $qr
+                "qr" => $qr,
+                "isOwner" => $isOwner,
+
             ]
         );
 
