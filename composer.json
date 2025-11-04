@@ -26,7 +26,8 @@
         "classmap": [
             "controller/",
             "helper/",
-            "model/"
+            "model/",
+            "config/"
         ]  
     }
 }
