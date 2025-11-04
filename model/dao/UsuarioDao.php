@@ -139,7 +139,7 @@ class UsuarioDao
     {
         $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil FROM usuario WHERE id = ? and rol_id = ?";
         $types = "ii";
-        $params = [$id, 1];
+        $params = [$id, UserRole::JUGADOR];
 
         $result = $this->dbConnection->executePrepared($sql, $types, $params);
 
