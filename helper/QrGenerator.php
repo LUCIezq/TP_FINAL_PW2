@@ -13,7 +13,7 @@ class QrGenerator
     {
 
         $writer = new PngWriter();
-        $config = parse_ini_file("config/config.ini", true);
+        $config = parse_ini_file(__DIR__ . "/../../config/config.ini", true);
 
 
         $qrCode = new QrCode(
