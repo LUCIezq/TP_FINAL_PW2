@@ -16,17 +16,14 @@ class UsuarioController
     public function perfil()
     {
 
-        if (!IsLogged::isLogged()) {
-            header("location: /login/index");
-            exit();
-        }
+        $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 
-        $id = $_GET["id"] ?? null;
-
-        if (empty($id) || !is_numeric($id)) {
+        if ($id === null || $id === false) {
             header('location: /home/index');
             exit();
         }
+
+        $id = (int) $id;
 
         $usuario = $this->usuarioDao->findById($id);
 
@@ -34,14 +31,24 @@ class UsuarioController
             header('location: /home/index');
             exit();
         }
+        $qr = null;
+        try {
+            if (!class_exists('QrGenerator')) {
+                throw new Exception('La clase QrGenerator no está disponible.');
+            }
+            $qr = QrGenerator::generateQr($usuario['id']);
 
+        } catch (Exception $e) {
+            throw new Exception('' . $e->getMessage());
+        }
         $this->mustacheRenderer->render(
             "perfilUsuario",
             [
                 "usuario" => $usuario,
-                "qr" => QrGenerator::generateQr($usuario['id'])
+                "qr" => $qr
             ]
         );
+
     }
 
     public function getCountryAndCity()
