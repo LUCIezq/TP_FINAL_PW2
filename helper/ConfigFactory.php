@@ -2,7 +2,6 @@
 
 include_once 'vendor/mustache/src/Mustache/Autoloader.php';
 
-
 class ConfigFactory
 {
     private $config;
@@ -15,7 +14,7 @@ class ConfigFactory
     {
 
         $env = ($_SERVER['SERVER_NAME'] === 'localhost') ? 'local' : 'prod';
-        $path = __DIR__ . '/../config/configDb.' . $env . '.ini';
+        $path = __DIR__ . '/../config/configDB.' . $env . '.ini';
 
         if (!file_exists($path)) {
             throw new Exception('Archivo no encontrado');
