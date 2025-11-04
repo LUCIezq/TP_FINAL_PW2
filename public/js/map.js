@@ -1,58 +1,51 @@
 var map = L.map('map').setView([-34.579, -58.381], 7);
-
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 let marker = L.marker([-34.579, -58.381]).addTo(map);
 
 map.on('click', async function (e) {
-
-    var lat = e.latlng.lat;
-    var lon = e.latlng.lng;
-
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
 
     if (marker) {
         marker.setLatLng(e.latlng);
     }
 
     const data = await getLocation(lat, lon);
-
     const paisInput = document.getElementById('pais');
     const ciudadInput = document.getElementById('ciudad');
 
-    if (data) {
+    if (data && data.address) {
         paisInput.value = data.address.country || 'Desconocido';
-        ciudadInput.value = data.address.state || 'Desconocida';
+        ciudadInput.value = data.address.city
+            || data.address.town
+            || data.address.village
+            || data.address.state
+            || 'Desconocida';
     }
 });
 
 const getLocation = async (lat, lon) => {
-
-    const baseUrl = "https://nominatim.openstreetmap.org/reverse";
-
-
     if (typeof lat !== 'number' || typeof lon !== 'number') {
         throw new Error("Las latitudes y longitudes deben ser números");
     }
 
+    const baseUrl = "https://nominatim.openstreetmap.org/reverse";
     const params = new URLSearchParams({
-        lat: lat,
-        lon: lon
+        format: 'jsonv2',
+        addressdetails: '1',
+        lat: String(lat),
+        lon: String(lon),
+        zoom: '10'
     });
 
     try {
         const response = await fetch(`${baseUrl}?${params.toString()}`);
-
-
-        if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-        }
-
-        const data = await response.json();
-        console.log(data);
-        return data;
-
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        return await response.json();
     } catch (error) {
         console.error("Error al obtener los datos de la API:", error);
+        return null;
     }
 }
 
