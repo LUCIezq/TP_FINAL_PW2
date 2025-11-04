@@ -1,7 +1,7 @@
 var map = L.map('map').setView([-34.579, -58.381], 7);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-let marker = L.marker([-34.579, -58.381]).addTo(map);
+let marker = null;
 
 map.on('click', async function (e) {
     const lat = e.latlng.lat;
@@ -9,6 +9,8 @@ map.on('click', async function (e) {
 
     if (marker) {
         marker.setLatLng(e.latlng);
+    } else {
+        marker = L.marker([lat, lon]).addTo(map);
     }
 
     const data = await getLocation(lat, lon);
@@ -30,13 +32,10 @@ const getLocation = async (lat, lon) => {
         throw new Error("Las latitudes y longitudes deben ser números");
     }
 
-    const baseUrl = "https://nominatim.openstreetmap.org/reverse";
+    const baseUrl = "http://localhost/service/get_location.php";
     const params = new URLSearchParams({
-        format: 'jsonv2',
-        addressdetails: '1',
         lat: String(lat),
         lon: String(lon),
-        zoom: '10'
     });
 
     try {

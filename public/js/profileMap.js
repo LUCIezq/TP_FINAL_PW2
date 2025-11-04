@@ -1,56 +1,57 @@
 
-// const url = "http://localhost/usuario/getCountryAndCity";
+const url = "http://localhost/usuario/getCountryAndCity";
 
-// const fetchData = async () => {
-//     try {
+const fetchData = async () => {
+    try {
 
-//         const response = await fetch(url);
+        const response = await fetch(url);
 
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-//         const data = await response.json();
-//         setMap(data);
+        const data = await response.json();
 
-//     } catch (e) {
-//         console.log('There was a problem with the fetch operation: ' + e.message);
-//     }
-// }
+        setMap(data);
 
-// let marker;
+    } catch (e) {
+        console.log('There was a problem with the fetch operation: ' + e.message);
+    }
+}
 
-// const setMap = async (data) => {
-//     const baseUrl = "http://localhost/service/get_location_reverse.php?";
 
-//     const params = new URLSearchParams({
-//         city: data.ciudad,
-//         country: data.pais
-//     });
 
-//     try {
+const setMap = async (data) => {
+    const baseUrl = "http://localhost/service/get_location_reverse.php";
 
-//         const response = await fetch(
-//             `${baseUrl}${params.toString()}&format=json&limit=1`,
-//         );
+    const params = new URLSearchParams({
+        city: data.ciudad,
+        country: data.pais
+    });
 
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//         const locationData = await response.json();
+    try {
 
-//         const lat = parseFloat(locationData[0].lat);
-//         const lon = parseFloat(locationData[0].lon);
+        const response = await fetch(
+            `${baseUrl}?${params.toString()}&format=json&limit=1`,
+        );
 
-//         map.setView([lat, lon], 7);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const locationData = await response.json();
 
-//         L.marker([lat, lon]).addTo(map);
+        const lat = parseFloat(locationData[0].lat);
+        const lon = parseFloat(locationData[0].lon);
 
-//         // map.off('click');
+        map.setView([lat, lon], 7);
 
-//     } catch (e) {
-//         console.log('There was a problem with the fetch operation: ' + e.message);
-//     }
-// }
+        L.marker([lat, lon]).addTo(map);
 
-// fetchData();
+        map.off('click');
+
+    } catch (e) {
+        console.log('There was a problem with the fetch operation: ' + e.message);
+    }
+}
+
+fetchData();
