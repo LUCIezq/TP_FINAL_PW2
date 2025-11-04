@@ -1,5 +1,5 @@
 
-const url = "http://localhost/usuario/getCountryAndCity";
+const url = "/usuario/getCountryAndCity";
 
 const fetchData = async () => {
     try {
