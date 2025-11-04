@@ -59,8 +59,8 @@ class ConfigFactory
 
         $this->objetos['PreguntasController'] = new PreguntasController(
             $this->renderer,
-            $this->conexion,
-            new CategoryDao($this->conexion)
+            new CategoryDao($this->conexion),
+            new PreguntasDao($this->conexion)
         );
 
         $this->objetos['CategoriaController'] = new CategoriaController(

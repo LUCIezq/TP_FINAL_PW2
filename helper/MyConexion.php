@@ -42,9 +42,13 @@ class MyConexion
         if (str_starts_with(strtoupper(trim($sql)), 'SELECT')) {
             return $stmt->get_result();
         }
+
+        if (str_starts_with(strtoupper(trim($sql)), 'INSERT')) {
+            return $stmt->insert_id;
+        }
+
         return $stmt->affected_rows;
     }
-
     public function close()
     {
         $this->conexion ?? $this->conexion->close();
