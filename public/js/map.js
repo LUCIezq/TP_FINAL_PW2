@@ -2,15 +2,16 @@ var map = L.map('map').setView([-34.579, -58.381], 7);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+let marker = L.marker([-34.579, -58.381]).addTo(map);
+
 map.on('click', async function (e) {
 
     var lat = e.latlng.lat;
     var lon = e.latlng.lng;
 
+
     if (marker) {
         marker.setLatLng(e.latlng);
-    } else {
-        marker = L.marker(e.latlng).addTo(map);
     }
 
     const data = await getLocation(lat, lon);
@@ -26,7 +27,8 @@ map.on('click', async function (e) {
 
 const getLocation = async (lat, lon) => {
 
-    const baseUrl = "http://localhost/service/get_location.php";
+    const baseUrl = "https://nominatim.openstreetmap.org/reverse";
+
 
     if (typeof lat !== 'number' || typeof lon !== 'number') {
         throw new Error("Las latitudes y longitudes deben ser números");
@@ -39,6 +41,7 @@ const getLocation = async (lat, lon) => {
 
     try {
         const response = await fetch(`${baseUrl}?${params.toString()}`);
+
 
         if (!response.ok) {
             throw new Error("HTTP error " + response.status);
