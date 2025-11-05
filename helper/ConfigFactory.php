@@ -67,6 +67,15 @@ class ConfigFactory
             new CategoryDao($this->conexion)
         );
 
+        $this->objetos['EditorController'] = new EditorController(
+            new EditorDao(
+                $this->conexion,
+            ),
+            $this->renderer
+        );
+        $this->objetos['AdminController'] = new AdminController(
+            $this->renderer
+        );
 
     }
 

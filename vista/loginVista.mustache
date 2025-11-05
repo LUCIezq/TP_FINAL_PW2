@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,9 +12,11 @@
   <!-- Reutilizamos el MISMO CSS del registro -->
   <link href="/public/assets/register.css" rel="stylesheet">
 </head>
+
 <body>
 
   <!-- MAIN -->
+
   <main class="container my-4">
     <h2 class="page-title text-center mb-4">Login</h2>
 
@@ -23,15 +26,15 @@
           <div class="card-body p-4 p-lg-5">
 
             {{#errors}}
-              <div class="alert alert-danger" role="alert">
-                <ul class="mb-0" style="list-style:none;">
-                  <li>{{.}}</li>
-                </ul>
-              </div>
+            <div class="alert alert-danger" role="alert">
+              <ul class="mb-0" style="list-style:none;">
+                <li>{{.}}</li>
+              </ul>
+            </div>
             {{/errors}}
 
             {{#hasMessage}}
-              <div class="alert alert-info">{{message}}</div>
+            <div class="alert alert-info">{{message}}</div>
             {{/hasMessage}}
 
             <form action="/login/login" method="POST" class="row g-3">
@@ -40,9 +43,10 @@
                 <input type="email" class="form-control" id="email" name="email" required placeholder="alguien@algo.com"">
               </div>
 
-              <div class="col-12">
+              <div class=" col-12">
                 <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" required placeholder="********">
+                <input type="password" class="form-control" id="password" name="password" required
+                  placeholder="********">
               </div>
 
               <div class="col-12 d-flex justify-content-between align-items-center">
@@ -61,4 +65,5 @@
   </main>
 
 </body>
+
 </html>

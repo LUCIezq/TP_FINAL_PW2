@@ -38,10 +38,16 @@ class PreguntasController
     public function createQuestion()
     {
 
+        if (!IsLogged::isLogged() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('location: /login/index');
+            exit();
+        }
+
         $data = [
-            "pregunta" => $_POST["pregunta"],
-            "categoriaId" => (int) $_POST["categoria"],
-            "indiceCorrecta" => (int) $_POST["correcta"]
+            "pregunta" => trim($_POST["pregunta"]),
+            "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]),
+            "indiceCorrecta" => filter_var($_POST["correcta"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,]]),
+            "usuarioId" => $_SESSION["user_id"]
         ];
 
         $result = $this->preguntasDao->createQuestion($data);

@@ -18,7 +18,7 @@ class LoginModelDao
         }
 
         try {
-            $user = $this->usuarioDao->findByEmail($email)[0];
+            $user = $this->usuarioDao->findByEmail($email);
 
             if (!$user || empty($user)) {
                 return ["Usuario/contraseña inválidos."];

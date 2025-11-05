@@ -17,6 +17,11 @@ class LoginController
 
     public function index($errors = [])
     {
+        if (IsLogged::isLogged()) {
+            header("Location: /home/index");
+            exit();
+        }
+
         $message = $_SESSION['message'] ?? '';
         $errors = $_SESSION['errors'] ?? [];
 
@@ -43,8 +48,24 @@ class LoginController
             $_SESSION['errors'] = $errors;
             $this->index();
         } else {
-            CreateUserSession::create($this->usuarioDao->findByEmail($email)[0]);
-            header("Location: /home/index");
+
+            $user = $this->usuarioDao->findByEmail($email);
+            CreateUserSession::create($user);
+
+            $path = null;
+            switch ($user['rol_id']) {
+                case UserRole::ADMIN:
+                    $path = "/admin/index";
+                    break;
+                case UserRole::JUGADOR:
+                    $path = "/home/index";
+                    break;
+                case UserRole::EDITOR:
+                    $path = "/editor/index";
+                    break;
+            }
+
+            header("Location: $path");
             exit();
         }
     }

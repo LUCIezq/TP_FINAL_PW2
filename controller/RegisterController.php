@@ -27,7 +27,7 @@ class RegisterController
         ]);
     }
 
-    public function getDataFormRegister()
+    private function getDataFormRegister()
     {
         $formData = [
             'titulo' => 'Registro de usuario',
@@ -45,7 +45,7 @@ class RegisterController
         return $formData;
     }
 
-    public function userRegister()
+    private function userRegister()
     {
         $inputs = [];
 
@@ -76,7 +76,7 @@ class RegisterController
             exit();
         }
     }
-    public function getTokenByUsername($username)
+    private function getTokenByUsername($username)
     {
         $user = $this->usuarioDao->getUserByUsername($username);
         return $user ? $user[0]['token_verificacion'] : null;

@@ -100,7 +100,7 @@ class UsuarioDao
 
         $result = $this->dbConnection->executePrepared($sql, $types, $params);
 
-        return $this->dbConnection->processData($result);
+        return $this->dbConnection->processData($result)[0];
     }
 
     public function activateUser($username)

@@ -11,6 +11,16 @@ class PreguntasDao
 
     public function createQuestion($data)
     {
+
+        foreach ($data as $value) {
+            if (empty($value)) {
+                return [
+                    "created" => false,
+                    "lastInsertId" => null
+                ];
+            }
+        }
+
         $sql = "INSERT INTO pregunta (texto,categoria_id,puntos,activa,fecha_creacion) VALUES (?,?,?,?, NOW())";
 
         $params = [
