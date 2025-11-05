@@ -76,7 +76,6 @@ class ConfigFactory
         $this->objetos['AdminController'] = new AdminController(
             $this->renderer
         );
-
     }
 
     public function get($objectName)
