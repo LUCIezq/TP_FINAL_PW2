@@ -55,6 +55,49 @@ class UsuarioController
 
     }
 
+    /*🔋🔋🔋🔋🔋🔋
+     * METODO PERFIL() que en mi codigo funcion
+     * public function perfil()
+    {
+        if (!IsLogged::isLogged()) {
+            header("location: /login/index");
+            exit();
+        }
+
+        $id = $_GET["id"] ?? null;
+
+        if (empty($id) || !is_numeric($id)) {
+            header('location: /home/index');
+            exit();
+        }
+
+        $usuario = $this->usuarioDao->findById($id);
+
+        if (empty($usuario)) {
+            header('location: /home/index');
+            exit();
+        }
+
+        // Obtener estadisticas de partidas del usuario
+        //getConnection creada en UsuarioDao
+        $gameDao = new GameDao($this->usuarioDao->getConnection());
+
+        $estadisticas = $gameDao->obtenerEstadisticasUsuario($id);
+
+        // Combinar datos de usuario con estadísticas
+        $usuario = array_merge($usuario, $estadisticas);
+
+        // Renderizar vista con toda la información
+        $this->mustacheRenderer->render(
+            "perfilUsuario",
+            [
+                "usuario" => $usuario,
+                "qr" => QrGenerator::generateQr($usuario['id'])
+            ]
+        );
+    } 🔋🔋🔋🔋🔋🔋
+     */
+
     public function getCountryAndCity()
     {
 

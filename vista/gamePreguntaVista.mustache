@@ -1,0 +1,67 @@
+<div class="container text-center py-5">
+    <h3 class="mb-4">Pregunta</h3>
+    <p class="fs-5">{{pregunta.enunciado}}</p>
+
+    <form id="formPregunta" method="POST" action="/game/respuesta">
+        <input type="hidden" name="partida_id" value="{{partida_id}}">
+        <input type="hidden" name="pregunta_id" value="{{pregunta.id}}">
+
+        <div class="d-grid gap-3 col-6 mx-auto mt-4">
+            {{#respuestas}}
+                <button
+                        type="button"
+                        class="btn btn-outline-primary btn-lg opcion-respuesta"
+                        data-id="{{id}}"
+                        data-texto="{{texto}}">
+                    {{texto}}
+                </button>
+            {{/respuestas}}
+        </div>
+    </form>
+
+    <div id="mensaje" class="mt-5 fs-4 fw-bold"></div>
+</div>
+
+
+<script>
+    const botones = document.querySelectorAll(".opcion-respuesta");
+    const form = document.getElementById("formPregunta");
+    const mensajeDiv = document.getElementById("mensaje");
+
+    botones.forEach(btn => {
+        btn.addEventListener("click", () => {
+            botones.forEach(b => b.disabled = true);
+
+            const formData = new FormData(form);
+            formData.append("respuesta_id", btn.dataset.id);
+
+            fetch("/game/respuesta", {
+                method: "POST",
+                body: formData
+            })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.correcta && data.continuar) {
+
+                            btn.classList.remove("btn-outline-primary");
+                            btn.classList.add("btn-success");
+                            mensajeDiv.innerHTML = "✅ ¡Correcto!";
+                            setTimeout(() => {
+                                window.location.href = "/game/siguientePregunta";
+                            }, 1500);
+                        }
+                        else if (data.fin) {
+                            mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
+                            setTimeout(() => window.location.href = "/home", 2500);
+                        }
+                        else if (data.correcta === false) {
+
+                            btn.classList.remove("btn-outline-primary");
+                            btn.classList.add("btn-danger");
+                            mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" + data.correcta_texto + "</strong>";
+                            setTimeout(() => window.location.href = "/home", 3000);
+                        }
+                    })
+        });
+    });
+</script>

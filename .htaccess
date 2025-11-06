@@ -19,6 +19,14 @@
     # Rutas tipo /controller/method
     RewriteRule ^([^/]+)/([^/]+)/?$ index.php?controller=$1&method=$2 [L,QSA]
 
+    # --- nuevos🔋🔋🔋🔋🔋🔋
+    #-- RewriteRule ^home$ index.php?controller=Home&method=index [L,QSA]
+            #   RewriteRule ^game$ index.php?controller=Game&method=base [L,QSA]
+            #   RewriteRule ^game/start$ index.php?controller=Game&method=start [L,QSA]
+            #   RewriteRule ^game/respuesta$ index.php?controller=Game&method=respuesta [L,QSA]
+            #   RewriteRule ^game/siguientePregunta$ index.php?controller=Game&method=siguientePregunta [L,QSA]
+
+            
     # Rutas tipo /controller
     RewriteRule ^([^/]+)/?$ index.php?controller=$1 [L,QSA]
 </IfModule>

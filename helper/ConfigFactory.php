@@ -76,6 +76,17 @@ class ConfigFactory
         );
     }
 
+
+    //🔋🔋🔋🔋🔋🔋 nuevo para agregar 🔋🔋🔋🔋🔋🔋
+    /*
+     * require_once 'model/dao/GameDao.php';
+        require_once 'controller/GameController.php';
+        $this->objetos['GameController'] = new GameController(
+            $this->renderer,
+            new GameDao($this->conexion)
+        );
+     */
+
     public function get($objectName)
     {
         return $this->objetos[$objectName];

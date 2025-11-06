@@ -135,7 +135,7 @@ class UsuarioDao
         return $this->dbConnection->processData($result);
     }
 
-    public function findById($id)
+    public function findById($id) //cambiar este metodo 🔋🔋🔋🔋🔋🔋
     {
         $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil FROM usuario WHERE id = ? and rol_id = ?";
         $types = "ii";
@@ -146,6 +146,29 @@ class UsuarioDao
         return $this->dbConnection->processData($result)[0] ?? null;
     }
 
+    /*
+     * 🔋🔋🔋🔋🔋🔋 metodo que funciona bien, agregando nuevos campos
+     * public function findById($id)
+    {
+        $sql = "SELECT
+                id,
+                nombre,
+                apellido,
+                email,
+                nombre_usuario,
+                foto_perfil,
+                nivel_id,
+                puntos
+            FROM usuario
+            WHERE id = ? AND rol_id = ?";
+        $types = "ii";
+        $params = [$id, 1];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($result)[0] ?? null;
+    }
+     */
     public function existsInBd($id)
     {
 
@@ -192,4 +215,11 @@ class UsuarioDao
 
         return $this->dbConnection->processData($result);
     }
+    /*
+     * 🔋🔋🔋🔋🔋🔋 maneja de base de datos
+     * public function getConnection()
+    {
+        return $this->dbConnection;
+    }
+     */
 }
