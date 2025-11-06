@@ -1,8 +1,5 @@
 <?php
 
-use Mustache_Engine;
-use Mustache_Loader_FilesystemLoader;
-
 class MustacheRenderer
 {
     private $mustache;
@@ -10,8 +7,8 @@ class MustacheRenderer
 
     public function __construct($partialsPathLoader)
     {
-        $this->mustache = new Mustache_Engine([
-            'partials_loader' => new Mustache_Loader_FilesystemLoader($partialsPathLoader)
+        $this->mustache = new \Mustache_Engine([
+            'partials_loader' => new \Mustache_Loader_FilesystemLoader($partialsPathLoader)
         ]);
 
         $this->viewsFolder = $partialsPathLoader;
