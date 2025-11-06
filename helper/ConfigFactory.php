@@ -1,7 +1,5 @@
 <?php
 
-include_once 'vendor/mustache/src/Mustache/Autoloader.php';
-
 class ConfigFactory
 {
     private $config;

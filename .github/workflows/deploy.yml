@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_PATH }}
-          local-dir: ./ # sube el proyecto completo con vendor generado
+          local-dir: ./ 
           protocol: ftp
           exclude: |
             **/.git*
