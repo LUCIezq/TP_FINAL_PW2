@@ -1,11 +1,9 @@
-
-
-
-
 .env
 .env.local
 .env.development
 .env.production
+
+
 
 .vscode/
 .idea/
@@ -29,6 +27,7 @@ Thumbs.db
 node_modules/
 package.json
 package-lock.json
+/vendor/
 
 README.md
 *.md
@@ -36,13 +35,12 @@ README.md
 *.docx
 *.xlsx
 
-
-
 .git/
 
 deploy.yml
 build/
 storage/
 uploads/
+
 
 
