@@ -50,6 +50,7 @@ class LoginController
         } else {
 
             $user = $this->usuarioDao->findByEmail($email);
+
             CreateUserSession::create($user);
 
             $path = null;

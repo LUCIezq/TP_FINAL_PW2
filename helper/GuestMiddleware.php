@@ -16,7 +16,7 @@ class GuestMiddleware
                     break;
                 case UserRole::JUGADOR:
                 default:
-                    header('Location: /home');
+                    header('Location: /home/index');
                     break;
             }
             exit;

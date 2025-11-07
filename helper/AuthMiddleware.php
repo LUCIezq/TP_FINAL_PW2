@@ -6,7 +6,7 @@ class AuthMiddleware
         session_start();
 
         if (!isset($_SESSION['usuario'])) {
-            header('Location: /login');
+            header('Location: /login/index');
             exit;
         }
 

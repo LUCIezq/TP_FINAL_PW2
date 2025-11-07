@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,48 +19,49 @@
   <!-- Fuente estilo caricatura -->
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
   <main class="container my-4">
     <h2 class="brand-title text-center">Questify</h2>
-       {{#solicitud_errors}}
-        <div class="alert alert-danger" role="alert">
-          <span class="mb-0">
-            {{.}}
-          </span>
-        </div>
-        {{/solicitud_errors}}
+    {{#solicitud_errors}}
+    <div class="alert alert-danger" role="alert">
+      <span class="mb-0">
+        {{.}}
+      </span>
+    </div>
+    {{/solicitud_errors}}
 
-        {{#solicitud_success}}
-        <div class="alert alert-success" role="alert">
-          {{solicitud_success}}
-        </div>
-        {{/solicitud_success}}
+    {{#solicitud_success}}
+    <div class="alert alert-success" role="alert">
+      {{solicitud_success}}
+    </div>
+    {{/solicitud_success}}
 
-   
+
     <div class="container my-5">
 
       <div class="grid-home">
 
-          <section class="panel-sky shadow-sm">
-              <header class="panel-sky__header">
-                  <span class="panel-sky__title">Juego</span>
-              </header>
+        <section class="panel-sky shadow-sm">
+          <header class="panel-sky__header">
+            <span class="panel-sky__title">Juego</span>
+          </header>
 
-              <ul class="panel-sky__list">
-                  <li class="sky-item text-center py-4">
-                      <h3 class="mb-4">¡Bienvenido a Questify!</h3>
+          <ul class="panel-sky__list">
+            <li class="sky-item text-center py-4">
+              <h3 class="mb-4">¡Bienvenido a Questify!</h3>
 
-                      <form action="index.php" method="get">
-                          <input type="hidden" name="controller" value="Game">
-                          <input type="hidden" name="method" value="base">
-                          <button type="submit" class="btn btn-lg btn-success px-5 py-3">
-                              🎡 Jugar
-                          </button>
-                      </form>
-                  </li>
-              </ul>
-          </section>
+              <form action="index.php" method="get">
+                <input type="hidden" name="controller" value="Game">
+                <input type="hidden" name="method" value="base">
+                <button type="submit" class="btn btn-lg btn-success px-5 py-3">
+                  🎡 Jugar
+                </button>
+              </form>
+            </li>
+          </ul>
+        </section>
 
 
         <!-- ============ Partidas (izquierda) ============ -->
@@ -135,8 +137,8 @@
           <ul class="panel-beige__list">
             {{#jugadores}}
 
-            
-            
+
+
             <li class="panel-beige__item ">
               <a class="panel-beige__avatar" href="/usuario/perfil/{{id_usuario}}">
                 <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
@@ -148,18 +150,17 @@
                 </a>
                 <div class="panel-beige__meta">@{{nombre_usuario}}</div>
               </div>
-              
+
               {{#puede_desafiar}}
-              <button type="button"
-                      class="btn btn-peach btn-sm panel-beige__action btn-desafiar"
-                      data-destinatario-id="{{id_usuario}}">
+              <button type="button" class="btn btn-peach btn-sm panel-beige__action btn-desafiar"
+                data-destinatario-id="{{id_usuario}}">
                 Desafiar
               </button>
               {{/puede_desafiar}}
 
               {{#solicitud_enviada}}
               <span class="badge bg-warning text-dark panel-beige__status">
-                Solicitud Enviada 
+                Solicitud Enviada
                 <i class="bi bi-clock-history"></i>
               </span>
               {{/solicitud_enviada}}
@@ -167,26 +168,26 @@
               {{#solicitud_recibida}}
 
               <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
-              <span class="badge bg-success text-white panel-beige__status">
-                Solicitud Recibida
-                <i class="bi bi-check-circle"></i>
-              </span>
+                <span class="badge bg-success text-white panel-beige__status">
+                  Solicitud Recibida
+                  <i class="bi bi-check-circle"></i>
+                </span>
 
-              <div style="display: flex; gap: 5px;align-items: center;">
-                <form action="/solicitudPartida/aceptar" method="POST" class="panel-beige__form-aceptar">
-                <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
-                <button type="submit" class="btn btn-success btn-sm">
-                  <i class="bi bi-check"></i>
-                </button>
-                </form>
+                <div style="display: flex; gap: 5px;align-items: center;">
+                  <form action="/solicitudPartida/aceptar" method="POST" class="panel-beige__form-aceptar">
+                    <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
+                    <button type="submit" class="btn btn-success btn-sm">
+                      <i class="bi bi-check"></i>
+                    </button>
+                  </form>
 
-                <form action="/solicitudPartida/rechazar" method="POST" class="panel-beige__form-rechazar">
-                  <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
-                  <button type="submit" class="btn btn-danger btn-sm">
-                    <i class="bi bi-x"></i>
-                  </button>
-                </form>
-              </div>
+                  <form action="/solicitudPartida/rechazar" method="POST" class="panel-beige__form-rechazar">
+                    <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </form>
+                </div>
               </div>
               {{/solicitud_recibida}}
             </li>
@@ -208,7 +209,7 @@
         </a>
       </div>
 
-      
+
       <form action="/solicitudPartida/crearSolicitudPartida" method="POST" class="form-desafiar">
         <input type="hidden" name="destinatario_id" id="destinatario_id">
       </form>
@@ -217,4 +218,5 @@
 
   <script src="/public/js/SaveUserId.js"></script>
 </body>
+
 </html>

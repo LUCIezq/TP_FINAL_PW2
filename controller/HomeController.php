@@ -28,7 +28,6 @@ class HomeController
 
         $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
-
         $this->mustacheRenderer->render(
             "home",
 
@@ -40,7 +39,6 @@ class HomeController
                 "solicitud_errors" => $error_solicitud,
                 "solicitud_success" => $success_solicitud,
                 "id" => $_SESSION["user"]["id"],
-                "" => ""
             ]
         );
     }

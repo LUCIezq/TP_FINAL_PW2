@@ -47,8 +47,9 @@ class PreguntasController
             "pregunta" => trim($_POST["pregunta"]),
             "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]),
             "indiceCorrecta" => filter_var($_POST["correcta"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,]]),
-            "usuarioId" => $_SESSION["user_id"]
+            "usuarioId" => $_SESSION["user"]["id"]
         ];
+
 
         $result = $this->preguntasDao->createQuestion($data);
 

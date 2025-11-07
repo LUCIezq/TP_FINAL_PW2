@@ -17,6 +17,10 @@ class RegisterController
 
     public function index($errors = [])
     {
+        if (IsLogged::isLogged()) {
+            header("Location: /home/index");
+            exit();
+        }
 
         $data = $this->getDataFormRegister();
 
@@ -27,7 +31,7 @@ class RegisterController
         ]);
     }
 
-    private function getDataFormRegister()
+    public function getDataFormRegister()
     {
         $formData = [
             'titulo' => 'Registro de usuario',
@@ -45,7 +49,7 @@ class RegisterController
         return $formData;
     }
 
-    private function userRegister()
+    public function userRegister()
     {
         $inputs = [];
 
@@ -62,7 +66,7 @@ class RegisterController
 
         $errors = $this->registerModelDao->userRegister($inputs);
 
-        CreateUserSession::create($this->usuarioDao->findByUsername($inputs['usuario'])[0]);
+        // CreateUserSession::create($this->usuarioDao->findByUsername($inputs['usuario'])[0]);
 
         if (!empty($errors)) {
             $this->index($errors);
@@ -76,7 +80,7 @@ class RegisterController
             exit();
         }
     }
-    private function getTokenByUsername($username)
+    public function getTokenByUsername($username)
     {
         $user = $this->usuarioDao->getUserByUsername($username);
         return $user ? $user[0]['token_verificacion'] : null;

@@ -21,20 +21,19 @@ class PreguntasDao
             }
         }
 
-        $sql = "INSERT INTO pregunta (texto,categoria_id,puntos,activa,fecha_creacion) VALUES (?,?,?,?, NOW())";
+        $sql = "INSERT INTO pregunta (genero_id,dificultad_id,texto,activa,usuario_id) VALUES (?,?,?,?,?)";
 
         $params = [
-            $data["pregunta"],
             $data["categoriaId"],
-            100,
-            0
+            1,
+            $data["pregunta"],
+            0,
+            $data["usuarioId"]
         ];
 
-        $types = "siii";
+        $types = "iisii";
 
         $result = $this->conexion->executePrepared($sql, $types, $params);
-
-        echo $result;
 
         return [
             "created" => $result != 0,

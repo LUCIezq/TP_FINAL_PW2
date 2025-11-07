@@ -17,16 +17,6 @@ class GeneroDao
         $sql = "SELECT * FROM sexo";
         $result = $this->db->query($sql);
 
-        $genders = [];
-
-        if ($this->db->validateResult($result)) {
-            while ($row = $result->fetch_assoc()) {
-                $genders[] = [
-                    'id' => $row['id'],
-                    'nombre' => $row['nombre']
-                ];
-            }
-        }
-        return $genders;
+        return $result;
     }
 }
