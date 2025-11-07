@@ -137,7 +137,7 @@ class UsuarioDao
 
     public function findById($id) //cambiar este metodo 🔋🔋🔋🔋🔋🔋
     {
-        $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil FROM usuario WHERE id = ? and rol_id = ?";
+        $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil,nivel_id,puntos FROM usuario WHERE id = ? and rol_id = ?";
         $types = "ii";
         $params = [$id, UserRole::JUGADOR];
 
@@ -215,11 +215,10 @@ class UsuarioDao
 
         return $this->dbConnection->processData($result);
     }
-    /*
-     * 🔋🔋🔋🔋🔋🔋 maneja de base de datos
-     * public function getConnection()
+
+    public function getConnection()
     {
         return $this->dbConnection;
     }
-     */
+
 }

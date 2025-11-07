@@ -12,7 +12,7 @@ class CategoryDao
 
     public function getAll(): array
     {
-        $sql = "SELECT * FROM categoria";
+        $sql = "SELECT * FROM genero";
         $result = $this->db->query($sql);
 
         return $result;
