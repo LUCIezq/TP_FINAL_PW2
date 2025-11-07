@@ -19,8 +19,6 @@ const fetchData = async () => {
     }
 }
 
-
-
 const setMap = async (data) => {
     const baseUrl = "/service/get_location_reverse.php";
 

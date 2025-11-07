@@ -1,3 +1,64 @@
-<h1>
-    Vista editor
-</h1>
+<header>
+    <title>Editor de Preguntas</title>
+    <link rel="stylesheet" href="/public/assets/editor.css">
+</header>
+
+<body class="p-4">
+
+    <div class="container" style="max-width: 800px;">
+        <!-- Navegación -->
+        <div class="d-flex justify-content-between mb-4">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Sugeridas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Sistema</a>
+                </li>
+            </ul>
+            <button class="btn btn-outline-primary rounded-pill px-3">Crear preguntas +</button>
+        </div>
+
+
+        {{#questions}}
+        <div class="card p-4"
+            style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
+
+            <div class=" d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <small class="text-muted">Pregunta creada por @{{usuario}}</small>
+                    <div class="titulo mt-1">{{pregunta}}</div>
+                </div>
+
+                <div>
+                    <button class="btn-round btn btn-outline-danger me-2">✖</button>
+                </div>
+            </div>
+
+            <form>
+                <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="categoria">
+                    <option selected>Seleccionar categoría</option>
+                    {{#categories}}
+                    <option value="{{id}}">{{nombre}}</option>
+                    {{/categories}}
+                </select>
+                {{#respuestas}}
+                <div class="form-check mb-3 opcion">
+                    <input class="form-check-input" type="radio" name="respuesta" id="{{@index}}">
+                    <input type="text" class="form-control" required placeholder="Respuesta {{@index}}"
+                        value="{{respuesta}}">
+                </div>
+
+                {{/respuestas}}
+
+                <button type="submit" class="guardar-btn">Aprobar</button>
+            </form>
+        </div>
+        {{/questions}}
+
+        {{^questions}}Sin datos{{/questions}}
+
+    </div>
+
+</body>

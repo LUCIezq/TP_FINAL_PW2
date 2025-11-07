@@ -10,6 +10,19 @@ class AdminController
     }
     public function index()
     {
+
+        if (!IsLogged::isLogged()) {
+            header("Location:/login/index");
+            exit();
+        }
+
+        $role = $_SESSION['user']['rol_id'] ?? null;
+
+        if ($role != UserRole::ADMIN) {
+            header("Location:/home/index");
+            exit();
+        }
+
         $this->mustacheRenderer->render("admin", []);
     }
 }

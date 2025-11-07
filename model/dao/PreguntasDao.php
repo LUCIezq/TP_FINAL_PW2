@@ -57,4 +57,44 @@ class PreguntasDao
         $this->conexion->executePrepared($sql, $types, $params);
     }
 
+    public function getAllQuestionByUsers()
+    {
+        $sql = "SELECT u.nombre_usuario as usuario,
+        p.texto as pregunta,
+        p.id as pregunta_id,
+        r.texto as respuesta,
+        r.id as respuesta_id
+        from pregunta p
+        JOIN usuario u ON p.usuario_id = u.id
+        LEFT JOIN respuesta r ON r.pregunta_id = p.id
+        WHERE p.activa  =0";
+
+        $result = $this->conexion->query($sql);
+
+        $questions = [];
+
+        foreach ($result as $row) {
+            $pid = $row['pregunta_id'];
+
+            if (!isset($questions[$pid])) {
+                $questions[$pid] = [
+                    'usuario' => $row['usuario'],
+                    'pregunta' => $row['pregunta'],
+                    'pregunta_id' => $pid,
+                    'respuestas' => []
+                ];
+            }
+
+            if (!empty($row['respuesta_id'])) {
+                $questions[$pid]['respuestas'][] = [
+                    'respuesta' => $row['respuesta'],
+                    'respuesta_id' => $row['respuesta_id']
+                ];
+            }
+        }
+        //array values es util para pasar a mustache ya que este no maneja bien los arrays asociativos
+        return array_values($questions);
+
+    }
+
 }

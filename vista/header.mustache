@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <title>Questify</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<!-- Bootstrap 5 -->
+  <meta charset="utf-8">
+  <title>Questify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <!-- CSS externo -->
   <link href="/public/assets/header.css" rel="stylesheet">
   <link href="/public/assets/footer.css" rel="stylesheet">
-   <script  defer src="/public/js/map.js"></script>
+  <script defer src="/public/js/map.js"></script>
 
 </head>
+
 <body class="layout">
 
-<header class="site-header" role="banner" aria-label="Encabezado principal">
-  <div class="site-header__bar">
-    <div class="container py-3 d-flex align-items-center justify-content-between">
-      <h3 class="site-title m-0">Questify</h3>
+  <header class="site-header" role="banner" aria-label="Encabezado principal">
+    <div class="site-header__bar">
+      <div class="container py-3 d-flex align-items-center justify-content-between">
+        <h3 class="site-title m-0">Questify</h3>
 
-      {{#isLogged}}
-      <div class="d-flex align-items-center gap-3">
-        <img src="{{url_profile}}" alt="Foto de perfil"
-            width="40" height="40" class="rounded-circle object-fit-cover">
-        
-        <span class="fw-semibold">Bienvenido, 
+        {{#isLogged}}
+        <div class="d-flex align-items-center gap-3">
+          <img src="{{url_profile}}" alt="Foto de perfil" width="40" height="40"
+            class="rounded-circle object-fit-cover">
+
+          <span class="fw-semibold">Bienvenido,
             <a href="/usuario/perfil/{{id}}" class="text-decoration-none">
-                  {{usuario}}!
+              {{usuario}}!
             </a>
-        </span>
+          </span>
+        </div>
+        {{/isLogged}}
       </div>
-      {{/isLogged}}
     </div>
-  </div>
-</header>
-
-
+  </header>

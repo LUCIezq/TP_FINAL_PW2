@@ -26,20 +26,24 @@ class HomeController
             exit();
         }
 
-        $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
+        if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
+            $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
-        $this->mustacheRenderer->render(
-            "home",
+            $this->mustacheRenderer->render(
+                "home",
 
-            [
-                "usuario" => $_SESSION['user']['nombre_usuario'],
-                "url_profile" => $_SESSION['user']['foto_perfil'],
-                "isLogged" => $_SESSION['logged_in'],
-                "jugadores" => $players,
-                "solicitud_errors" => $error_solicitud,
-                "solicitud_success" => $success_solicitud,
-                "id" => $_SESSION["user"]["id"],
-            ]
-        );
+                [
+                    "usuario" => $_SESSION['user']['nombre_usuario'],
+                    "url_profile" => $_SESSION['user']['foto_perfil'],
+                    "isLogged" => $_SESSION['logged_in'],
+                    "jugadores" => $players,
+                    "solicitud_errors" => $error_solicitud,
+                    "solicitud_success" => $success_solicitud,
+                    "id" => $_SESSION["user"]["id"],
+                ]
+            );
+        }
+
+
     }
 }
