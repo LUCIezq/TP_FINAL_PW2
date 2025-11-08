@@ -135,9 +135,30 @@ class UsuarioDao
         return $this->dbConnection->processData($result);
     }
 
-    public function findById($id) //cambiar este metodo 🔋🔋🔋🔋🔋🔋
+   /* public function findById($id) //cambiar este metodo 🔋🔋🔋🔋🔋🔋
     {
         $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil,nivel_id,puntos FROM usuario WHERE id = ? and rol_id = ?";
+        $types = "ii";
+        $params = [$id, UserRole::JUGADOR];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($result)[0] ?? null;
+    }*/
+
+    public function findById($id)
+    {
+        $sql = "SELECT
+                id,
+                nombre,
+                apellido,
+                email,
+                nombre_usuario,
+                foto_perfil,
+                nivel_id,
+                puntos
+            FROM usuario
+            WHERE id = ? AND rol_id = ?";
         $types = "ii";
         $params = [$id, UserRole::JUGADOR];
 

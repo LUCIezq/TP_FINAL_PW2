@@ -84,7 +84,7 @@ class ConfigFactory
             new GameDao($this->conexion)
         );
     }
-    
+
 
     public function get($objectName)
     {
