@@ -15,11 +15,13 @@ class HomeController
 
     public function index(): void
     {
+        /*
         $error_solicitud = $_SESSION['solicitud_errors'];
         $success_solicitud = $_SESSION['solicitud_success'];
 
         unset($_SESSION['solicitud_errors']);
         unset($_SESSION['solicitud_success']);
+        */
 
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
@@ -37,8 +39,10 @@ class HomeController
                     "url_profile" => $_SESSION['user']['foto_perfil'],
                     "isLogged" => $_SESSION['logged_in'],
                     "jugadores" => $players,
+                    /*
                     "solicitud_errors" => $error_solicitud,
                     "solicitud_success" => $success_solicitud,
+                    */
                     "id" => $_SESSION["user"]["id"],
                 ]
             );
