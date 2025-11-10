@@ -58,7 +58,7 @@ class ConfigFactory
         $this->objetos['PreguntasController'] = new PreguntasController(
             $this->renderer,
             new CategoryDao($this->conexion),
-            new PreguntasDao($this->conexion)
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion))
         );
 
         $this->objetos['CategoriaController'] = new CategoriaController(
@@ -70,7 +70,7 @@ class ConfigFactory
                 $this->conexion,
             ),
             $this->renderer,
-            new PreguntasDao($this->conexion),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
             new CategoryDao($this->conexion)
         );
         $this->objetos['AdminController'] = new AdminController(

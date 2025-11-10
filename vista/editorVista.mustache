@@ -24,35 +24,29 @@
         <div class="card p-4"
             style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
 
-            <div class=" d-flex justify-content-between align-items-center mb-3">
+            <form method="post" action="/editor/aprobar" style="display: flex; flex-direction: column; gap: 1rem;">
 
-                <div>
-                    <small class="text-muted">Pregunta creada por @{{usuario}}</small>
-                    <div class="titulo mt-1">{{pregunta}}</div>
+                <div class="w-100">
+                    <small class="text-muted">Pregunta creada por <b>
+                            @{{usuario}}
+                        </b></small>
+                    <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" />
                 </div>
 
-                <div>
-                    <button class="btn-round btn btn-outline-danger me-2">✖</button>
-                </div>
-            </div>
-
-            <form>
-                <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="categoria">
-                    <option selected>Seleccionar categoría</option>
-                    {{#categories}}
-                    <option value="{{id}}">{{nombre}}</option>
-                    {{/categories}}
+                <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="categoria" required>
+                    <option value="{{genero_name}}">{{genero_name}}</option>
                 </select>
+
                 {{#respuestas}}
                 <div class="form-check mb-3 opcion">
-                    <input class="form-check-input" type="radio" name="respuesta" id="{{@index}}">
-                    <input type="text" class="form-control" required placeholder="Respuesta {{@index}}"
-                        value="{{respuesta}}">
+                    <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
+                        name="respuesta">
+                    <input type="text" name="respuesta{{@index}}" class="form-control" required
+                        placeholder="Respuesta {{@index}}" value="{{respuesta}}">
                 </div>
-
                 {{/respuestas}}
 
-                <button type="submit" class="guardar-btn">Aprobar</button>
+                <button style="align-self: flex-start;" type="submit" class="guardar-btn">Aprobar</button>
             </form>
         </div>
         {{/questions}}
@@ -60,5 +54,6 @@
         {{^questions}}Sin datos{{/questions}}
 
     </div>
+
 
 </body>

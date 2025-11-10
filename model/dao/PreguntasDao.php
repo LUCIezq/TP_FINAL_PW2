@@ -3,10 +3,12 @@
 class PreguntasDao
 {
     private MyConexion $conexion;
+    private CategoryDao $categoryDao;
 
-    public function __construct(MyConexion $conexion)
+    public function __construct(MyConexion $conexion, CategoryDao $categoryDao)
     {
         $this->conexion = $conexion;
+        $this->categoryDao = $categoryDao;
     }
 
     public function createQuestion($data)
@@ -63,11 +65,13 @@ class PreguntasDao
         p.texto as pregunta,
         p.id as pregunta_id,
         r.texto as respuesta,
-        r.id as respuesta_id
+        r.id as respuesta_id,
+        p.genero_id as genero_id,
+        r.es_correcta as es_correcta
         from pregunta p
         JOIN usuario u ON p.usuario_id = u.id
         LEFT JOIN respuesta r ON r.pregunta_id = p.id
-        WHERE p.activa  =0";
+        WHERE p.activa=0";
 
         $result = $this->conexion->query($sql);
 
@@ -81,14 +85,17 @@ class PreguntasDao
                     'usuario' => $row['usuario'],
                     'pregunta' => $row['pregunta'],
                     'pregunta_id' => $pid,
-                    'respuestas' => []
+                    'genero_id' => $row['genero_id'],
+                    'genero_name' => $this->categoryDao->getById($row['genero_id'])['nombre'],
+                    'respuestas' => [],
                 ];
             }
 
             if (!empty($row['respuesta_id'])) {
                 $questions[$pid]['respuestas'][] = [
                     'respuesta' => $row['respuesta'],
-                    'respuesta_id' => $row['respuesta_id']
+                    'respuesta_id' => $row['respuesta_id'],
+                    'es_correcta' => $row['es_correcta']
                 ];
             }
         }

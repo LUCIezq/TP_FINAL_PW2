@@ -39,5 +39,11 @@ class EditorController
         ]);
     }
 
+    public function aprobar()
+    {
+
+        ShowData::show($_POST);
+    }
+
 
 }
