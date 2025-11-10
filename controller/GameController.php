@@ -45,6 +45,7 @@ class GameController
                 "pregunta" => $pregunta,
                 "respuestas" => $respuestas
             ]);
+
             return;
         }
 
@@ -83,6 +84,7 @@ class GameController
         // obtener primera pregunta sin repetir
         $pregunta = $this->gameDao->obtenerPregunta($generoId, $dificultadId, $usuarioId);
         $respuestas = $this->gameDao->obtenerRespuestas((int) $pregunta['id']);
+
 
         $this->renderer->render("gamePregunta", [
             "partida_id" => $partidaId,
