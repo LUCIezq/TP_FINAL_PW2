@@ -35,15 +35,13 @@ class HomeController
                 "home",
 
                 [
-                    "usuario" => $_SESSION['user']['nombre_usuario'],
-                    "url_profile" => $_SESSION['user']['foto_perfil'],
+                    "usuario" => $_SESSION['user'],
                     "isLogged" => $_SESSION['logged_in'],
                     "jugadores" => $players,
                     /*
                     "solicitud_errors" => $error_solicitud,
                     "solicitud_success" => $success_solicitud,
                     */
-                    "id" => $_SESSION["user"]["id"],
                 ]
             );
         }

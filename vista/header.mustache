@@ -14,6 +14,7 @@
   <!-- CSS externo -->
   <link href="/public/assets/header.css" rel="stylesheet">
   <link href="/public/assets/footer.css" rel="stylesheet">
+
   <script defer src="/public/js/map.js"></script>
 
 </head>
@@ -26,17 +27,27 @@
         <h3 class="site-title m-0">Questify</h3>
 
         {{#isLogged}}
+        {{#isPlayer}}
         <div class="d-flex align-items-center gap-3">
-          <img src="{{url_profile}}" alt="Foto de perfil" width="40" height="40"
+          <img src="{{usuario.foto_perfil}}" alt="Foto de perfil" width="40" height="40"
             class="rounded-circle object-fit-cover">
 
           <span class="fw-semibold">Bienvenido,
-            <a href="/usuario/perfil/{{id}}" class="text-decoration-none">
-              {{usuario}}!
+            <a href="/usuario/perfil/{{usuario.id}}" class="text-decoration-none">
+              {{usuario.nombre_usuario}}!
             </a>
           </span>
+
+          {{/isPlayer}}
+
+          <a class="btn btn-sm btn-primary" href="/login/logout">
+            Cerrar sesion
+          </a>
+
         </div>
+
         {{/isLogged}}
+
       </div>
     </div>
   </header>

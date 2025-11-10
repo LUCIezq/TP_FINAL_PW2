@@ -107,4 +107,54 @@ class PreguntasDao
 
     }
 
+    public function getQuestionById($id)
+    {
+
+        $sql = "SELECT p.id as pregunta_id,
+        p.texto as pregunta,
+        p.genero_id,
+        r.texto as respuesta
+        FROM pregunta p 
+        LEFT JOIN respuesta r on r.pregunta_id = p.id
+        WHERE p.id = ?";
+        $params = [$id];
+        $types = "i";
+
+        $data = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        );
+
+        $questions = [];
+
+        foreach ($data as $row) {
+            $id = $row['pregunta_id'];
+
+            if (!isset($questions[$id])) {
+                $questions[$id] = [
+                    'pregunta_id' => $row['pregunta_id'],
+                    'pregunta' => $row['pregunta'],
+                    'genero_id' => $row['genero_id'],
+                    'respuestas' => [
+                        $row['respuesta']
+
+                    ],
+                ];
+            } else {
+                $questions[$id]['respuestas'][] = $row['respuesta'];
+            }
+        }
+        return array_values($questions)[0] ?? null;
+    }
+
+    public function aprobarPregunta($id)
+    {
+        $sql = 'UPDATE pregunta set activa=1 where id = ?';
+        $params = [$id];
+        $types = 'i';
+        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+    }
+
+    public function actualizarPregunta($data, $id)
+    {
+    }
 }

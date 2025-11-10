@@ -1,59 +1,77 @@
-<header>
-    <title>Editor de Preguntas</title>
-    <link rel="stylesheet" href="/public/assets/editor.css">
-</header>
-
-<body class="p-4">
-
-    <div class="container" style="max-width: 800px;">
-        <!-- Navegación -->
-        <div class="d-flex justify-content-between mb-4">
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Sugeridas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Sistema</a>
-                </li>
-            </ul>
-            <button class="btn btn-outline-primary rounded-pill px-3">Crear preguntas +</button>
-        </div>
-
-
-        {{#questions}}
-        <div class="card p-4"
-            style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
-
-            <form method="post" action="/editor/aprobar" style="display: flex; flex-direction: column; gap: 1rem;">
-
-                <div class="w-100">
-                    <small class="text-muted">Pregunta creada por <b>
-                            @{{usuario}}
-                        </b></small>
-                    <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" />
-                </div>
-
-                <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="categoria" required>
-                    <option value="{{genero_name}}">{{genero_name}}</option>
-                </select>
-
-                {{#respuestas}}
-                <div class="form-check mb-3 opcion">
-                    <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
-                        name="respuesta">
-                    <input type="text" name="respuesta{{@index}}" class="form-control" required
-                        placeholder="Respuesta {{@index}}" value="{{respuesta}}">
-                </div>
-                {{/respuestas}}
-
-                <button style="align-self: flex-start;" type="submit" class="guardar-btn">Aprobar</button>
-            </form>
-        </div>
-        {{/questions}}
-
-        {{^questions}}Sin datos{{/questions}}
-
+<div class="container" style="max-width: 800px; margin-top: 3rem;">
+    <!-- Navegación -->
+    <div class="d-flex justify-content-between mb-4">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Sugeridas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Sistema</a>
+            </li>
+        </ul>
+        <button class="btn btn-outline-primary rounded-pill px-3">Crear preguntas +</button>
     </div>
 
+    {{#message}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+    </div>
+    {{/message}}
 
-</body>
+    {{#questions}}
+    <div class="card p-4"
+        style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
+
+        <form method="post" action="/editor/aprobar" style="display: flex; flex-direction: column; gap: 1rem;">
+
+            <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
+
+            <div class="w-100">
+                <small class="text-muted">Pregunta creada por <b>
+                        @{{usuario}}
+                    </b></small>
+                <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" required />
+            </div>
+
+            <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id" required>
+                <option value="" disabled>Seleccione una categoría</option>
+                {{#categories}}
+                <option value="{{genero_id}}" {{#es_seleccionada}}selected{{/es_seleccionada}}>{{nombre}}</option>
+                {{/categories}}
+            </select>
+
+            {{#respuestas}}
+            <div class="form-check mb-3 opcion">
+                <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
+                    value="{{respuesta_id}}" name="id_correcta" required>
+                <input type="text" name="respuesta{{respuesta_id}}" id="{{respuesta_id}}" class="form-control" required
+                    placeholder="Opcion" value="{{respuesta}}">
+            </div>
+            {{/respuestas}}
+
+            <button style="align-self: flex-start;" type="submit" class="btn btn-primary">Aprobar</button>
+        </form>
+    </div>
+
+    {{/questions}}
+
+    {{^questions}}
+    <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
+        No hay preguntas pendientes de aprobación.
+    </h2>
+    {{/questions}}
+
+</div>
+
+<script>
+    const inputsRadio = document.querySelectorAll('.opcion input[type="radio"]');
+
+    inputsRadio.forEach(radio => {
+        const dataId = radio.value;
+
+        radio.addEventListener('change', () => {
+            const inputText = document.getElementById(dataId);
+            inputText.focus();
+        })
+    });
+</script>

@@ -61,8 +61,6 @@ Esta arquitectura facilita la escalabilidad, el mantenimiento y la reutilizació
 - Email: editor@editor.com
 - Contraseña: editoreditor
 
-> Con este usuario podés ingresar al panel de edición para crear o modificar preguntas.
-
-## 👨‍💻 Autor Ezequiel Luci - Yamila Sleiman - Leandro Carrazo Pedraza
+## 👨‍💻 Autores Ezequiel Luci - Yamila Sleiman - Leandro Carrazo Pedraza
 
 - 📘 Proyecto académico para la Tecnicatura en Programación Web — Universidad Nacional de La Matanza (UNLaM)
