@@ -38,12 +38,12 @@ class GameController
                 $partida['usuario_id']
             );
 
-            $respuestas = $this->gameDao->obtenerRespuestas((int)$pregunta['id']);
+            $respuestas = $this->gameDao->obtenerRespuestas((int) $pregunta['id']);
 
             $this->renderer->render("gamePregunta", [
-                "partida_id"  => $partida['id'],
-                "pregunta"    => $pregunta,
-                "respuestas"  => $respuestas
+                "partida_id" => $partida['id'],
+                "pregunta" => $pregunta,
+                "respuestas" => $respuestas
             ]);
             return;
         }
@@ -63,9 +63,9 @@ class GameController
             return;
         }
 
-        $generoId = (int)$genero['id'];
+        $generoId = (int) $genero['id'];
         $dificultadId = 1; // "inicial" por ahora
-        $usuarioId = (int)$_SESSION['user']['id'];
+        $usuarioId = (int) $_SESSION['user']['id'];
 
         // crear partida
         $partidaId = $this->gameDao->crearPartida($usuarioId, $generoId, $dificultadId);
@@ -82,12 +82,12 @@ class GameController
 
         // obtener primera pregunta sin repetir
         $pregunta = $this->gameDao->obtenerPregunta($generoId, $dificultadId, $usuarioId);
-        $respuestas = $this->gameDao->obtenerRespuestas((int)$pregunta['id']);
+        $respuestas = $this->gameDao->obtenerRespuestas((int) $pregunta['id']);
 
         $this->renderer->render("gamePregunta", [
-            "partida_id"  => $partidaId,
-            "pregunta"    => $pregunta,
-            "respuestas"  => $respuestas
+            "partida_id" => $partidaId,
+            "pregunta" => $pregunta,
+            "respuestas" => $respuestas
         ]);
     }
 
@@ -102,9 +102,9 @@ class GameController
         }
 
         $respuestaId = $_POST['respuesta_id'] ?? null;
-        $preguntaId  = $_POST['pregunta_id'] ?? null;
-        $partidaId   = $_POST['partida_id'] ?? null;
-        $usuarioId   = $_SESSION['user']['id'] ?? null;
+        $preguntaId = $_POST['pregunta_id'] ?? null;
+        $partidaId = $_POST['partida_id'] ?? null;
+        $usuarioId = $_SESSION['user']['id'] ?? null;
 
         if (!$respuestaId || !$preguntaId || !$partidaId || !$usuarioId) {
             echo json_encode(["error" => "Datos incompletos"]);
@@ -124,11 +124,11 @@ class GameController
             $usuarioId,
             $partidaId,
             $preguntaId,
-            (int)$esCorrecta === 1
+            (int) $esCorrecta === 1
         );
 
         // 3- si es correta:
-        if ((int)$esCorrecta === 1) {
+        if ((int) $esCorrecta === 1) {
 
             $this->gameDao->sumarPunto($usuarioId);
             $_SESSION['partida']['preguntas_respondidas']++;
@@ -179,12 +179,12 @@ class GameController
             $partida['usuario_id']
         );
 
-        $respuestas = $this->gameDao->obtenerRespuestas((int)$pregunta['id']);
+        $respuestas = $this->gameDao->obtenerRespuestas((int) $pregunta['id']);
 
         $this->renderer->render("gamePregunta", [
-            "partida_id"  => $partida['id'],
-            "pregunta"    => $pregunta,
-            "respuestas"  => $respuestas
+            "partida_id" => $partida['id'],
+            "pregunta" => $pregunta,
+            "respuestas" => $respuestas
         ]);
     }
 }
