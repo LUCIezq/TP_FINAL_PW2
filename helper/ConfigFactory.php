@@ -76,18 +76,15 @@ class ConfigFactory
         $this->objetos['AdminController'] = new AdminController(
             $this->renderer
         );
-    }
 
-
-    //🔋🔋🔋🔋🔋🔋 nuevo para agregar 🔋🔋🔋🔋🔋🔋
-    /*
-     * require_once 'model/dao/GameDao.php';
+        require_once 'model/dao/GameDao.php';
         require_once 'controller/GameController.php';
         $this->objetos['GameController'] = new GameController(
             $this->renderer,
             new GameDao($this->conexion)
         );
-     */
+    }
+
 
     public function get($objectName)
     {

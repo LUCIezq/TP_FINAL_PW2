@@ -1,4 +1,4 @@
-<div class="container text-center py-5">
+<!--<div class="container text-center py-5">
     <h2 class="mb-4">🎡 Gira la ruleta para descubrir el genero de tu preguta</h2>
 
     <button id="btnGirar" class="btn btn-lg btn-primary px-5 py-3">
@@ -18,4 +18,22 @@
                 "<button type='submit' class='btn btn-success mt-3'>Comenzar partida</button>" +
                 "</form>";
     });
-</script>
+</script>-->
+<div class="container text-center py-5">
+    <h2 class="mb-4">🎡 ¡Gira la ruleta para descubrir el genero de tu pregunta!</h2>
+
+    <div class="ruleta-container mx-auto position-relative">
+        <canvas id="ruletaCanvas" width="400" height="400"></canvas>
+        <div id="flecha" class="flecha">▼</div>
+    </div>
+
+    <button id="btnGirar" class="btn btn-lg btn-primary mt-4 px-5 py-3">
+        Girar ruleta
+    </button>
+
+    <div id="resultado" class="mt-5 h4"></div>
+</div>
+
+<!-- Enlaces al CSS y JS -->
+<link rel="stylesheet" href="/public/assets/gameRuleta.css">
+<script src="/public/js/gameRuleta.js"></script>

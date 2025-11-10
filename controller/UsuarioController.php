@@ -36,7 +36,6 @@ class UsuarioController
 
         $gameDao = new GameDao($this->usuarioDao->getConnection());
         $estadisticas = $gameDao->obtenerEstadisticasUsuario($id);
-
         $usuario = array_merge($usuario, $estadisticas);
 
         try {
