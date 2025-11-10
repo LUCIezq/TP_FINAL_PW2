@@ -34,19 +34,19 @@ class GameDao
 
     public function obtenerPregunta($generoId, $dificultadId, $usuarioId)
     {
-        $sql = "SELECT p.id, p.enunciado
+        $sql = "SELECT p.id, p.texto
             FROM pregunta p
             WHERE p.genero_id = ?
-              AND p.dificultad_id = ?
-              AND p.activa = 1
-              AND p.id NOT IN (
-                  SELECT h.pregunta_id
-                  FROM historial_partida h
-                  JOIN pregunta pq ON pq.id = h.pregunta_id
-                  WHERE h.usuario_id = ?
+            AND p.dificultad_id = ?
+            AND p.activa = 1
+            AND p.id NOT IN (
+                SELECT h.pregunta_id
+                FROM historial_partida h
+                JOIN pregunta pq ON pq.id = h.pregunta_id
+                WHERE h.usuario_id = ?
                     AND pq.genero_id = ?
                     AND pq.dificultad_id = ?
-              )
+            )
             ORDER BY RAND()
             LIMIT 1";
 

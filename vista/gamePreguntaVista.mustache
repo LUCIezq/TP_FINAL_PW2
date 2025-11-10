@@ -1,6 +1,6 @@
 <div class="container text-center py-5">
     <h3 class="mb-4">Pregunta</h3>
-    <p class="fs-5">{{pregunta.enunciado}}</p>
+    <p class="fs-5">{{pregunta.texto}}</p>
 
     <form id="formPregunta" method="POST" action="/game/respuesta">
         <input type="hidden" name="partida_id" value="{{partida_id}}">
@@ -8,13 +8,10 @@
 
         <div class="d-grid gap-3 col-6 mx-auto mt-4">
             {{#respuestas}}
-                <button
-                        type="button"
-                        class="btn btn-outline-primary btn-lg opcion-respuesta"
-                        data-id="{{id}}"
-                        data-texto="{{texto}}">
-                    {{texto}}
-                </button>
+            <button type="button" class="btn btn-outline-primary btn-lg opcion-respuesta" data-id="{{id}}"
+                data-texto="{{texto}}">
+                {{texto}}
+            </button>
             {{/respuestas}}
         </div>
     </form>
@@ -39,29 +36,29 @@
                 method: "POST",
                 body: formData
             })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.correcta && data.continuar) {
+                .then(res => res.json())
+                .then(data => {
+                    if (data.correcta && data.continuar) {
 
-                            btn.classList.remove("btn-outline-primary");
-                            btn.classList.add("btn-success");
-                            mensajeDiv.innerHTML = "✅ ¡Correcto!";
-                            setTimeout(() => {
-                                window.location.href = "/game/siguientePregunta";
-                            }, 1500);
-                        }
-                        else if (data.fin) {
-                            mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
-                            setTimeout(() => window.location.href = "/home", 2500);
-                        }
-                        else if (data.correcta === false) {
+                        btn.classList.remove("btn-outline-primary");
+                        btn.classList.add("btn-success");
+                        mensajeDiv.innerHTML = "✅ ¡Correcto!";
+                        setTimeout(() => {
+                            window.location.href = "/game/siguientePregunta";
+                        }, 1500);
+                    }
+                    else if (data.fin) {
+                        mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
+                        setTimeout(() => window.location.href = "/home", 2500);
+                    }
+                    else if (data.correcta === false) {
 
-                            btn.classList.remove("btn-outline-primary");
-                            btn.classList.add("btn-danger");
-                            mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" + data.correcta_texto + "</strong>";
-                            setTimeout(() => window.location.href = "/home", 3000);
-                        }
-                    })
+                        btn.classList.remove("btn-outline-primary");
+                        btn.classList.add("btn-danger");
+                        mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" + data.correcta_texto + "</strong>";
+                        setTimeout(() => window.location.href = "/home", 3000);
+                    }
+                })
         });
     });
 </script>
