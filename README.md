@@ -1,29 +1,68 @@
-# Pokédex básica (para práctica de refactor)
+# 🧠 Preguntados — Juego de preguntas y respuestas
 
-> Implementación deliberadamente simple y repetitiva (sin prepared statements, sin helpers, conexión duplicada) para usar en clase y luego refactorizar.
+**Preguntados** es un proyecto web desarrollado en **PHP** siguiendo el patrón **MVC (Modelo–Vista–Controlador)**.  
+El sistema permite que los usuarios se registren, verifiquen su cuenta por correo electrónico, respondan preguntas para ganar puntos y suban de nivel.  
+Incluye un rol especial de **editor**, encargado de crear y gestionar las preguntas del juego.
 
-## Requisitos
-- PHP 7+ con mysqli
-- MySQL/MariaDB
+---
 
-## Instalación
-1. Crear BD e importar `database.sql`.
-2. Copiar el contenido del zip en el servidor (colocar la carpeta `imagenes` con permisos de escritura si se va a subir imágenes).
-3. Usuario admin: `admin` / `admin`.
+## 🚀 Tecnologías utilizadas
 
-## Archivos
-- index.php (listado + búsqueda)
-- login.php / logout.php
-- ver.php (detalle)
-- nuevo.php (alta, requiere login)
-- editar.php (modificación, requiere login)
-- borrar.php (baja, requiere login)
-- tipos/ (iconos de tipo)
-- imagenes/ (placeholders y futuras subidas)
+- **PHP 8+**
+- **MySQL / MariaDB**
+- **HTML5, CSS3 y JavaScript**
+- **Mustache** (motor de plantillas)
+- **PHPMailer** o `mail()` para envío de correos
+- **XAMPP** (entorno local)
+- **InfinityFree** (hosting de prueba)
 
-## Notas para discusión/refactor
-- Repetición de conexión y encabezado/pie.
-- SQL vulnerable a inyección.
-- Password en texto plano.
-- Falta validación y sanitización.
-- No se borran archivos de imagen en `borrar.php`.
+---
+
+## 🧩 Arquitectura — Patrón MVC
+
+El proyecto está estructurado bajo el modelo **MVC**, lo que asegura una separación clara entre:
+
+- **Modelo:** manejo de la base de datos y la lógica de negocio (usuarios, preguntas, respuestas, niveles, etc.).
+- **Vista:** archivos Mustache encargados de renderizar el contenido dinámico en HTML.
+- **Controlador:** intermediario entre la vista y el modelo; gestiona las acciones del usuario y las respuestas del sistema.
+
+Esta arquitectura facilita la escalabilidad, el mantenimiento y la reutilización del código.
+
+---
+
+## ⚙️ Funcionalidades principales
+
+### 👤 Sistema de usuarios
+
+- Registro de usuarios con **hash seguro de contraseñas** (`password_hash` y `password_verify`).
+- Envío de **correo de verificación** con **token único** generado al registrarse.
+- Activación de cuenta mediante enlace recibido por email.
+- Inicio de sesión y manejo de sesión seguro.
+- Roles definidos:
+  - 🧑‍🎓 **Jugador:** puede responder preguntas y acumular puntos.
+  - ✏️ **Editor:** puede crear, editar y eliminar preguntas.
+
+### 🎯 Lógica de juego
+
+- Cada pregunta respondida correctamente otorga **1 punto**.
+- El nivel del usuario se determina por la cantidad de puntos acumulados.
+- Los niveles se definen en una tabla `nivel` con valores preconfigurados (por ejemplo: 1, 2, 3... según los puntos necesarios).
+
+### 🧱 Otras características
+
+- Validaciones tanto del lado del cliente como del servidor.
+- Codificación **UTF-8** para evitar errores de caracteres.
+- Implementación adaptable a distintos servidores (local o hosting gratuito como InfinityFree).
+
+---
+
+## 🔑 Credenciales de prueba (rol Editor)
+
+- Email: editor@editor.com
+- Contraseña: editoreditor
+
+> Con este usuario podés ingresar al panel de edición para crear o modificar preguntas.
+
+## 👨‍💻 Autor Ezequiel Luci - Yamila Sleiman - Leandro Carrazo Pedraza
+
+- 📘 Proyecto académico para la Tecnicatura en Programación Web — Universidad Nacional de La Matanza (UNLaM)

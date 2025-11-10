@@ -75,6 +75,9 @@ class PreguntasDao
 
         $result = $this->conexion->query($sql);
 
+        if (empty($result))
+            return [];
+
         $questions = [];
 
         foreach ($result as $row) {
