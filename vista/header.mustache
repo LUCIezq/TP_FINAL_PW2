@@ -27,8 +27,9 @@
         <h3 class="site-title m-0">Questify</h3>
 
         {{#isLogged}}
-        {{#isPlayer}}
+
         <div class="d-flex align-items-center gap-3">
+          {{#isPlayer}}
           <img src="{{usuario.foto_perfil}}" alt="Foto de perfil" width="40" height="40"
             class="rounded-circle object-fit-cover">
 
@@ -37,12 +38,13 @@
               {{usuario.nombre_usuario}}!
             </a>
           </span>
-
           {{/isPlayer}}
 
+          {{^isPlayer}}
           <a class="btn btn-sm btn-primary" href="/login/logout">
             Cerrar sesion
           </a>
+          {{/isPlayer}}
 
         </div>
 

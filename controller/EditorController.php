@@ -49,7 +49,8 @@ class EditorController
             "questions" => $questions,
             "categories" => $categories,
             "isLogged" => IsLogged::isLogged(),
-            "message" => $message
+            "message" => $message,
+            "usuario" => $_SESSION['user'],
         ]);
     }
 

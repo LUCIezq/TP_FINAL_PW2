@@ -38,6 +38,7 @@ class HomeController
                     "usuario" => $_SESSION['user'],
                     "isLogged" => $_SESSION['logged_in'],
                     "jugadores" => $players,
+                    "isPlayer" => $_SESSION["user"]["rol_id"] === UserRole::JUGADOR
                     /*
                     "solicitud_errors" => $error_solicitud,
                     "solicitud_success" => $success_solicitud,
@@ -45,7 +46,5 @@ class HomeController
                 ]
             );
         }
-
-
     }
 }
