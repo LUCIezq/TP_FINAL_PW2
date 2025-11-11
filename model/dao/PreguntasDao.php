@@ -170,11 +170,13 @@ class PreguntasDao
     {
         $sql = "SELECT p.id as pregunta_id,
         p.texto as pregunta,
+        u.nombre_usuario as usuario,
         p.genero_id,
         r.texto as respuesta,
         r.id as respuesta_id,
         r.es_correcta
         FROM pregunta p 
+        JOIN usuario u ON p.usuario_id = u.id
         LEFT JOIN respuesta r on r.pregunta_id = p.id
         WHERE p.activa=true";
 
@@ -190,6 +192,7 @@ class PreguntasDao
                     'pregunta_id' => $row['pregunta_id'],
                     'pregunta' => $row['pregunta'],
                     'genero_id' => $row['genero_id'],
+                    'usuario' => $row['usuario'],
                     'respuestas' => [
                         $row['respuesta']
                     ],

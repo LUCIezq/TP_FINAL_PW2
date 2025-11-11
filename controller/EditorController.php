@@ -32,7 +32,6 @@ class EditorController
             exit();
         }
 
-
         $type = $_GET['type'] ?? 'sistema';
 
         $questions = [];
