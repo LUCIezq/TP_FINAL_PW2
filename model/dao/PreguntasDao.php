@@ -193,9 +193,7 @@ class PreguntasDao
                     'pregunta' => $row['pregunta'],
                     'genero_id' => $row['genero_id'],
                     'usuario' => $row['usuario'],
-                    'respuestas' => [
-                        $row['respuesta']
-                    ],
+                    'respuestas' => [],
                 ];
             }
             if (!empty($row['respuesta_id'])) {
