@@ -32,11 +32,22 @@ class EditorController
             exit();
         }
 
-        $questionsByUsers = $this->preguntasDao->getAllQuestionByUsers();
+
+        $type = $_GET['type'] ?? 'sistema';
+
+        $questions = [];
+
+        if ($type == 'sugeridas') {
+            $questions = $this->preguntasDao->getAllQuestionByUsers();
+        }
+        if ($type == 'sistema') {
+            $questions = $this->preguntasDao->getAllSystemQuestions();
+        }
+
         $categories = $this->categoryDao->getAll();
 
         $this->mustacheRenderer->render("editor", [
-            "questions" => $questionsByUsers,
+            "questions" => $questions,
             "categories" => $categories,
             "isLogged" => IsLogged::isLogged(),
             "message" => $message

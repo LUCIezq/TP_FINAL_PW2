@@ -165,4 +165,44 @@ class PreguntasDao
         $types = "i";
         return $this->conexion->executePrepared($sql, $types, $params) === 1;
     }
+
+    public function getAllSystemQuestions()
+    {
+        $sql = "SELECT p.id as pregunta_id,
+        p.texto as pregunta,
+        p.genero_id,
+        r.texto as respuesta,
+        r.id as respuesta_id,
+        r.es_correcta
+        FROM pregunta p 
+        LEFT JOIN respuesta r on r.pregunta_id = p.id
+        WHERE p.activa=true";
+
+        $data = $this->conexion->query($sql);
+
+        $questions = [];
+
+        foreach ($data as $row) {
+            $id = $row['pregunta_id'];
+
+            if (!isset($questions[$id])) {
+                $questions[$id] = [
+                    'pregunta_id' => $row['pregunta_id'],
+                    'pregunta' => $row['pregunta'],
+                    'genero_id' => $row['genero_id'],
+                    'respuestas' => [
+                        $row['respuesta']
+                    ],
+                ];
+            }
+            if (!empty($row['respuesta_id'])) {
+                $questions[$id]['respuestas'][] = [
+                    'respuesta' => $row['respuesta'],
+                    'respuesta_id' => $row['respuesta_id'],
+                    'es_correcta' => $row['es_correcta']
+                ];
+            }
+        }
+        return array_values($questions);
+    }
 }
