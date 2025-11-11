@@ -157,4 +157,12 @@ class PreguntasDao
     public function actualizarPregunta($data, $id)
     {
     }
+
+    public function rechazarPregunta($id)
+    {
+        $sql = "DELETE FROM pregunta WHERE id = ?";
+        $params = [$id];
+        $types = "i";
+        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+    }
 }

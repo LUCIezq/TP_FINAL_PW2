@@ -84,6 +84,45 @@ class EditorController
         }
     }
 
+    public function rechazar()
+    {
 
+        $pregunta = $this->preguntasDao->getQuestionById($_POST["pregunta_id"]);
+
+        if (!$pregunta) {
+            header("Location:/editor/index");
+            exit();
+        }
+
+        try {
+            $state = $this->preguntasDao->rechazarPregunta($_POST["pregunta_id"]);
+
+            $state == true ? $_SESSION["message"] = "Pregunta rechazada correctamente." : $_SESSION['message'] = "No se pudo rechazar la pregunta.";
+
+        } catch (Exception $e) {
+            $_SESSION["message"] = "Error al rechazar la pregunta.";
+            header("Location:/editor/index");
+            exit();
+        }
+        header("Location:/editor/index");
+        exit();
+
+    }
+
+    public function procesarPregunta()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $accion = $_POST['accion'] ?? null;
+
+            if ($accion === 'aprobar') {
+                $this->aprobar();
+            } elseif ($accion === 'rechazar') {
+                $this->rechazar();
+            } else {
+                header("Location:/editor/index");
+                exit();
+            }
+        }
+    }
 
 }
