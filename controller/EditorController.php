@@ -32,18 +32,18 @@ class EditorController
             exit();
         }
 
-        $type = $_GET['type'] ?? 'sistema';
+        $filters = [
+            'type' => htmlspecialchars(trim($_GET["type"] ?? "sistema"), ENT_QUOTES, 'UTF-8'),
+            'category_id' => htmlspecialchars(trim($_GET["category_id"] ?? ""), ENT_QUOTES, 'UTF-8')
+        ];
 
-        $questions = [];
-
-        if ($type == 'sugeridas') {
-            $questions = $this->preguntasDao->getAllQuestionByUsers();
-        }
-        if ($type == 'sistema') {
-            $questions = $this->preguntasDao->getAllSystemQuestions();
-        }
-
+        $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
+        ;
         $categories = $this->categoryDao->getAll();
+
+        foreach ($categories as &$category) {
+            $category['checked'] = $filters['category_id'] === $category['id'] ? 'checked' : '';
+        }
 
         $this->mustacheRenderer->render("editor", [
             "questions" => $questions,
@@ -51,6 +51,8 @@ class EditorController
             "isLogged" => IsLogged::isLogged(),
             "message" => $message,
             "usuario" => $_SESSION['user'],
+            "isSistema" => $filters['type'] == "sistema",
+            "isSugeridas" => $filters['type'] == "sugeridas",
         ]);
     }
 

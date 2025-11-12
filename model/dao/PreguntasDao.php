@@ -59,6 +59,71 @@ class PreguntasDao
         $this->conexion->executePrepared($sql, $types, $params);
     }
 
+    public function getQuestionsWithFilter($filters)
+    {
+        $categories = $this->categoryDao->getAll();
+        $filter = [
+            'sistema' => ' activa = 1',
+            'sugeridas' => ' activa = 0'
+        ];
+
+        $type = $filters['type'];
+        $category = $filters['category_id'];
+
+
+        if (!in_array($type, array_keys($filter))) {
+            $type = 'sistema';
+        }
+
+        if (empty($category) || !is_numeric($category)) {
+            $categoryCondition = "";
+        } else {
+            if (!in_array($category, array_column($categories, 'id'))) {
+                $categoryCondition = "";
+            } else {
+                $categoryCondition = " AND p.genero_id = " . intval($category);
+            }
+        }
+
+        $sql = "SELECT u.nombre_usuario as usuario,
+        p.texto as pregunta,
+        p.id as pregunta_id,
+        r.texto as respuesta,
+        r.id as respuesta_id,
+        p.genero_id as genero_id,
+        r.es_correcta as es_correcta
+        from pregunta p
+        JOIN usuario u ON p.usuario_id = u.id
+        LEFT JOIN respuesta r ON r.pregunta_id = p.id
+        WHERE p." . $filter[$type] . $categoryCondition;
+
+        $result = $this->conexion->query($sql);
+
+        $questions = [];
+
+        foreach ($result as $row) {
+            $id = $row['pregunta_id'];
+
+            if (!isset($questions[$id])) {
+                $questions[$id] = [
+                    'pregunta_id' => $row['pregunta_id'],
+                    'pregunta' => $row['pregunta'],
+                    'genero_id' => $row['genero_id'],
+                    'usuario' => $row['usuario'],
+                    'respuestas' => [],
+                ];
+            }
+            if (!empty($row['respuesta_id'])) {
+                $questions[$id]['respuestas'][] = [
+                    'respuesta' => $row['respuesta'],
+                    'respuesta_id' => $row['respuesta_id'],
+                    'es_correcta' => $row['es_correcta']
+                ];
+            }
+        }
+        return array_values($questions);
+    }
+
     public function getAllQuestionByUsers()
     {
         $sql = "SELECT u.nombre_usuario as usuario,

@@ -1,72 +1,99 @@
-<div class="container" style="max-width: 800px; margin-top: 3rem;">
-    <!-- Navegación -->
-    <div class="d-flex justify-content-between mb-4">
-        <ul class="nav nav-pills">
+<div class="container"
+    style="max-width: 1200px; margin-top: 3rem;display: flex; justify-content: space-between; gap: 2rem;">
+
+    <div class="flex-grow-1">
+        <!-- Navegación -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- <ul class="nav nav-pills">
             <li class="nav-item">
                 <a class="nav-link active" href="/editor/index/?type=sistema">Sistema</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/editor/index/?type=sugeridas">Sugeridas</a>
             </li>
-        </ul>
-        <button class="btn btn-outline-primary rounded-pill px-3">Crear preguntas +</button>
+        </ul> -->
+            <button class="btn btn-outline-primary rounded-pill px-3">Crear preguntas +</button>
+        </div>
+
+        {{#message}}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{message}}
+        </div>
+        {{/message}}
+
+        {{#questions}}
+        <div class="card p-4"
+            style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
+
+            <form method="post" action="/editor/procesarPregunta"
+                style="display: flex; flex-direction: column; gap: 1rem;">
+
+                <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
+
+                <div class="w-100">
+                    <small class="text-muted">Pregunta creada por <b>
+                            {{usuario}}
+                        </b></small>
+                    <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" required />
+                </div>
+
+                <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id" required>
+                    <option value="" disabled>Seleccione una categoría</option>
+                    {{#categories}}
+                    <option value="{{genero_id}}" {{#es_seleccionada}}selected{{/es_seleccionada}}>{{nombre}}</option>
+                    {{/categories}}
+                </select>
+
+                {{#respuestas}}
+                <div class="form-check mb-3 opcion">
+                    <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
+                        value="{{respuesta_id}}" name="id_correcta" required>
+                    <input type="text" name="respuesta{{respuesta_id}}" id="{{respuesta_id}}" class="form-control"
+                        required placeholder="Opcion" value="{{respuesta}}">
+                </div>
+                {{/respuestas}}
+
+                <div class="d-flex gap-2">
+                    <button style="align-self: flex-start;" type="submit" name="accion" value="aprobar"
+                        class="btn btn-primary">Aprobar</button>
+                    <button style="align-self: flex-start;" type="submit" name="accion" value="rechazar"
+                        class="btn btn-danger">Rechazar</button>
+                </div>
+
+            </form>
+        </div>
+        {{/questions}}
+
+        {{^questions}}
+        <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
+            No hay preguntas pendientes de aprobación.
+        </h2>
+        {{/questions}}
     </div>
 
-    {{#message}}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{message}}
-    </div>
-    {{/message}}
+    <form action="/editor/index" method="get">
+        <select name="type" onchange="this.form.submit()" class="form-select">
+            <option value="sistema" {{#isSistema}}selected{{/isSistema}}>Sistema</option>
+            <option value="sugeridas" {{#isSugeridas}}selected{{/isSugeridas}}>Sugeridas</option>
+        </select>
+        <div>
+            <h2 style="font-size: .9rem; margin-top: 1rem; margin-bottom: 1rem;">
+                Seleccione una categoria
+            </h2>
+            {{#categories}}
 
-    {{#questions}}
-    <div class="card p-4"
-        style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
-
-        <form method="post" action="/editor/procesarPregunta" style="display: flex; flex-direction: column; gap: 1rem;">
-
-            <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
-
-            <div class="w-100">
-                <small class="text-muted">Pregunta creada por <b>
-                        {{usuario}}
-                    </b></small>
-                <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" required />
+            <div class="form-check">
+                <input class="form-check-input" type="radio" {{checked}} name="category_id" id="category_{{id}}"
+                    value="{{id}}" {{#is_selected}}checked{{/is_selected}} onchange="this.form.submit()">
+                <label class="form-check-label" style="font-size: .9rem;" for="category_{{id}}">
+                    {{nombre}}
+                </label>
             </div>
-
-            <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id" required>
-                <option value="" disabled>Seleccione una categoría</option>
-                {{#categories}}
-                <option value="{{genero_id}}" {{#es_seleccionada}}selected{{/es_seleccionada}}>{{nombre}}</option>
-                {{/categories}}
-            </select>
-
-            {{#respuestas}}
-            <div class="form-check mb-3 opcion">
-                <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
-                    value="{{respuesta_id}}" name="id_correcta" required>
-                <input type="text" name="respuesta{{respuesta_id}}" id="{{respuesta_id}}" class="form-control" required
-                    placeholder="Opcion" value="{{respuesta}}">
-            </div>
-            {{/respuestas}}
-
-            <div class="d-flex gap-2">
-                <button style="align-self: flex-start;" type="submit" name="accion" value="aprobar"
-                    class="btn btn-primary">Aprobar</button>
-                <button style="align-self: flex-start;" type="submit" name="accion" value="rechazar"
-                    class="btn btn-danger">Rechazar</button>
-            </div>
-
-        </form>
-    </div>
-    {{/questions}}
-
-    {{^questions}}
-    <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
-        No hay preguntas pendientes de aprobación.
-    </h2>
-    {{/questions}}
-
+            {{/categories}}
+        </div>
+    </form>
 </div>
+
 
 
 <script>

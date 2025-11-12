@@ -24,7 +24,7 @@ class MyConexion
     {
         $result = $this->conexion->query($sql);
         if (!$result || $result->num_rows <= 0) {
-            return null;
+            return [];
         }
         return $this->processData($result);
     }
@@ -70,6 +70,7 @@ class MyConexion
     public function processData($result)
     {
         $data = [];
+
         while ($row = $result->fetch_assoc()) {
             $data[] = $row;
         }
