@@ -46,12 +46,19 @@
                 </div>
                 {{/respuestas}}
 
+                {{#isSugeridas}}
                 <div class="d-flex gap-2">
                     <button style="align-self: flex-start;" type="submit" name="accion" value="aprobar"
                         class="btn btn-primary">Aprobar</button>
                     <button style="align-self: flex-start;" type="submit" name="accion" value="rechazar"
                         class="btn btn-danger">Rechazar</button>
                 </div>
+                {{/isSugeridas}}
+
+                {{#isSistema}}
+                <button style="align-self: flex-start;" type="submit" name="accion" value="modificar"
+                    class="btn btn-primary">Modificar</button>
+                {{/isSistema}}
 
             </form>
         </div>
