@@ -2,16 +2,9 @@
     style="max-width: 1200px; margin-top: 3rem;display: flex; justify-content: space-between; gap: 2rem;">
 
     <div class="flex-grow-1">
-        <!-- Navegación -->
+
         <div class="d-flex justify-content-between mb-4">
-            <!-- <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a class="nav-link active" href="/editor/index/?type=sistema">Sistema</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/editor/index/?type=sugeridas">Sugeridas</a>
-            </li>
-        </ul> -->
+
             <button class="btn btn-outline-primary rounded-pill px-3">Crear preguntas +</button>
         </div>
 
@@ -39,9 +32,9 @@
 
                 <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id" required>
                     <option value="" disabled>Seleccione una categoría</option>
-                    {{#categories}}
-                    <option value="{{genero_id}}" {{#es_seleccionada}}selected{{/es_seleccionada}}>{{nombre}}</option>
-                    {{/categories}}
+                    {{#categorias}}
+                    <option value="{{id}}" {{selected}}>{{nombre}}</option>
+                    {{/categorias}}
                 </select>
 
                 {{#respuestas}}
@@ -84,7 +77,7 @@
 
             <div class="form-check">
                 <input class="form-check-input" type="radio" {{checked}} name="category_id" id="category_{{id}}"
-                    value="{{id}}" {{#is_selected}}checked{{/is_selected}} onchange="this.form.submit()">
+                    value="{{id}}" onchange="this.form.submit()">
                 <label class="form-check-label" style="font-size: .9rem;" for="category_{{id}}">
                     {{nombre}}
                 </label>
@@ -93,8 +86,6 @@
         </div>
     </form>
 </div>
-
-
 
 <script>
     const inputsRadio = document.querySelectorAll('.opcion input[type="radio"]');

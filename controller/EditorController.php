@@ -45,10 +45,23 @@ class EditorController
             $category['checked'] = $filters['category_id'] === $category['id'] ? 'checked' : '';
         }
 
+        foreach ($questions as &$p) {
+            $p['categorias'] = [];
+
+            foreach ($categories as $c) {
+                $p['categorias'][] = [
+                    'id' => $c['id'],
+                    'nombre' => $c['nombre'],
+                    'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
+                ];
+            }
+        }
+        unset($p);
+
         $this->mustacheRenderer->render("editor", [
             "questions" => $questions,
-            "categories" => $categories,
             "isLogged" => IsLogged::isLogged(),
+            "categories" => $categories,
             "message" => $message,
             "usuario" => $_SESSION['user'],
             "isSistema" => $filters['type'] == "sistema",
