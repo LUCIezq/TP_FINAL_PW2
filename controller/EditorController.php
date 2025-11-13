@@ -56,6 +56,9 @@ class EditorController
                 ];
             }
         }
+
+        array_unshift($categories, ['id' => '', 'nombre' => 'Todas', 'checked' => $filters['category_id'] === '' ? 'checked' : '']);
+
         unset($p);
 
         $this->mustacheRenderer->render("editor", [
