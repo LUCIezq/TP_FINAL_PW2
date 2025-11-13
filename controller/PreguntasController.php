@@ -61,7 +61,7 @@ class PreguntasController
 
         $id = (int) $result['lastInsertId'];
 
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 4; $i++) {
             $text = $_POST["respuesta" . $i];
             $isCorrect = ($i == $data["indiceCorrecta"]) ? 1 : 0;
 

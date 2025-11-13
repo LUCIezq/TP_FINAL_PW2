@@ -193,11 +193,7 @@ class EditorController
 
             $errors[] = $this->preguntasDao->actualizarPregunta($inputs);
 
-            if (empty($errors)) {
-                $_SESSION['message'] = "Pregunta modificada correctamente.";
-            } else {
-                $_SESSION['message'] = "No se pudo modificar la pregunta.";
-            }
+            empty($errors) ? $_SESSION['message'] = "Pregunta modificada correctamente." : $_SESSION['message'] = implode(' ', $errors);
 
             header("Location:/editor/index");
             exit();
@@ -230,4 +226,12 @@ class EditorController
         }
     }
 
+    public function crearPregunta()
+    {
+        $this->mustacheRenderer->render("preguntas", [
+            "isLogged" => IsLogged::isLogged(),
+            "usuario" => $_SESSION['user'],
+            "categories" => $this->categoryDao->getAll()
+        ]);
+    }
 }

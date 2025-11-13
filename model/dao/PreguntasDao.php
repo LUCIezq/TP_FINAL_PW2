@@ -291,7 +291,8 @@ class PreguntasDao
 
         $sql = 'UPDATE pregunta set ' . implode(',', $cambios) . ' where id = ?';
 
-        return $this->conexion->executePrepared($sql, $types . 'i', [...$params, $preguntaForm_id]) > 0;
+        $this->conexion->executePrepared($sql, $types . 'i', [...$params, $preguntaForm_id]);
+        return "Pregunta actualizada correctamente.";
     }
 
 

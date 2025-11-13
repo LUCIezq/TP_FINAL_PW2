@@ -46,5 +46,9 @@ class HomeController
                 ]
             );
         }
+        if ($_SESSION['user']['rol_id'] == UserRole::EDITOR) {
+            header("location: /editor/index");
+            exit();
+        }
     }
 }
