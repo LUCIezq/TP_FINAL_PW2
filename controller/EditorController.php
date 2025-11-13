@@ -188,9 +188,9 @@ class EditorController
 
         try {
 
-            $status = $this->preguntasDao->actualizarPregunta($inputs);
+            $errors[] = $this->preguntasDao->actualizarPregunta($inputs);
 
-            if ($status) {
+            if (empty($errors)) {
                 $_SESSION['message'] = "Pregunta modificada correctamente.";
             } else {
                 $_SESSION['message'] = "No se pudo modificar la pregunta.";
