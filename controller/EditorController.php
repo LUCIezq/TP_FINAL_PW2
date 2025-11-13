@@ -173,15 +173,22 @@ class EditorController
         if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
             $errors[] = "Todas las respuestas deben ser proporcionadas.";
 
+        foreach ($inputs['respuestas'] as $respuesta) {
+            if (empty(trim($respuesta))) {
+                $errors[] = "Las respuestas no pueden estar vacías.";
+                break;
+            }
+        }
+
         if (!empty($errors)) {
             $_SESSION['message'] = implode(' ', $errors);
             header("Location:/editor/index");
             exit();
         }
 
-        $status = $this->preguntasDao->actualizarPregunta($inputs);
-
         try {
+
+            $status = $this->preguntasDao->actualizarPregunta($inputs);
 
             if ($status) {
                 $_SESSION['message'] = "Pregunta modificada correctamente.";

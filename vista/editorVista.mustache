@@ -41,8 +41,8 @@
                 <div class="form-check mb-3 opcion">
                     <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
                         value="{{respuesta_id}}" name="id_correcta" required>
-                    <input type="text" name="respuestas[]" id="{{respuesta_id}}" class="form-control" required
-                        placeholder="Opcion" value="{{respuesta}}">
+                    <input type="text" name="respuestas[{{respuesta_id}}]" id="{{respuesta_id}}" class="form-control"
+                        required placeholder="Opcion" value="{{respuesta}}">
                 </div>
                 {{/respuestas}}
 
@@ -60,7 +60,7 @@
                     {{/isSistema}}
 
                     <button style="align-self: flex-start;" type="submit" name="accion" value="rechazar"
-                        class="btn btn-danger">Rechazar</button>
+                        class="btn btn-danger">{{#isSistema}}Eliminar{{/isSistema}}{{^isSistema}}Rechazar{{/isSistema}}</button>
                 </div>
             </form>
         </div>

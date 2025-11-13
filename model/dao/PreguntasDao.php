@@ -243,7 +243,7 @@ class PreguntasDao
         $textoForm = $data['texto'];
         $genero_idForm = $data['genero_id'];
         $id_correctaForm = $data['id_correcta'];
-        // $respuestasForm = $data['respuestas'];
+        $respuestasForm = $data['respuestas'];
 
         $preguntaEnBd = $this->obtenerPreguntaPorId($preguntaForm_id);
 
@@ -273,20 +273,17 @@ class PreguntasDao
         $respuestaCorrectaBd = $this->obtenerRespuestaCorrectaPorIdPregunta($preguntaEnBd['id']);
 
         if ($respuestaCorrectaBd['id'] != $id_correctaForm) {
-            $sql = 'UPDATE respuesta
-            SET es_correcta = CASE 
-            WHEN id = ? THEN 1 
-            ELSE 0 
-            END 
-            WHERE pregunta_id = ?';
-            $params = [
-                $id_correctaForm,
-                $preguntaForm_id
-            ];
-            $types = 'ii';
-            $this->conexion->executePrepared($sql, $types, $params);
+            $this->actualizarRespuestaCorrecta($id_correctaForm, $preguntaEnBd['id']);
         }
 
+        $respuestasBd = $this->obtenerRespuestasPorId($preguntaEnBd['id']);
+
+        foreach ($respuestasBd as $respuestaBd) {
+            $respuestaId = $respuestaBd['id'];
+            if (isset($respuestasForm[$respuestaId]) && $respuestasForm[$respuestaId] !== $respuestaBd['texto']) {
+                $this->actualizarEnunciadoRespuesta($respuestaId, $respuestasForm[$respuestaId]);
+            }
+        }
 
         if (empty($cambios)) {
             return 'No hay cambios para actualizar.';
@@ -298,9 +295,36 @@ class PreguntasDao
     }
 
 
+    public function actualizarEnunciadoRespuesta($respuestaId, $nuevoTexto)
+    {
+        $sql = 'UPDATE respuesta set texto = ? where id = ?';
+        $paramsUpdate = [
+            $nuevoTexto,
+            $respuestaId
+        ];
+        $typesUpdate = 'si';
+        $this->conexion->executePrepared($sql, $typesUpdate, $paramsUpdate);
+    }
+
+    public function actualizarRespuestaCorrecta($idCorrecta, $idPregunta)
+    {
+        $sql = 'UPDATE respuesta
+            SET es_correcta = CASE 
+            WHEN id = ? THEN 1 
+            ELSE 0 
+            END 
+            WHERE pregunta_id = ?';
+        $params = [
+            $idCorrecta,
+            $idPregunta
+        ];
+        $types = 'ii';
+        $this->conexion->executePrepared($sql, $types, $params);
+    }
+
     public function obtenerRespuestasPorId($preguntaId)
     {
-        $sql = "SELECT id,texto,es_correcta 
+        $sql = "SELECT id,texto
         from respuesta 
         where pregunta_id = ?";
 
