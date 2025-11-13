@@ -172,6 +172,20 @@ class PreguntasDao
 
     }
 
+    public function obtenerPreguntaPorId($id)
+    {
+        $sql = "SELECT id,texto,genero_id,activa from pregunta where id = ?";
+        $params = [$id];
+        $types = "i";
+
+        $data = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        );
+
+        return $data[0];
+    }
+
+
     public function getQuestionById($id)
     {
 
@@ -219,8 +233,95 @@ class PreguntasDao
         return $this->conexion->executePrepared($sql, $types, $params) === 1;
     }
 
-    public function actualizarPregunta($data, $id)
+    public function actualizarPregunta($data)
     {
+        $cambios = [];
+        $params = [];
+        $types = '';
+
+        $preguntaForm_id = $data['pregunta_id'];
+        $textoForm = $data['texto'];
+        $genero_idForm = $data['genero_id'];
+        $id_correctaForm = $data['id_correcta'];
+        // $respuestasForm = $data['respuestas'];
+
+        $preguntaEnBd = $this->obtenerPreguntaPorId($preguntaForm_id);
+
+        if (!$preguntaEnBd) {
+            return 'Pregunta invalida.';
+        }
+
+        if ($preguntaEnBd['texto'] !== $textoForm) {
+            $cambios[] = 'texto = ?';
+            $params[] = $textoForm;
+            $types .= 's';
+        }
+
+        $generoPreguntaBd = $preguntaEnBd['genero_id'];
+        $generos = $this->categoryDao->getAll();
+
+        if (!in_array($genero_idForm, array_column($generos, 'id'))) {
+            return 'Genero invalido.';
+        }
+
+        if ($generoPreguntaBd !== (int) $genero_idForm) {
+            $cambios[] = 'genero_id = ?';
+            $params[] = $genero_idForm;
+            $types .= 'i';
+        }
+
+        $respuestaCorrectaBd = $this->obtenerRespuestaCorrectaPorIdPregunta($preguntaEnBd['id']);
+
+        if ($respuestaCorrectaBd['id'] != $id_correctaForm) {
+            $sql = 'UPDATE respuesta
+            SET es_correcta = CASE 
+            WHEN id = ? THEN 1 
+            ELSE 0 
+            END 
+            WHERE pregunta_id = ?';
+            $params = [
+                $id_correctaForm,
+                $preguntaForm_id
+            ];
+            $types = 'ii';
+            $this->conexion->executePrepared($sql, $types, $params);
+        }
+
+
+        if (empty($cambios)) {
+            return 'No hay cambios para actualizar.';
+        }
+
+        $sql = 'UPDATE pregunta set ' . implode(',', $cambios) . ' where id = ?';
+
+        return $this->conexion->executePrepared($sql, $types . 'i', [...$params, $preguntaForm_id]) > 0;
+    }
+
+
+    public function obtenerRespuestasPorId($preguntaId)
+    {
+        $sql = "SELECT id,texto,es_correcta 
+        from respuesta 
+        where pregunta_id = ?";
+
+        $params = [$preguntaId];
+        $types = "i";
+        return $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        );
+    }
+
+    public function obtenerRespuestaCorrectaPorIdPregunta($preguntaId)
+    {
+        $sql = "SELECT id,texto 
+        from respuesta 
+        where pregunta_id = ? AND es_correcta = 1";
+
+        $params = [$preguntaId];
+        $types = "i";
+        return $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        )[0] ?? null;
     }
 
     public function rechazarPregunta($id)

@@ -135,19 +135,88 @@ class EditorController
 
     }
 
+    public function modificar()
+    {
+
+        // 1 - Recibir datos por POST
+        // 2 - Validar y sanitizar datos
+        // 3 - Consultar en la bd si existe la pregunta
+        // 4 - Si existe validar campo a campo para actualizar unicamente el que se modifico.
+        // 5 - Guardamos en un array todos los campos actualizados.
+        // 6 - LLamar al metodo del dao para actualizar la pregunta.
+        // 7 - Redirigir con mensaje de exito o error.
+
+        $errors = [];
+        $inputs = [];
+
+        if ($_SERVER["REQUEST_METHOD"] != "POST") {
+            header("Location:/editor/index");
+            exit();
+        }
+
+        $inputs = [
+            'pregunta_id' => filter_input(INPUT_POST, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'texto' => trim($_POST['texto'] ?? ''),
+            'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'respuestas' => $_POST['respuestas'] ?? []
+        ];
+
+        if (!$inputs['pregunta_id'])
+            $errors[] = "ID de pregunta inválido.";
+        if (empty($inputs['texto']))
+            $errors[] = "El texto de la pregunta no puede estar vacío.";
+        if (!$inputs['genero_id'])
+            $errors[] = "Categoría inválida.";
+        if (!$inputs['id_correcta'])
+            $errors[] = "Debe seleccionarse una respuesta correcta.";
+        if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
+            $errors[] = "Todas las respuestas deben ser proporcionadas.";
+
+        if (!empty($errors)) {
+            $_SESSION['message'] = implode(' ', $errors);
+            header("Location:/editor/index");
+            exit();
+        }
+
+        $status = $this->preguntasDao->actualizarPregunta($inputs);
+
+        try {
+
+            if ($status) {
+                $_SESSION['message'] = "Pregunta modificada correctamente.";
+            } else {
+                $_SESSION['message'] = "No se pudo modificar la pregunta.";
+            }
+
+            header("Location:/editor/index");
+            exit();
+
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error al modificar la pregunta.";
+            header("Location:/editor/index");
+            exit();
+        }
+    }
+
     public function procesarPregunta()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $accion = $_POST['accion'] ?? null;
 
-            if ($accion === 'aprobar') {
-                $this->aprobar();
-            } elseif ($accion === 'rechazar') {
-                $this->rechazar();
-            } else {
-                header("Location:/editor/index");
-                exit();
-            }
+        if ($_SERVER["REQUEST_METHOD"] != "POST") {
+            header("Location:/editor/index");
+            exit();
+        }
+        $accion = $_POST['accion'] ?? null;
+
+        if ($accion === 'aprobar') {
+            $this->aprobar();
+        } elseif ($accion === 'rechazar') {
+            $this->rechazar();
+        } elseif ($accion === 'modificar') {
+            $this->modificar();
+        } else {
+            header("Location:/editor/index");
+            exit();
         }
     }
 

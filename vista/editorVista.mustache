@@ -41,8 +41,8 @@
                 <div class="form-check mb-3 opcion">
                     <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
                         value="{{respuesta_id}}" name="id_correcta" required>
-                    <input type="text" name="respuesta{{respuesta_id}}" id="{{respuesta_id}}" class="form-control"
-                        required placeholder="Opcion" value="{{respuesta}}">
+                    <input type="text" name="respuestas[]" id="{{respuesta_id}}" class="form-control" required
+                        placeholder="Opcion" value="{{respuesta}}">
                 </div>
                 {{/respuestas}}
 
@@ -66,7 +66,7 @@
 
         {{^questions}}
         <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
-            No hay preguntas pendientes de aprobación.
+            No se encontraron preguntas
         </h2>
         {{/questions}}
     </div>
