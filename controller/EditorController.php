@@ -167,7 +167,7 @@ class EditorController
 
         if (!$inputs['pregunta_id'])
             $errors[] = "ID de pregunta inválido.";
-        if (empty($inputs['texto']))
+        if ($inputs['texto'] === '')
             $errors[] = "El texto de la pregunta no puede estar vacío.";
         if (!$inputs['genero_id'])
             $errors[] = "Categoría inválida.";
