@@ -10,6 +10,10 @@ class CategoriaController
         $this->categoryDao = $categoryDao;
     }
 
+    public function eliminarCategoria()
+    {
+
+    }
 
     public function getAll(): array
     {

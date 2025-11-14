@@ -11,6 +11,17 @@ class PreguntasDao
         $this->categoryDao = $categoryDao;
     }
 
+    public function getPreguntasPorCategoria($idCategoria)
+    {
+        $sql = "SELECT * FROM pregunta WHERE genero_id = ?";
+        $params = [$idCategoria];
+        $types = "i";
+
+        $result = $this->conexion->executePrepared($sql, $types, $params);
+
+        return $this->conexion->processData($result);
+    }
+
     public function createQuestion($data)
     {
 

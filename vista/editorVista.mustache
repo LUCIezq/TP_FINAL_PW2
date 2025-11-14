@@ -33,10 +33,12 @@
                 </div>
 
                 <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id" required>
-                    <option value="" disabled>Seleccione una categoría</option>
-                    {{#categorias}}
-                    <option value="{{id}}" {{selected}}>{{nombre}}</option>
-                    {{/categorias}}
+                    <div class="d-flex ">
+                        <option value="" disabled>Seleccione una categoría</option>
+                        {{#categorias}}
+                        <option value="{{id}}" {{selected}}>{{nombre}}</option>
+                        {{/categorias}}
+                    </div>
                 </select>
 
                 {{#respuestas}}
@@ -73,7 +75,7 @@
         {{/questions}}
     </div>
 
-    <form action="/editor/index" method="get">
+    <form action="/editor/index" method="GET" id="form">
         <select name="type" onchange="this.form.submit()" class="form-select">
             <option value="sistema" {{#isSistema}}selected{{/isSistema}}>Sistema</option>
             <option value="sugeridas" {{#isSugeridas}}selected{{/isSugeridas}}>Sugeridas</option>
@@ -84,15 +86,30 @@
             </h2>
             {{#categories}}
 
-            <div class="form-check">
-                <input class="form-check-input" type="radio" {{checked}} name="category_id" id="category_{{id}}"
-                    value="{{id}}" onchange="this.form.submit()">
-                <label class="form-check-label" style="font-size: .9rem;" for="category_{{id}}">
-                    {{nombre}}
-                </label>
+            <div class="form-check d-flex justify-content-between opcion mb-2">
+                <div>
+                    <input class="form-check-input" type="radio" {{checked}} name="category_id" id="category_{{id}}"
+                        value="{{id}}" onchange="this.form.submit()">
+                    <label class="form-check-label" style="font-size: .9rem;" for="category_{{id}}">
+                        {{nombre}}
+                    </label>
+                </div>
+
+                {{#esIdValido}}
+                <button type="button" data-id="{{id}}" style="border: none; background: none;"
+                    title="Eliminar categoría">
+                    <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red"
+                        class="bi bi-x" viewBox="0 0 16 16">
+                        <path
+                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                    </svg>
+                </button>
+                {{/esIdValido}}
+
             </div>
             {{/categories}}
         </div>
+
     </form>
 </div>
 
@@ -107,4 +124,27 @@
             inputText.focus();
         })
     });
+
+    const form = document.getElementById('form');
+    const botonesEliminar = document.querySelectorAll('#form button');
+
+    Array.from(botonesEliminar).forEach(boton => {
+        console.log(boton);
+        boton.addEventListener('click', (e) => {
+
+            e.preventDefault();
+
+            const categoriaId = boton.dataset.id;
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'eliminar_categoria_id';
+            form.appendChild(input);
+
+            input.value = categoriaId;
+
+            form.submit();
+        });
+    });
+
 </script>

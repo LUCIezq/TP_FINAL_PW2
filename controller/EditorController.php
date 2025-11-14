@@ -34,8 +34,24 @@ class EditorController
 
         $filters = [
             'type' => htmlspecialchars(trim($_GET["type"] ?? "sistema"), ENT_QUOTES, 'UTF-8'),
-            'category_id' => htmlspecialchars(trim($_GET["category_id"] ?? ""), ENT_QUOTES, 'UTF-8')
+            'category_id' => htmlspecialchars(trim($_GET["category_id"] ?? ""), ENT_QUOTES, 'UTF-8'),
+            'eliminar_categoria_id' => filter_input(
+                INPUT_GET,
+                'eliminar_categoria_id',
+                FILTER_VALIDATE_INT,
+                [
+                    'options' => [
+                        'min_range' => 1
+                    ]
+                ]
+            )
         ];
+
+        if ($filters['eliminar_categoria_id']) {
+            $_SESSION["message"] = $this->eliminarCategoria($filters['eliminar_categoria_id']);
+            header("Location:/editor/index");
+            exit();
+        }
 
         $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
         ;
@@ -43,6 +59,7 @@ class EditorController
 
         foreach ($categories as &$category) {
             $category['checked'] = $filters['category_id'] === $category['id'] ? 'checked' : '';
+            $category['esIdValido'] = $category['id'] != '' ? true : false;
         }
 
         foreach ($questions as &$p) {
@@ -70,6 +87,17 @@ class EditorController
             "isSistema" => $filters['type'] == "sistema",
             "isSugeridas" => $filters['type'] == "sugeridas",
         ]);
+    }
+
+    private function eliminarCategoria($idCategoria)
+    {
+        $preguntas = $this->preguntasDao->getPreguntasPorCategoria($idCategoria);
+
+        if (count($preguntas) > 0) {
+            return "No se puede eliminar la categoría porque tiene preguntas asociadas.";
+        }
+
+        return $this->categoryDao->eliminarCategoria($idCategoria);
     }
 
     public function aprobar()
