@@ -1,5 +1,63 @@
 <div class="container text-center py-5">
-    <p class="fs-5">{{pregunta.texto}}</p>
+    <div class="bg-light p-4 rounded-3 mb-4" style="display: flex; flex-direction: column; align-items: center;">
+
+        <div class="dropdown" style="align-self: flex-end;">
+            <button type="button" style="border: none; background: transparent;" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;" width="16" height="16"
+                    fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                    <path
+                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                </svg>
+            </button>
+            <ul class="dropdown-menu">
+                <button type="button" style="width:100%; border: none; background: transparent;" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                    <li><a class="dropdown-item" href="#">Reportar</a></li>
+                </button>
+            </ul>
+        </div>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Reportar pregunta</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/reporte/reportar" method="post">
+                            <div class="mb-3">
+                                <label for="motivo" class="form-label">Motivo del reporte:</label>
+                                <select class="form-select" id="motivo" name="motivo" required>
+                                    <option value="" selected disabled>Seleccione un motivo</option>
+                                    <option value="Inexactitud">Inexactitud</option>
+                                    <option value="Ofensivo">Ofensivo</option>
+                                    <option value="Spam">Spam</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="detalle" class="form-label">Detalle (opcional):</label>
+                                <textarea class="form-control" id="detalle" name="detalle" rows="3"></textarea>
+                            </div>
+                            <input type="hidden" name="pregunta_id" value="{{pregunta.id}}">
+                            <input type="hidden" name="usuario_id" value="{{usuario_id}}">
+
+                            <div class="mt">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Enviar reporte</button>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <p class="fs-5 font-weight-bold">{{pregunta.texto}}</p>
+    </div>
 
     <form id="formPregunta" method="POST" action="/game/respuesta">
         <input type="hidden" name="partida_id" value="{{partida_id}}">
@@ -17,7 +75,6 @@
 
     <div id="mensaje" class="mt-5 fs-4 fw-bold"></div>
 </div>
-
 
 <script>
     const botones = document.querySelectorAll(".opcion-respuesta");
