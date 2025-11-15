@@ -27,6 +27,10 @@ class GameController
             header("location: /login/index");
             exit();
         }
+        $message = $_SESSION['message'] ?? null;
+        if ($message) {
+            unset($_SESSION['message']);
+        }
         //partida en curso (aca vamos a tener que implentar el tiempo)
         if (isset($_SESSION['partida'])) {
             $partida = $_SESSION['partida'];
@@ -43,7 +47,9 @@ class GameController
             $this->renderer->render("gamePregunta", [
                 "partida_id" => $partida['id'],
                 "pregunta" => $pregunta,
-                "respuestas" => $respuestas
+                "respuestas" => $respuestas,
+                "usuario_id" => $partida['usuario_id'],
+                'message' => $message
             ]);
 
             return;
@@ -89,7 +95,9 @@ class GameController
         $this->renderer->render("gamePregunta", [
             "partida_id" => $partidaId,
             "pregunta" => $pregunta,
-            "respuestas" => $respuestas
+            'usuario_id' => $usuarioId,
+            "respuestas" => $respuestas,
+            'message' => $message
         ]);
     }
 

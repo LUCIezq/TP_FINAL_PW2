@@ -1,0 +1,76 @@
+<?php
+
+class ReporteDao
+{
+    private MyConexion $db;
+    private const CANTIDAD_MAXIMA_REPORTE = 5;
+    private PreguntasDao $preguntasDao;
+    public function __construct(MyConexion $db, PreguntasDao $preguntasDao)
+    {
+        $this->db = $db;
+        $this->preguntasDao = $preguntasDao;
+    }
+
+    public function guardarReporte(Reporte $reporte)
+    {
+        $state = '';
+
+        $preguntaBd = $this->preguntasDao->obtenerPreguntaPorId($reporte->getPreguntaId());
+
+        if (!$preguntaBd) {
+            return 'La pregunta no existe.';
+        }
+
+        $existeReportePorPreguntaYUsuario = $this->existeReportePorUsuarioYPreguntaPendiente($reporte->getUsuarioId(), $reporte->getPreguntaId());
+
+        if (count($existeReportePorPreguntaYUsuario) > 0) {
+            return 'Ya has enviado un reporte para esta pregunta.';
+        }
+
+        $sql = "INSERT INTO reporte (id_pregunta,id_usuario,id_estado_reporte,motivo,comentario,fecha_reporte) 
+                VALUES (?, ?, ?, ?, ?,current_timestamp())";
+        $params = [
+            $reporte->getPreguntaId(),
+            $reporte->getUsuarioId(),
+            EstadoReporte::PENDIENTE,
+            $reporte->getMotivo(),
+            $reporte->getDetalle()
+        ];
+        $types = "ssiss";
+
+        $result = $this->db->executePrepared($sql, $types, $params) > 0;
+
+        $cantidadDeReportes = $this->obtenerCantidadDeReportesPorIdDePregunta($reporte->getPreguntaId());
+
+        if ($cantidadDeReportes >= self::CANTIDAD_MAXIMA_REPORTE) {
+            $this->preguntasDao->inactivarPregunta($reporte->getPreguntaId());
+        }
+
+        return $result ? 'Reporte guardado con éxito.' : 'Error al guardar el reporte.';
+    }
+
+    public function existeReportePorUsuarioYPreguntaPendiente($usuario_id, $pregunta_id)
+    {
+        $sql = "SELECT * FROM reporte
+        WHERE id_usuario = ? AND id_pregunta = ? and id_estado_reporte = ?";
+
+        $params = [$usuario_id, $pregunta_id, EstadoReporte::PENDIENTE];
+        $types = "iii";
+
+        $result = $this->db->executePrepared($sql, $types, $params);
+        return $this->db->processData($result);
+    }
+
+    public function obtenerCantidadDeReportesPorIdDePregunta($pregunta_id)
+    {
+
+        $sql = "SELECT COUNT(*) AS total FROM reporte
+        WHERE id_pregunta = ?";
+
+        $params = [$pregunta_id];
+        $types = "i";
+
+        $result = $this->db->executePrepared($sql, $types, $params);
+        return $this->db->processData($result)[0]['total'];
+    }
+}

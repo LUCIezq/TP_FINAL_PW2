@@ -215,6 +215,7 @@ class EditorController
             'pregunta_id' => filter_input(INPUT_POST, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
             'texto' => trim($_POST['texto'] ?? ''),
             'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            
             'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
             'respuestas' => $_POST['respuestas'] ?? []
         ];

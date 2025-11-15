@@ -77,7 +77,7 @@ class ConfigFactory
             $this->renderer
         );
 
-        $this->objetos['ReporteController'] = new ReporteController();
+        $this->objetos['ReporteController'] = new ReporteController(new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))));
 
         require_once 'model/dao/GameDao.php';
         require_once 'controller/GameController.php';

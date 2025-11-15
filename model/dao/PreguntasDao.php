@@ -306,6 +306,14 @@ class PreguntasDao
         return "Pregunta actualizada correctamente.";
     }
 
+    public function inactivarPregunta($id)
+    {
+        $sql = 'UPDATE pregunta set activa=0 where id = ?';
+        $params = [$id];
+        $types = 'i';
+        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+    }
+
 
     public function actualizarEnunciadoRespuesta($respuestaId, $nuevoTexto)
     {
