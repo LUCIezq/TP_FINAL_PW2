@@ -18,6 +18,21 @@ class CategoryDao
         return $result;
     }
 
+    public function crearCategoria($nombre)
+    {
+        $sql = "INSERT INTO genero (nombre) VALUES (?)";
+        $params = [$nombre];
+        $types = "s";
+
+        $result = $this->db->executePrepared($sql, $types, $params);
+
+        if ($result > 0) {
+            return "La categoría ha sido creada correctamente.";
+        } else {
+            return "No se pudo crear la categoría.";
+        }
+    }
+
     public function eliminarCategoria($idCategoria)
     {
 

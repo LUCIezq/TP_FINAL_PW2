@@ -100,6 +100,32 @@ class EditorController
         return $this->categoryDao->eliminarCategoria($idCategoria);
     }
 
+    public function crearCategoria()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            $nombre = htmlspecialchars(trim($_POST["nombre"]), ENT_QUOTES, 'UTF-8');
+
+            if (empty($nombre)) {
+                $_SESSION["message"] = "El nombre de la categoría no puede estar vacío.";
+                header("Location:/editor/index");
+                exit();
+            }
+
+            try {
+                $state = $this->categoryDao->crearCategoria($nombre);
+
+                $state == true ? $_SESSION["message"] = "Categoría creada correctamente." : $_SESSION['message'] = "No se pudo crear la categoría.";
+
+            } catch (Exception $e) {
+                $_SESSION["message"] = "Error al crear la categoría.";
+                header("Location:/editor/index");
+                exit();
+            }
+            header("Location:/editor/index");
+            exit();
+        }
+    }
     public function aprobar()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
