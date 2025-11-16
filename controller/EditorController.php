@@ -7,12 +7,15 @@ class EditorController
     private PreguntasDao $preguntasDao;
     private CategoryDao $categoryDao;
 
-    public function __construct(EditorDao $dao, MustacheRenderer $mustacheRenderer, PreguntasDao $preguntasDao, CategoryDao $categoryDao)
+    private ReporteDao $reporteDao;
+
+    public function __construct(EditorDao $dao, MustacheRenderer $mustacheRenderer, PreguntasDao $preguntasDao, CategoryDao $categoryDao, ReporteDao $reporteDao)
     {
         $this->dao = $dao;
         $this->mustacheRenderer = $mustacheRenderer;
         $this->preguntasDao = $preguntasDao;
         $this->categoryDao = $categoryDao;
+        $this->reporteDao = $reporteDao;
     }
 
     public function index()
@@ -54,7 +57,6 @@ class EditorController
         }
 
         $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
-        ;
         $categories = $this->categoryDao->getAll();
 
         foreach ($categories as &$category) {
@@ -74,8 +76,8 @@ class EditorController
             }
         }
 
-        array_unshift($categories, ['id' => '', 'nombre' => 'Todas', 'checked' => $filters['category_id'] === '' ? 'checked' : '']);
 
+        array_unshift($categories, ['id' => '', 'nombre' => 'Todas', 'checked' => $filters['category_id'] === '' ? 'checked' : '']);
         unset($p);
 
         $this->mustacheRenderer->render("editor", [
@@ -85,7 +87,7 @@ class EditorController
             "message" => $message,
             "usuario" => $_SESSION['user'],
             "isSistema" => $filters['type'] == "sistema",
-            "isSugeridas" => $filters['type'] == "sugeridas",
+            "isSugeridas" => $filters['type'] == "sugeridas"
         ]);
     }
 
@@ -215,7 +217,7 @@ class EditorController
             'pregunta_id' => filter_input(INPUT_POST, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
             'texto' => trim($_POST['texto'] ?? ''),
             'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
-            
+
             'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
             'respuestas' => $_POST['respuestas'] ?? []
         ];
@@ -269,15 +271,19 @@ class EditorController
         }
         $accion = $_POST['accion'] ?? null;
 
-        if ($accion === 'aprobar') {
-            $this->aprobar();
-        } elseif ($accion === 'rechazar') {
-            $this->rechazar();
-        } elseif ($accion === 'modificar') {
-            $this->modificar();
-        } else {
-            header("Location:/editor/index");
-            exit();
+        switch ($accion) {
+            case 'aprobar':
+                $this->aprobar();
+                break;
+            case 'rechazar':
+                $this->rechazar();
+                break;
+            case 'modificar':
+                $this->modificar();
+                break;
+            default:
+                header("Location:/editor/index");
+                exit();
         }
     }
 

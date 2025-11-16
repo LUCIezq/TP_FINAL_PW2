@@ -3,12 +3,19 @@
 class ReporteDao
 {
     private MyConexion $db;
-    private const CANTIDAD_MAXIMA_REPORTE = 5;
+    private const CANTIDAD_MAXIMA_REPORTE = 1;
     private PreguntasDao $preguntasDao;
     public function __construct(MyConexion $db, PreguntasDao $preguntasDao)
     {
         $this->db = $db;
         $this->preguntasDao = $preguntasDao;
+    }
+
+    public function getAllReportes()
+    {
+        $sql = "SELECT * FROM reporte";
+        $result = $this->db->executePrepared($sql, "", []);
+        return $this->db->processData($result);
     }
 
     public function guardarReporte(Reporte $reporte)
