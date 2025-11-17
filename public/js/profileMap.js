@@ -1,55 +1,72 @@
+// ===============================
+//   Solo ejecutar si existe #map
+// ===============================
+if (document.getElementById("map")) {
 
-const url = "/usuario/getCountryAndCity";
+    // Crear el mapa centrado en Buenos Aires
+    var map = L.map('map').setView([-34.579, -58.381], 7);
 
-const fetchData = async () => {
-    try {
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        const response = await fetch(url);
+    let marker = null;
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    // Evento: clic en el mapa
+    map.on('click', async function (e) {
+        const lat = e.latlng.lat;
+        const lon = e.latlng.lng;
+
+        // Crear o mover marcador
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker([lat, lon]).addTo(map);
         }
 
-        const data = await response.json();
+        // Obtener país y ciudad desde API propia
+        const data = await getLocation(lat, lon);
 
-        setMap(data);
+        const paisInput = document.getElementById('pais');
+        const ciudadInput = document.getElementById('ciudad');
 
-    } catch (e) {
-        console.log('There was a problem with the fetch operation: ' + e.message);
-    }
-}
-
-const setMap = async (data) => {
-    const baseUrl = "/service/get_location_reverse.php";
-
-    const params = new URLSearchParams({
-        city: data.ciudad,
-        country: data.pais
+        if (data && data.address) {
+            paisInput.value = data.address.country || 'Desconocido';
+            ciudadInput.value =
+                data.address.city ||
+                data.address.town ||
+                data.address.village ||
+                data.address.state ||
+                'Desconocida';
+        }
     });
 
-    try {
+    // ===============================
+    //   Función: obtener ubicación
+    // ===============================
+    const getLocation = async (lat, lon) => {
 
-        const response = await fetch(
-            `${baseUrl}?${params.toString()}&format=json&limit=1`,
-        );
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (typeof lat !== 'number' || typeof lon !== 'number') {
+            throw new Error("Las latitudes y longitudes deben ser números");
         }
-        const locationData = await response.json();
 
-        const lat = parseFloat(locationData[0].lat);
-        const lon = parseFloat(locationData[0].lon);
+        const baseUrl = "/service/get_location.php";
+        const params = new URLSearchParams({
+            lat: String(lat),
+            lon: String(lon),
+        });
 
-        map.setView([lat, lon], 7);
+        try {
+            const response = await fetch(`${baseUrl}?${params.toString()}`);
 
-        L.marker([lat, lon]).addTo(map);
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
 
-        map.off('click');
+            return await response.json();
 
-    } catch (e) {
-        console.log('There was a problem with the fetch operation: ' + e.message);
-    }
-}
+        } catch (error) {
+            console.error("Error al obtener los datos de la API:", error);
+            return null;
+        }
+    };
 
-fetchData();
+} // <-- FIN del IF que evita errores en vistas sin mapa
