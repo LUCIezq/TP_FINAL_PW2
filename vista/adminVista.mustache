@@ -1,0 +1,163 @@
+{{> header }}
+
+<link rel="stylesheet" href="/public/assets/dashboardAdmin.css>
+
+<div class="admin-container">
+    
+    <!-- ========================= -->
+    <!--       SIDEBAR ADMIN       -->
+    <!-- ========================= -->
+    <aside class="admin-sidebar">
+        <h2 class="sidebar-title">ADMIN</h2>
+
+        <ul class="sidebar-menu">
+            <li><a href="/admin/index" class="active">📊 Dashboard</a></li>
+            <li><a href="/editor/index">📝 Gestión de Preguntas</a></li>
+            <li><a href="/home/index">🏠 Volver al Lobby</a></li>
+            <li><a href="/login/logout">🚪 Cerrar sesión</a></li>
+        </ul>
+    </aside>
+
+    <!-- ========================= -->
+    <!--        MAIN CONTENT       -->
+    <!-- ========================= -->
+    <main class="admin-main">
+        
+        <h1 class="dashboard-title">Panel Administrativo</h1>
+
+        <!-- FILTROS -->
+        <div class="filter-bar">
+            <label for="filtroPeriodo">Filtrar por:</label>
+            <select id="filtroPeriodo">
+                <option value="dia">Hoy</option>
+                <option value="semana">Última semana</option>
+                <option value="mes">Último mes</option>
+                <option value="anio">Último año</option>
+            </select>
+        </div>
+
+        <!-- ========================= -->
+        <!--           KPIs            -->
+        <!-- ========================= -->
+        <div class="kpi-grid">
+
+            <div class="kpi-card">
+                <h4>Usuarios Registrados</h4>
+                <p>{{totalUsuarios}}</p>
+            </div>
+
+            <div class="kpi-card">
+                <h4>Partidas Jugadas</h4>
+                <p>{{totalPartidas}}</p>
+            </div>
+
+            <div class="kpi-card">
+                <h4>Preguntas Aprobadas</h4>
+                <p>{{totalPreguntas}}</p>
+            </div>
+
+            <div class="kpi-card">
+                <h4>Preguntas de Usuarios</h4>
+                <p>{{totalPreguntasUsuarios}}</p>
+            </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!--         GRÁFICOS          -->
+        <!-- ========================= -->
+
+        <div class="charts-grid">
+
+            <div class="chart-box">
+                <h3>Usuarios por País</h3>
+                <canvas id="chartPais"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Distribución por Sexo</h3>
+                <canvas id="chartSexo"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Distribución por Edad</h3>
+                <canvas id="chartEdad"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>% de Respuestas Correctas por Usuario</h3>
+                <canvas id="chartPrecision"></canvas>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- ========================= -->
+<!--        CHART JS CDN       -->
+<!-- ========================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const dataPais = {{usuariosPorPais | json}};
+    const dataSexo = {{usuariosPorSexo | json}};
+    const dataEdad = {{usuariosPorEdad | json}};
+    const dataPrecision = {{porcentajeCorrectas | json}};
+
+    // País
+    new Chart(document.getElementById("chartPais"), {
+        type: 'bar',
+        data: {
+            labels: dataPais.map(i => i.pais),
+            datasets: [{
+                label: "Usuarios",
+                data: dataPais.map(i => i.cantidad),
+                backgroundColor: '#5a4ee3'
+            }]
+        },
+    });
+
+    // Sexo
+    new Chart(document.getElementById("chartSexo"), {
+        type: 'pie',
+        data: {
+            labels: dataSexo.map(i => i.sexo),
+            datasets: [{
+                data: dataSexo.map(i => i.cantidad),
+                backgroundColor: ["#1fb286", "#5a4ee3", "#f6c344"]
+            }]
+        }
+    });
+
+    // Edad
+    new Chart(document.getElementById("chartEdad"), {
+        type: 'bar',
+        data: {
+            labels: dataEdad.map(i => i.grupo),
+            datasets: [{
+                label: "Usuarios",
+                data: dataEdad.map(i => i.cantidad),
+                backgroundColor: "#1fb286"
+            }]
+        }
+    });
+
+    // Precisión
+    new Chart(document.getElementById("chartPrecision"), {
+        type: 'line',
+        data: {
+            labels: dataPrecision.map(i => i.nombre_usuario),
+            datasets: [{
+                label: "% correctas",
+                data: dataPrecision.map(i => i.porcentaje),
+                borderColor: '#5a4ee3',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.3
+            }]
+        }
+    });
+</script>
+
+{{> footer }}
