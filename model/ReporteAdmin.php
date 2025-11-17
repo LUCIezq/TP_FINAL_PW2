@@ -6,7 +6,6 @@ class ReporteAdmin
 
     public function __construct(MyConexion $conexion)
     {
-        // guardamos la conexión que viene desde el AdminController
         $this->db = $conexion;
     }
 
@@ -30,14 +29,16 @@ class ReporteAdmin
 
     public function getTotalPreguntas(): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE estado = 'aprobada'";
+        // Todas las preguntas activas
+        $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE activa = 1";
         $result = $this->db->query($sql);
         return $result[0]['total'] ?? 0;
     }
 
     public function getTotalPreguntasUsuarios(): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE origen = 'usuario'";
+        // Preguntas creadas por usuarios (todas lo son)
+        $sql = "SELECT COUNT(*) AS total FROM pregunta";
         $result = $this->db->query($sql);
         return $result[0]['total'] ?? 0;
     }
@@ -54,17 +55,44 @@ class ReporteAdmin
 
     public function getUsuariosPorSexo(): array
     {
-        $sql = "SELECT sexo, COUNT(*) AS cantidad FROM usuario GROUP BY sexo";
+        $sql = "
+            SELECT s.nombre AS sexo, COUNT(*) AS cantidad
+            FROM usuario u
+            LEFT JOIN sexo s ON u.sexo_id = s.id
+            GROUP BY sexo_id
+        ";
         return $this->db->query($sql);
     }
 
     public function getUsuariosPorEdad(): array
-{
-    return [];
-}
+    {
+        $sql = "
+            SELECT 
+                CASE
+                    WHEN TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) < 18 THEN 'Menores'
+                    WHEN TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) >= 65 THEN 'Jubilados'
+                    ELSE 'Adultos'
+                END AS grupo,
+                COUNT(*) AS cantidad
+            FROM usuario
+            GROUP BY grupo
+        ";
+
+        return $this->db->query($sql);
+    }
 
     public function getPorcentajeCorrectasPorUsuario(): array
-{
-    return [];
-}
+    {
+        // Se calcula desde historial_partida
+        $sql = "
+            SELECT 
+                u.nombre_usuario,
+                ROUND((SUM(h.respondida_correctamente) / COUNT(*)) * 100, 1) AS porcentaje
+            FROM historial_partida h
+            INNER JOIN usuario u ON u.id = h.usuario_id
+            GROUP BY h.usuario_id
+        ";
+
+        return $this->db->query($sql);
+    }
 }
