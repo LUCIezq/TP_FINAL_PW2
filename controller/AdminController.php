@@ -41,8 +41,8 @@ class AdminController
             // Gráficos
             "usuariosPorPais"         => $reporte->getUsuariosPorPais(),
             "usuariosPorSexo"         => $reporte->getUsuariosPorSexo(),
-            "usuariosPorEdad"         => $reporte->getUsuariosPorEdad(),
-            "porcentajeCorrectas"     => $reporte->getPorcentajeCorrectasPorUsuario()
+            "usuariosPorEdad"         => [],
+            "porcentajeCorrectas"     => []
         ];
 
         // Renderizar la vista del dashboard

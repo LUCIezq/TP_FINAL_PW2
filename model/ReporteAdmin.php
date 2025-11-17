@@ -59,33 +59,12 @@ class ReporteAdmin
     }
 
     public function getUsuariosPorEdad(): array
-    {
-        $sql = "
-            SELECT 
-                CASE
-                    WHEN YEAR(CURDATE()) - anio_nacimiento < 18 THEN 'Menores'
-                    WHEN YEAR(CURDATE()) - anio_nacimiento >= 65 THEN 'Jubilados'
-                    ELSE 'Adultos'
-                END AS grupo,
-                COUNT(*) AS cantidad
-            FROM usuario
-            GROUP BY grupo
-        ";
-
-        return $this->db->query($sql);
-    }
+{
+    return [];
+}
 
     public function getPorcentajeCorrectasPorUsuario(): array
-    {
-        $sql = "
-            SELECT 
-                u.nombre_usuario,
-                ROUND((SUM(r.correcta) / COUNT(*)) * 100, 1) AS porcentaje
-            FROM respuesta r
-            INNER JOIN usuario u ON u.id_usuario = r.id_usuario
-            GROUP BY u.id_usuario
-        ";
-
-        return $this->db->query($sql);
-    }
+{
+    return [];
+}
 }
