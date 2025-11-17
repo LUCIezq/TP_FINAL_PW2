@@ -46,6 +46,6 @@ class AdminController
         // ];
 
         // Renderizar la vista del dashboard
-        $this->mustacheRenderer->render("adminVista", $data);
+        $this->mustacheRenderer->render("adminVista", []);
     }
 }
