@@ -102,11 +102,15 @@ class PreguntasDao
         r.texto as respuesta,
         r.id as respuesta_id,
         p.genero_id as genero_id,
-        r.es_correcta as es_correcta
+        r.es_correcta as es_correcta,
+        rep.id_reporte
         from pregunta p
         JOIN usuario u ON p.usuario_id = u.id
         LEFT JOIN respuesta r ON r.pregunta_id = p.id
-        WHERE p." . $filter[$type] . $categoryCondition;
+        LEFT JOIN reporte rep ON rep.id_pregunta = p.id
+        WHERE p." . $filter[$type] . $categoryCondition . "
+        ORDER BY rep.id_reporte DESC";
+
 
         $result = $this->conexion->query($sql);
 
@@ -122,6 +126,7 @@ class PreguntasDao
                     'genero_id' => $row['genero_id'],
                     'usuario' => $row['usuario'],
                     'respuestas' => [],
+                    'id_reporte' => $row['id_reporte'] ?? null
                 ];
             }
             if (!empty($row['respuesta_id'])) {
