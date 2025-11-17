@@ -100,10 +100,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    const dataPais = {{usuariosPorPais | json}};
-    const dataSexo = {{usuariosPorSexo | json}};
-    const dataEdad = {{usuariosPorEdad | json}};
-    const dataPrecision = {{porcentajeCorrectas | json}};
+    const dataPais = {{{usuariosPorPais}}};
+    const dataSexo = {{{usuariosPorSexo}}};
+    const dataEdad = {{{usuariosPorEdad}}};
+    const dataPrecision = {{{porcentajeCorrectas}}};
 
     // País
     new Chart(document.getElementById("chartPais"), {
@@ -113,7 +113,7 @@
             datasets: [{
                 label: "Usuarios",
                 data: dataPais.map(i => i.cantidad),
-                backgroundColor: '#5a4ee3'
+                backgroundColor: '#1fb286'
             }]
         },
     });
@@ -138,7 +138,7 @@
             datasets: [{
                 label: "Usuarios",
                 data: dataEdad.map(i => i.cantidad),
-                backgroundColor: "#1fb286"
+                backgroundColor: "#5a4ee3"
             }]
         }
     });
@@ -151,7 +151,7 @@
             datasets: [{
                 label: "% correctas",
                 data: dataPrecision.map(i => i.porcentaje),
-                borderColor: '#5a4ee3',
+                borderColor: '#1fb286',
                 borderWidth: 3,
                 fill: false,
                 tension: 0.3
