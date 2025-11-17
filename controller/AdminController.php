@@ -32,20 +32,20 @@ class AdminController
         $reporte = new ReporteAdmin($this->conexion);
 
         //Obtener datos para el dashboard
-        // $data = [
-        //     "totalUsuarios"           => $reporte->getTotalUsuarios(),
-        //     "totalPartidas"           => $reporte->getTotalPartidas(),
-        //     "totalPreguntas"          => $reporte->getTotalPreguntas(),
-        //     "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
+        $data = [
+            "totalUsuarios"           => $reporte->getTotalUsuarios(),
+            "totalPartidas"           => $reporte->getTotalPartidas(),
+            "totalPreguntas"          => $reporte->getTotalPreguntas(),
+            "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
 
-        //     // Gráficos
-        //     "usuariosPorPais"         => $reporte->getUsuariosPorPais(),
-        //     "usuariosPorSexo"         => $reporte->getUsuariosPorSexo(),
-        //     "usuariosPorEdad"         => $reporte->getUsuariosPorEdad(),
-        //     "porcentajeCorrectas"     => $reporte->getPorcentajeCorrectasPorUsuario()
-        // ];
+            // Gráficos
+            "usuariosPorPais"         => $reporte->getUsuariosPorPais(),
+            "usuariosPorSexo"         => $reporte->getUsuariosPorSexo(),
+            "usuariosPorEdad"         => $reporte->getUsuariosPorEdad(),
+            "porcentajeCorrectas"     => $reporte->getPorcentajeCorrectasPorUsuario()
+        ];
 
         // Renderizar la vista del dashboard
-        $this->mustacheRenderer->render("adminVista", []);
+        $this->mustacheRenderer->render("adminVista", $data);
     }
 }
