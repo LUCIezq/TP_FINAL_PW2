@@ -32,7 +32,7 @@ class AdminController
         $reporte = new ReporteAdmin($this->conexion);
 
         //Obtener datos para el dashboard
-        $data = [
+        /*$data = [
             "totalUsuarios"           => $reporte->getTotalUsuarios(),
             "totalPartidas"           => $reporte->getTotalPartidas(),
             "totalPreguntas"          => $reporte->getTotalPreguntas(),
@@ -43,6 +43,19 @@ class AdminController
             "usuariosPorSexo"         => $reporte->getUsuariosPorSexo(),
             "usuariosPorEdad"         => [],
             "porcentajeCorrectas"     => []
+        ];*/
+
+        $data = [
+            "totalUsuarios"           => $reporte->getTotalUsuarios(),
+            "totalPartidas"           => $reporte->getTotalPartidas(),
+            "totalPreguntas"          => $reporte->getTotalPreguntas(),
+            "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
+
+            // Gráficos (IMPORTANTE: json_encode)
+            "usuariosPorPais"         => json_encode($reporte->getUsuariosPorPais()),
+            "usuariosPorSexo"         => json_encode($reporte->getUsuariosPorSexo()),
+            "usuariosPorEdad"         => json_encode([]),
+            "porcentajeCorrectas"     => json_encode([])  
         ];
 
         // Renderizar la vista del dashboard
