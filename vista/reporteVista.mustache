@@ -1,0 +1,68 @@
+<div class="container my-3" style="max-width: 800px;">
+
+    <a href="/editor/index" class="btn btn-primary d-inline-flex align-items-center gap-1 mb-4">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+
+    {{#pregunta}}
+    <div class="card border-0 shadow-sm mb-3" style="font-size: 0.92rem;">
+        <div class="card-body py-3">
+            <h4 class="m-0 fw-semibold ">Pregunta</h4>
+            <div class="d-flex justify-content-between align-items-center">
+                {{#cantidadReportes}}
+                <span class="badge bg-danger">{{cantidadReportes}} reportes</span>
+                {{/cantidadReportes}}
+            </div>
+
+            <p class="mt-2 mb-3" style="font-size: 1.5rem; text-decoration: underline;">{{texto}}</p>
+
+            <div class="d-flex gap-2 mt-2">
+                <span class="badge bg-primary">{{genero_nombre}}</span>
+                <!-- <span class="badge bg-success">Dificultad: {{dificultad}}</span> -->
+            </div>
+        </div>
+    </div>
+    {{/pregunta}}
+
+    <div class="card border-0 shadow-sm mb-2" style="font-size: 0.88rem;">
+        <div class="card-body py-2 px-3">
+
+            <ul class="list-group list-group-flush">
+                {{#pregunta.respuestas}}
+                <li class="list-group-item px-0 d-flex align-items-center">
+                    {{texto}}
+                </li>
+                {{/pregunta.respuestas}}
+            </ul>
+
+        </div>
+    </div>
+
+    <h5 class="mb-3 mt-5">Reportes</h5>
+
+    {{#preguntaConReportes}}
+    <div class="card border-0 shadow-sm mb-2" style="font-size: 0.88rem;">
+        <div class="card-body py-2 px-3">
+            <span class="badge bg-secondary mt-1 mb-2"> {{nombre_usuario}}</span>
+
+
+            <div class="d-flex justify-content-between">
+                <span class="fw-semibold">{{motivo}}</span>
+                <small class="text-muted">{{fecha_reporte}}</small>
+            </div>
+
+            {{#comentario}}
+            <p class="mb-1 mt-1 text-muted">{{comentario}}</p>
+            {{/comentario}}
+
+        </div>
+    </div>
+    {{/preguntaConReportes}}
+
+    {{^preguntaConReportes}}
+    <div class="alert alert-info py-2 shadow-sm" style="font-size: 0.9rem;">
+        No hay reportes para esta pregunta.
+    </div>
+    {{/preguntaConReportes}}
+
+</div>

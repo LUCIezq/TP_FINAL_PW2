@@ -18,6 +18,17 @@ class ReporteDao
         return $this->db->processData($result);
     }
 
+    public function obtenerReportesPorIdPregunta($idPregunta)
+    {
+        $sql = 'SELECT *,usuario.nombre_usuario from reporte
+        JOIN usuario ON reporte.id_usuario = usuario.id 
+        WHERE id_pregunta = ?';
+        $params = [$idPregunta];
+        $types = "i";
+        $result = $this->db->executePrepared($sql, $types, $params);
+        return $this->db->processData($result);
+    }
+
     public function guardarReporte(Reporte $reporte)
     {
         $state = '';
@@ -43,6 +54,7 @@ class ReporteDao
             $reporte->getMotivo(),
             $reporte->getDetalle()
         ];
+
         $types = "ssiss";
 
         $result = $this->db->executePrepared($sql, $types, $params) > 0;

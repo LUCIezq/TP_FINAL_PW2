@@ -33,19 +33,19 @@ class AdminController
 
         //Obtener datos para el dashboard
         $data = [
-            "totalUsuarios"           => $reporte->getTotalUsuarios(),
-            "totalPartidas"           => $reporte->getTotalPartidas(),
-            "totalPreguntas"          => $reporte->getTotalPreguntas(),
-            "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
+            "totalUsuarios" => $reporte->getTotalUsuarios(),
+            "totalPartidas" => $reporte->getTotalPartidas(),
+            "totalPreguntas" => $reporte->getTotalPreguntas(),
+            "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
 
             // Gráficos
-            "usuariosPorPais"         => $reporte->getUsuariosPorPais(),
-            "usuariosPorSexo"         => $reporte->getUsuariosPorSexo(),
-            "usuariosPorEdad"         => [],
-            "porcentajeCorrectas"     => []
+            "usuariosPorPais" => $reporte->getUsuariosPorPais(),
+            "usuariosPorSexo" => $reporte->getUsuariosPorSexo(),
+            "usuariosPorEdad" => [],
+            "porcentajeCorrectas" => []
         ];
 
         // Renderizar la vista del dashboard
-        $this->mustacheRenderer->render("adminVista", $data);
+        $this->mustacheRenderer->render("admin", $data);
     }
 }

@@ -37,7 +37,10 @@ class MyConexion
             throw new Exception("Error en la preparación de la consulta: " . $this->conexion->error);
         }
 
-        $stmt->bind_param($types, ...$params);
+        if ($types !== '' && !empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
         $stmt->execute();
 
         if (str_starts_with(strtoupper(trim($sql)), 'SELECT')) {

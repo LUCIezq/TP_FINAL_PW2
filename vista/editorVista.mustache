@@ -1,7 +1,6 @@
-<div class="container"
-    style="max-width: 1200px; margin-top: 3rem;display: flex; justify-content: space-between; gap: 2rem;">
+<div style=" padding: 1.5rem; margin-top: 1rem;display: flex; justify-content: space-between; gap: 2rem;">
 
-    <div class="flex-grow-1">
+    <div class="d-flex flex-column w-100">
 
         <div class="d-flex justify-content-between mb-4">
 
@@ -16,77 +15,153 @@
         </div>
         {{/message}}
 
-        {{#questions}}
-        <div class="card p-4"
-            style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
+        <div class="d-flex gap-4 w-100">
+            <div class="w-100">
+                <h3 class="h5 fw-semibold text-secondary mb-3" style="text-align: center;">Preguntas del sistema</h3>
+                {{#questions}}
+                <div class="card p-4"
+                    style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
 
-            <form method="post" action="/editor/procesarPregunta"
-                style="display: flex; flex-direction: column; gap: 1rem;">
+                    <form method="post" action="/editor/procesarPregunta"
+                        style="display: flex; flex-direction: column; gap: 1rem;">
 
-                <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
+                        <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
 
-                <div class="w-100">
-                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 1rem;">
-                        <small class="text-muted">Pregunta creada por <b>
-                                {{usuario}}
-                            </b></small>
-                        {{#id_reporte}}
-                        <span class="badge text-bg-warning">Reportes pendientes</span>
-                        {{/id_reporte}}
-                    </div>
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 1rem;">
+                                <small class="text-muted">Pregunta creada por <b>
+                                        {{usuario}}
+                                    </b></small>
+                                {{#id_reporte}}
+                                <span class="badge text-bg-warning">Reportes pendientes</span>
+                                {{/id_reporte}}
+                            </div>
 
-                    <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" required />
+                            <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}"
+                                required />
 
+                        </div>
+
+                        <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id"
+                            required>
+                            <div class="d-flex ">
+                                <option value="" disabled>Seleccione una categoría</option>
+                                {{#categorias}}
+                                <option value="{{id}}" {{selected}}>{{nombre}}</option>
+                                {{/categorias}}
+                            </div>
+                        </select>
+
+                        {{#respuestas}}
+                        <div class="form-check mb-3 opcion">
+                            <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
+                                value="{{respuesta_id}}" name="id_correcta" required>
+                            <input type="text" name="respuestas[{{respuesta_id}}]" id="{{respuesta_id}}"
+                                class="form-control" required placeholder="Opcion" value="{{respuesta}}">
+                        </div>
+                        {{/respuestas}}
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <div class="d-flex gap-2">
+                                <button style="align-self: flex-start;" type="submit" name="accion" value="modificar"
+                                    class="btn btn-primary">Modificar</button>
+
+                                <button style="align-self: flex-start;" type="submit" name="accion" value="eliminar"
+                                    class="btn btn-danger">Eliminar</button>
+                            </div>
+                            {{#id_reporte}}
+                            <button type="button" class="btn btn-primary position-relative">
+                                <a class="text-white" style="text-decoration: none;"
+                                    href="/reporte/ver/?id={{pregunta_id}}">Ver
+                                    reportes</a>
+                            </button>
+                            {{/id_reporte}}
+                        </div>
+                    </form>
                 </div>
+                {{/questions}}
 
-                <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id" required>
-                    <div class="d-flex ">
-                        <option value="" disabled>Seleccione una categoría</option>
-                        {{#categorias}}
-                        <option value="{{id}}" {{selected}}>{{nombre}}</option>
-                        {{/categorias}}
-                    </div>
-                </select>
+                {{^questions}}
+                <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
+                    No se encontraron preguntas
+                </h2>
+                {{/questions}}
 
-                {{#respuestas}}
-                <div class="form-check mb-3 opcion">
-                    <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
-                        value="{{respuesta_id}}" name="id_correcta" required>
-                    <input type="text" name="respuestas[{{respuesta_id}}]" id="{{respuesta_id}}" class="form-control"
-                        required placeholder="Opcion" value="{{respuesta}}">
+            </div>
+
+            <div class="w-100">
+                <h3 class="h5 fw-semibold text-secondary mb-3" style="text-align: center;">Preguntas sugeridas</h3>
+                {{#preguntasSugeridas}}
+                <div class="card p-4"
+                    style="display: flex; flex-direction: column; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px;">
+
+                    <form method="post" action="/editor/procesarPregunta"
+                        style="display: flex; flex-direction: column; gap: 1rem;">
+
+                        <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
+
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 1rem;">
+                                <small class="text-muted">Pregunta creada por <b>
+                                        {{usuario}}
+                                    </b></small>
+                            </div>
+
+                            <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}"
+                                required />
+
+                        </div>
+
+                        <select class="form-select mb-4" aria-label="Categoría de la pregunta" name="genero_id"
+                            required>
+                            <div class="d-flex ">
+                                <option value="" disabled>Seleccione una categoría</option>
+                                {{#categorias}}
+                                <option value="{{id}}" {{selected}}>{{nombre}}</option>
+                                {{/categorias}}
+                            </div>
+                        </select>
+
+                        {{#respuestas}}
+                        <div class="form-check mb-3 opcion">
+                            <input class="form-check-input" {{#es_correcta}}checked{{/es_correcta}} type="radio"
+                                value="{{respuesta_id}}" name="id_correcta" required>
+                            <input type="text" name="respuestas[{{respuesta_id}}]" id="{{respuesta_id}}"
+                                class="form-control" required placeholder="Opcion" value="{{respuesta}}">
+                        </div>
+                        {{/respuestas}}
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <div class="d-flex gap-2">
+
+                                <div class="d-flex gap-2">
+                                    <button style="align-self: flex-start;" type="submit" name="accion" value="aprobar"
+                                        class="btn btn-primary">Aprobar</button>
+                                </div>
+
+                                <button style="align-self: flex-start;" type="submit" name="accion" value="modificar"
+                                    class="btn btn-primary">Modificar</button>
+
+                                <button style="align-self: flex-start;" type="submit" name="accion" value="eliminar"
+                                    class="btn btn-danger">Rechazar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                {{/respuestas}}
-
-                <div class="d-flex gap-2">
-                    {{#isSugeridas}}
-                    <div class="d-flex gap-2">
-                        <button style="align-self: flex-start;" type="submit" name="accion" value="aprobar"
-                            class="btn btn-primary">Aprobar</button>
-                    </div>
-                    {{/isSugeridas}}
-
-                    <button style="align-self: flex-start;" type="submit" name="accion" value="modificar"
-                        class="btn btn-primary">Modificar</button>
-
-                    <button style="align-self: flex-start;" type="submit" name="accion" value="rechazar"
-                        class="btn btn-danger">{{#isSistema}}Eliminar{{/isSistema}}{{^isSistema}}Rechazar{{/isSistema}}</button>
-                </div>
-            </form>
+                {{/preguntasSugeridas}}
+                {{^preguntasSugeridas}}
+                <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
+                    No se encontraron preguntas
+                </h2>
+                {{/preguntasSugeridas}}
+            </div>
         </div>
-        {{/questions}}
-
-        {{^questions}}
-        <h2 style="font-size: .9rem; text-align: center;margin-top: 2rem;">
-            No se encontraron preguntas
-        </h2>
-        {{/questions}}
     </div>
+
     <div>
         <form action="/editor/index" method="GET" id="form">
-            <select name="type" onchange="this.form.submit()" class="form-select">
-                <option value="sistema" {{#isSistema}}selected{{/isSistema}}>Sistema</option>
-                <option value="sugeridas" {{#isSugeridas}}selected{{/isSugeridas}}>Sugeridas</option>
-            </select>
             <div>
                 <h2 style="font-size: .9rem; margin-top: 1rem; margin-bottom: 1rem;">
                     Seleccione una categoria
@@ -95,8 +170,8 @@
 
                 <div class="form-check d-flex justify-content-between opcion mb-2">
                     <div>
-                        <input class="form-check-input" type="radio" {{checked}} name="category_id" id="category_{{id}}"
-                            value="{{id}}" onchange="this.form.submit()">
+                        <input class="form-check-input" type="radio" {{checked}} name="category_name"
+                            id="category_{{id}}" value="{{nombre}}" onchange="this.form.submit()">
                         <label class="form-check-label" style="font-size: .9rem;" for="category_{{id}}">
                             {{nombre}}
                         </label>
@@ -119,12 +194,11 @@
 
         </form>
 
-        <form action="/editor/crearCategoria" method="post">
+        <form action="/editor/crearCategoria" method="post" class="mt-4">
             <input type="text" name="nombre" class="form-control mb-2" placeholder="Nueva categoría" required />
             <button type="submit" class="btn btn-outline-primary rounded-pill px-3">Crear categoria</button>
         </form>
     </div>
-
 
 </div>
 
@@ -144,7 +218,7 @@
     const botonesEliminar = document.querySelectorAll('#form button');
 
     Array.from(botonesEliminar).forEach(boton => {
-        console.log(boton);
+
         boton.addEventListener('click', (e) => {
 
             e.preventDefault();

@@ -78,11 +78,15 @@ class ConfigFactory
             new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion)))
         );
         $this->objetos['AdminController'] = new AdminController(
-    $this->renderer,
-    $this->conexion
-);
+            $this->renderer,
+            $this->conexion
+        );
 
-        $this->objetos['ReporteController'] = new ReporteController(new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))));
+        $this->objetos['ReporteController'] = new ReporteController(
+            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))),
+            $this->renderer,
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
+        );
 
         require_once 'model/dao/GameDao.php';
         require_once 'controller/GameController.php';

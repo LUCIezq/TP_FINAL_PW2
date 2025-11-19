@@ -36,8 +36,7 @@ class EditorController
         }
 
         $filters = [
-            'type' => htmlspecialchars(trim($_GET["type"] ?? "sistema"), ENT_QUOTES, 'UTF-8'),
-            'category_id' => htmlspecialchars(trim($_GET["category_id"] ?? ""), ENT_QUOTES, 'UTF-8'),
+            'category_name' => htmlspecialchars(trim($_GET["category_name"] ?? "todas"), ENT_QUOTES, 'UTF-8'),
             'eliminar_categoria_id' => filter_input(
                 INPUT_GET,
                 'eliminar_categoria_id',
@@ -60,7 +59,7 @@ class EditorController
         $categories = $this->categoryDao->getAll();
 
         foreach ($categories as &$category) {
-            $category['checked'] = $filters['category_id'] === $category['id'] ? 'checked' : '';
+            $category['checked'] = $filters['category_name'] === $category['nombre'] ? 'checked' : '';
             $category['esIdValido'] = $category['id'] != '' ? true : false;
         }
 
@@ -76,18 +75,30 @@ class EditorController
             }
         }
 
+        $preguntasSugeridas = $this->preguntasDao->getAllQuestionByUsers();
 
-        array_unshift($categories, ['id' => '', 'nombre' => 'Todas', 'checked' => $filters['category_id'] === '' ? 'checked' : '']);
+        foreach ($preguntasSugeridas as &$p) {
+            $p['categorias'] = [];
+
+            foreach ($categories as $c) {
+                $p['categorias'][] = [
+                    'id' => $c['id'],
+                    'nombre' => $c['nombre'],
+                    'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
+                ];
+            }
+        }
+
+        array_unshift($categories, ['id' => '', 'nombre' => 'todas', 'checked' => $filters['category_name'] === 'todas' ? 'checked' : '']);
         unset($p);
 
         $this->mustacheRenderer->render("editor", [
             "questions" => $questions,
             "isLogged" => IsLogged::isLogged(),
             "categories" => $categories,
+            'preguntasSugeridas' => $preguntasSugeridas,
             "message" => $message,
-            "usuario" => $_SESSION['user'],
-            "isSistema" => $filters['type'] == "sistema",
-            "isSugeridas" => $filters['type'] == "sugeridas"
+            "usuario" => $_SESSION['user']
         ]);
     }
 
@@ -256,7 +267,7 @@ class EditorController
             exit();
 
         } catch (Exception $e) {
-            $_SESSION['message'] = "Error al modificar la pregunta.";
+            $_SESSION['message'] = "Error al modificar la pregunta." . $e->getMessage();
             header("Location:/editor/index");
             exit();
         }
@@ -275,7 +286,7 @@ class EditorController
             case 'aprobar':
                 $this->aprobar();
                 break;
-            case 'rechazar':
+            case 'eliminar':
                 $this->rechazar();
                 break;
             case 'modificar':

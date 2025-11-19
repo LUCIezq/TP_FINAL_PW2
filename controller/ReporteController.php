@@ -3,10 +3,14 @@ class ReporteController
 {
 
     private ReporteDao $reporteDao;
+    private MustacheRenderer $mustacheRenderer;
+    private PreguntasDao $preguntasDao;
 
-    public function __construct(ReporteDao $reporteDao)
+    public function __construct(ReporteDao $reporteDao, MustacheRenderer $mustacheRenderer, PreguntasDao $preguntasDao)
     {
         $this->reporteDao = $reporteDao;
+        $this->mustacheRenderer = $mustacheRenderer;
+        $this->preguntasDao = $preguntasDao;
     }
 
     public function reportar()
@@ -52,6 +56,32 @@ class ReporteController
             header("Location: /game/start");
             exit();
         }
+    }
+
+    public function ver()
+    {
+        //aca deberiamos validar que este logueado y sea editor
+
+        $id_pregunta = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id_pregunta || $id_pregunta <= 0) {
+            header("Location: /editor/index");
+            exit();
+        }
+
+        $pregunta = $this->preguntasDao->obtenerPreguntaPorId($id_pregunta);
+
+        if (!$pregunta) {
+            header("Location: /editor/index");
+            exit();
+        }
+
+        $preguntaConReportes = $this->reporteDao->obtenerReportesPorIdPregunta($id_pregunta);
+
+        $this->mustacheRenderer->render("reporte", [
+            'preguntaConReportes' => $preguntaConReportes,
+            'pregunta' => $pregunta
+        ]);
     }
 
 }
