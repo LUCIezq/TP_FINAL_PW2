@@ -122,7 +122,6 @@ class PreguntasDao
                     'usuario' => $row['usuario'],
                     'respuestas' => [],
                     'id_reporte' => $row['id_reporte'] ?? null
-                    'id_reporte' => $row['id_reporte'] ?? null
                 ];
             }
             if (!empty($row['respuesta_id'])) {
@@ -407,44 +406,60 @@ class PreguntasDao
         )[0] ?? null;
     }
 
-    public function rechazarPregunta($id)
+    public function eliminarPreguntasPorIds($ids)
     {
-        $sql = "DELETE FROM pregunta WHERE id = ?";
-        $params = [$id];
-        $types = "i";
-        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+        if (empty($ids)) {
+            return false;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $sql = "DELETE FROM pregunta WHERE id IN ($placeholders)";
+
+        $types = str_repeat('i', count($ids));
+
+        return $this->conexion->executePrepared($sql, $types, $ids) > 0;
     }
 
     public function getAllSystemQuestions()
     {
-        $sql = "SELECT p.id as pregunta_id,
-        p.texto as pregunta,
+        $sql = "SELECT 
+        p.id as pregunta_id,
+        p.texto as enunciado,
         u.nombre_usuario as usuario,
         p.genero_id,
         r.texto as respuesta,
         r.id as respuesta_id,
-        r.es_correcta
+        r.es_correcta,
+        g.nombre as genero_nombre,
+        p.activa
+        
         FROM pregunta p 
+        
         JOIN usuario u ON p.usuario_id = u.id
-        LEFT JOIN respuesta r on r.pregunta_id = p.id
-        WHERE p.activa=true";
+        JOIN genero g ON g.id = p.genero_id
+        LEFT JOIN respuesta r on r.pregunta_id = p.id";
 
         $data = $this->conexion->query($sql);
 
         $questions = [];
 
         foreach ($data as $row) {
+
             $id = $row['pregunta_id'];
 
             if (!isset($questions[$id])) {
                 $questions[$id] = [
                     'pregunta_id' => $row['pregunta_id'],
-                    'pregunta' => $row['pregunta'],
+                    'enunciado' => $row['enunciado'],
                     'genero_id' => $row['genero_id'],
+                    'genero_nombre' => $row['genero_nombre'],
                     'usuario' => $row['usuario'],
+                    'activa' => $row['activa'],
                     'respuestas' => [],
                 ];
             }
+
             if (!empty($row['respuesta_id'])) {
                 $questions[$id]['respuestas'][] = [
                     'respuesta' => $row['respuesta'],
@@ -453,6 +468,7 @@ class PreguntasDao
                 ];
             }
         }
+
         return array_values($questions);
     }
 }

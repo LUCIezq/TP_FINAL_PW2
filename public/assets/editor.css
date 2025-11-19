@@ -1,79 +1,69 @@
-    .card {
-        border-radius: 16px;
-        border: 1px solid #dee2e6;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        background-color: #ffffff;
-    }
-
-    .btn-round {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 1rem;
-    }
-
-    .btn-light-orange {
-        background-color: #ff9f43;
-        color: #fff;
-        border: none;
-    }
-
-    .btn-light-orange:hover {
-        background-color: #ff851b;
-    }
-
-    .opcion {
-        background-color: #f1f3f5;
-        border: 1px solid #dee2e6;
-        border-radius: 10px;
-        padding: 10px 15px;
-        transition: 0.2s;
-    }
-
-    .opcion:hover {
-        border-color: #adb5bd;
-        background-color: #e9ecef;
-    }
-
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-    .nav-pills .nav-link.active {
-        background-color: #0d6efd;
-        color: white;
-    }
-
-    .nav-pills .nav-link {
-        color: #0d6efd;
-        border: 1px solid #0d6efd;
-        border-radius: 20px;
-        margin-right: 5px;
-    }
-
-    .titulo {
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-
-    .guardar-btn {
-        background-color: #ff9f43;
-        border: none;
-        color: white;
-        padding: 8px 20px;
-        border-radius: 10px;
-        font-weight: 500;
-    }
-
-    .guardar-btn:hover {
-        background-color: #ff851b;
+    body {
+        background-color: #f8f9fa;
     }
 
     .container {
-        padding-top: 50px;
+        padding: 2rem;
+    }
+
+    .dashboard-slider {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: .5rem;
+    }
+
+    .dashboard-slider::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .dashboard-slider::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+    }
+
+    .dashboard-item {
+        flex: 0 0 250px;
+        scroll-snap-align: start;
+        text-decoration: none;
+    }
+
+    .card-option {
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .card-option:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .sidebar {
+        width: 240px;
+        height: 100vh;
+        background: #fff;
+        border-right: 1px solid #e5e5e5;
+        position: fixed;
+        padding: 1rem;
+    }
+
+    .sidebar .nav-link {
+        border-radius: 8px;
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+    }
+
+    .sidebar .nav-link.active {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .content {
+        margin-left: 260px;
+        padding: 2rem;
+    }
+
+    .card-option:hover {
+        background: #f5f7fa;
+        cursor: pointer;
+        transition: .2s;
     }

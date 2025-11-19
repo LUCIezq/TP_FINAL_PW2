@@ -20,8 +20,6 @@ class EditorController
 
     public function index()
     {
-        $message = $_SESSION["message"] ?? null;
-        unset($_SESSION["message"]);
 
         if (!IsLogged::isLogged()) {
             header("Location:/login/index");
@@ -35,71 +33,119 @@ class EditorController
             exit();
         }
 
-        $filters = [
-            'category_name' => htmlspecialchars(trim($_GET["category_name"] ?? "todas"), ENT_QUOTES, 'UTF-8'),
-            'eliminar_categoria_id' => filter_input(
-                INPUT_GET,
-                'eliminar_categoria_id',
-                FILTER_VALIDATE_INT,
-                [
-                    'options' => [
-                        'min_range' => 1
-                    ]
-                ]
-            )
-        ];
+        $message = $_SESSION["message"] ?? null;
+        unset($_SESSION["message"]);
 
-        if ($filters['eliminar_categoria_id']) {
-            $_SESSION["message"] = $this->eliminarCategoria($filters['eliminar_categoria_id']);
-            header("Location:/editor/index");
-            exit();
-        }
+        // $filters = [
+        //     'category_name' => htmlspecialchars(trim($_GET["category_name"] ?? "todas"), ENT_QUOTES, 'UTF-8'),
+        //     'eliminar_categoria_id' => filter_input(
+        //         INPUT_GET,
+        //         'eliminar_categoria_id',
+        //         FILTER_VALIDATE_INT,
+        //         [
+        //             'options' => [
+        //                 'min_range' => 1
+        //             ]
+        //         ]
+        //     )
+        // ];
 
-        $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
-        $categories = $this->categoryDao->getAll();
+        // if ($filters['eliminar_categoria_id']) {
+        //     $_SESSION["message"] = $this->eliminarCategoria($filters['eliminar_categoria_id']);
+        //     header("Location:/editor/index");
+        //     exit();
+        // }
 
-        foreach ($categories as &$category) {
-            $category['checked'] = $filters['category_name'] === $category['nombre'] ? 'checked' : '';
-            $category['esIdValido'] = $category['id'] != '' ? true : false;
-        }
+        // $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
+        // $categories = $this->categoryDao->getAll();
 
-        foreach ($questions as &$p) {
-            $p['categorias'] = [];
+        // foreach ($categories as &$category) {
+        //     $category['checked'] = $filters['category_name'] === $category['nombre'] ? 'checked' : '';
+        //     $category['esIdValido'] = $category['id'] != '' ? true : false;
+        // }
 
-            foreach ($categories as $c) {
-                $p['categorias'][] = [
-                    'id' => $c['id'],
-                    'nombre' => $c['nombre'],
-                    'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
-                ];
-            }
-        }
+        // foreach ($questions as &$p) {
+        //     $p['categorias'] = [];
 
-        $preguntasSugeridas = $this->preguntasDao->getAllQuestionByUsers();
+        //     foreach ($categories as $c) {
+        //         $p['categorias'][] = [
+        //             'id' => $c['id'],
+        //             'nombre' => $c['nombre'],
+        //             'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
+        //         ];
+        //     }
+        // }
 
-        foreach ($preguntasSugeridas as &$p) {
-            $p['categorias'] = [];
+        // $preguntasSugeridas = $this->preguntasDao->getAllQuestionByUsers();
 
-            foreach ($categories as $c) {
-                $p['categorias'][] = [
-                    'id' => $c['id'],
-                    'nombre' => $c['nombre'],
-                    'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
-                ];
-            }
-        }
+        // foreach ($preguntasSugeridas as &$p) {
+        //     $p['categorias'] = [];
 
-        array_unshift($categories, ['id' => '', 'nombre' => 'todas', 'checked' => $filters['category_name'] === 'todas' ? 'checked' : '']);
-        unset($p);
+        //     foreach ($categories as $c) {
+        //         $p['categorias'][] = [
+        //             'id' => $c['id'],
+        //             'nombre' => $c['nombre'],
+        //             'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
+        //         ];
+        //     }
+        // }
+
+        // array_unshift($categories, ['id' => '', 'nombre' => 'todas', 'checked' => $filters['category_name'] === 'todas' ? 'checked' : '']);
+        // unset($p);
+
+        // $this->mustacheRenderer->render("editor", [
+        //     "questions" => $questions,
+        //     "isLogged" => IsLogged::isLogged(),
+        //     "categories" => $categories,
+        //     'preguntasSugeridas' => $preguntasSugeridas,
+        //     "message" => $message,
+        //     "usuario" => $_SESSION['user']
+        // ]);
+
+        $opcionesMenu = $this->obtenerOpcionesDashboard();
+        $preguntasDelSistema = $this->preguntasDao->getAllSystemQuestions();
 
         $this->mustacheRenderer->render("editor", [
-            "questions" => $questions,
+            'preguntasDelSistema' => $preguntasDelSistema,
             "isLogged" => IsLogged::isLogged(),
-            "categories" => $categories,
-            'preguntasSugeridas' => $preguntasSugeridas,
+            // "categories" => $categories,
+            // 'preguntasSugeridas' => $preguntasSugeridas,
             "message" => $message,
-            "usuario" => $_SESSION['user']
+            "usuario" => $_SESSION['user'],
+            'opcionesMenu' => $opcionesMenu
         ]);
+    }
+
+    private function obtenerOpcionesDashboard()
+    {
+
+        return [
+            [
+                'ancla' => 'crearPregunta',
+                'titulo' => 'Crear pregunta',
+                'descripcion' => 'Cargar nueva pregunta al sistema.'
+            ],
+            [
+                'ancla' => 'preguntasSistema',
+                'titulo' => 'Preguntas del sistema',
+                'descripcion' => 'Ver y gestionar las preguntas existentes en el sistema.'
+            ],
+            [
+                'ancla' => 'preguntasSugeridas',
+                'titulo' => 'Preguntas sugeridas',
+                'descripcion' => 'Revisar y aprobar o rechazar preguntas sugeridas por usuarios.'
+            ],
+            [
+                'ancla' => 'preguntasReportadas',
+                'titulo' => 'Preguntas reportadas',
+                'descripcion' => 'Revisar y gestionar preguntas que han sido reportadas por usuarios.'
+            ],
+            [
+                'ancla' => 'categorias',
+                'titulo' => 'Categorías',
+                'descripcion' => 'Gestionar las categorías de las preguntas.'
+            ]
+        ];
     }
 
     private function eliminarCategoria($idCategoria)
@@ -180,28 +226,43 @@ class EditorController
         }
     }
 
-    public function rechazar()
+    public function eliminarPreguntas()
     {
 
-        $pregunta = $this->preguntasDao->getQuestionById($_POST["pregunta_id"]);
+        if ($_SERVER["REQUEST_METHOD"] != "POST") {
+            header("Location:/editor/index");
+            exit();
+        }
 
-        if (!$pregunta) {
+        $idPreguntas = $_POST['ids'] ?? [];
+
+        if (empty($idPreguntas)) {
+            $_SESSION['message'] = "No se seleccionaron preguntas para eliminar.";
             header("Location:/editor/index");
             exit();
         }
 
         try {
-            $state = $this->preguntasDao->rechazarPregunta($_POST["pregunta_id"]);
+            $state = $this->preguntasDao->eliminarPreguntasPorIds($idPreguntas);
 
-            $state == true ? $_SESSION["message"] = "Pregunta rechazada correctamente." : $_SESSION['message'] = "No se pudo rechazar la pregunta.";
+            if ($state) {
+                if (count($idPreguntas) > 1) {
+                    $_SESSION["message"] = "Preguntas eliminadas correctamente.";
+                } else {
+                    $_SESSION["message"] = "Pregunta eliminada correctamente.";
+                }
+            } else {
+                $_SESSION["message"] = "No se pudieron eliminar las preguntas.";
+            }
+
+            header("Location:/editor/index");
+            exit();
 
         } catch (Exception $e) {
-            $_SESSION["message"] = "Error al rechazar la pregunta.";
+            $_SESSION['message'] = "Error al eliminar las preguntas." . $e->getMessage();
             header("Location:/editor/index");
             exit();
         }
-        header("Location:/editor/index");
-        exit();
 
     }
 

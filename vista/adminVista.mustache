@@ -1,7 +1,9 @@
+{{> header }}
+
 <link href="/public/assets/dashboardAdmin.css" rel="stylesheet">
 
 <div class="admin-container">
-
+    
     <!-- ========================= -->
     <!--       SIDEBAR ADMIN       -->
     <!-- ========================= -->
@@ -20,7 +22,7 @@
     <!--        MAIN CONTENT       -->
     <!-- ========================= -->
     <main class="admin-main">
-
+        
         <h1 class="dashboard-title">Panel Administrativo</h1>
 
         <!-- FILTROS -->
@@ -98,6 +100,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+    const dataPais = {{{usuariosPorPais}}};
+    const dataSexo = {{{usuariosPorSexo}}};
+    const dataEdad = {{{usuariosPorEdad}}};
+    const dataPrecision = {{{porcentajeCorrectas}}};
+
     // País
     new Chart(document.getElementById("chartPais"), {
         type: 'bar',

@@ -82,8 +82,13 @@ class ConfigFactory
             $this->conexion
         );
 
+        // $this->objetos['ReporteController'] = new ReporteController(new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))));
+
         $this->objetos['ReporteController'] = new ReporteController(
-            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))),
+            new ReporteDao(
+                $this->conexion,
+                new PreguntasDao($this->conexion, new CategoryDao($this->conexion))
+            ),
             $this->renderer,
             new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
         );
