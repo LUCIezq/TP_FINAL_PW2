@@ -32,19 +32,11 @@ class AdminController
         $reporte = new ReporteAdmin($this->conexion);
 
         //Obtener datos para el dashboard
-<<<<<<< HEAD
-        $data = [
-            "totalUsuarios" => $reporte->getTotalUsuarios(),
-            "totalPartidas" => $reporte->getTotalPartidas(),
-            "totalPreguntas" => $reporte->getTotalPreguntas(),
-            "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
-=======
-       $data = [
+$data = [
             "totalUsuarios"           => $reporte->getTotalUsuarios(),
             "totalPartidas"           => $reporte->getTotalPartidas(),
             "totalPreguntas"          => $reporte->getTotalPreguntas(),
             "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
->>>>>>> a91f11a7a7e98b7485236bdae892a432caededea
 
             // Gráficos
             "usuariosPorPais" => $reporte->getUsuariosPorPais(),
