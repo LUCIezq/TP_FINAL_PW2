@@ -32,7 +32,6 @@ class AdminController
         $reporte = new ReporteAdmin($this->conexion);
 
         //Obtener datos para el dashboard
-
         $data = [
             "totalUsuarios" => $reporte->getTotalUsuarios(),
             "totalPartidas" => $reporte->getTotalPartidas(),
