@@ -16,7 +16,10 @@ class MustacheRenderer
 
     public function render($contentFile, $data = [])
     {
+         //NUEVOecho $this->generateHtml($this->viewsFolder . '/' . $contentFile . ".mustache", $data);
+
         echo $this->generateHtml($this->viewsFolder . '/' . $contentFile . "Vista.mustache", $data);
+
     }
 
     private function generateHtml($contentFile, $data = [])

@@ -122,6 +122,7 @@ class PreguntasDao
                     'usuario' => $row['usuario'],
                     'respuestas' => [],
                     'id_reporte' => $row['id_reporte'] ?? null
+                    'id_reporte' => $row['id_reporte'] ?? null
                 ];
             }
             if (!empty($row['respuesta_id'])) {

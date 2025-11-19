@@ -27,6 +27,7 @@
 
                         <input type="hidden" name="pregunta_id" value="{{pregunta_id}}" />
 
+<<<<<<< HEAD
                         <div class="w-100">
                             <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 1rem;">
                                 <small class="text-muted">Pregunta creada por <b>
@@ -79,6 +80,20 @@
                             {{/id_reporte}}
                         </div>
                     </form>
+=======
+                <div class="w-100">
+                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 1rem;">
+                        <small class="text-muted">Pregunta creada por <b>
+                                {{usuario}}
+                            </b></small>
+                        {{#id_reporte}}
+                        <span class="badge text-bg-warning">Reportes pendientes</span>
+                        {{/id_reporte}}
+                    </div>
+
+                    <input type="text" name="texto" class="form-control mt-2 w-100" value="{{pregunta}}" required />
+
+>>>>>>> a91f11a7a7e98b7485236bdae892a432caededea
                 </div>
                 {{/questions}}
 
