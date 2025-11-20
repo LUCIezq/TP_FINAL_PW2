@@ -110,7 +110,7 @@ class EditorController
             'preguntasDelSistema' => $preguntasDelSistema,
             "isLogged" => IsLogged::isLogged(),
             // "categories" => $categories,
-            // 'preguntasSugeridas' => $preguntasSugeridas,
+            'preguntasSugeridas' => $preguntasSugeridas,
             "message" => $message,
             "usuario" => $_SESSION['user'],
             'opcionesMenu' => $opcionesMenu

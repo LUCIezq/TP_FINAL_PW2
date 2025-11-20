@@ -51,6 +51,7 @@ class PreguntasController
             'respuestas' => $_POST['respuestas'] ?? []
         ];
 
+
         $errors = [];
 
         if (!$data["pregunta"]) {
@@ -83,11 +84,9 @@ class PreguntasController
 
             $result = $this->preguntasDao->createQuestion($data);
 
-            if ($result["created"] !== true) {
-                $_SESSION["error_message"] = "Error al crear la pregunta.";
-                header('location: /preguntas/index');
-                exit();
-            }
+            $result == true ? $_SESSION["success_message"] = "Pregunta creada exitosamente y está en revisión." : $_SESSION["error_message"] = "Error al crear la pregunta.";
+            header('location: /preguntas/index');
+            exit();
 
         } catch (Exception $e) {
             $errors[] = "Error inesperado: " . $e->getMessage();
