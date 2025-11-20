@@ -61,7 +61,7 @@ class ConfigFactory
         $this->objetos['PreguntasController'] = new PreguntasController(
             $this->renderer,
             new CategoryDao($this->conexion),
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion))
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))
         );
 
         $this->objetos['CategoriaController'] = new CategoriaController(
@@ -73,9 +73,9 @@ class ConfigFactory
                 $this->conexion,
             ),
             $this->renderer,
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
             new CategoryDao($this->conexion),
-            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion)))
+            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)))
         );
         $this->objetos['AdminController'] = new AdminController(
             $this->renderer,
@@ -87,10 +87,10 @@ class ConfigFactory
         $this->objetos['ReporteController'] = new ReporteController(
             new ReporteDao(
                 $this->conexion,
-                new PreguntasDao($this->conexion, new CategoryDao($this->conexion))
+                new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))
             ),
             $this->renderer,
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
         );
 
         require_once 'model/dao/GameDao.php';

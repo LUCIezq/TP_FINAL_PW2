@@ -4,11 +4,13 @@ class PreguntasDao
 {
     private MyConexion $conexion;
     private CategoryDao $categoryDao;
+    private EstadoPreguntaDao $estadoPreguntaDao;
 
-    public function __construct(MyConexion $conexion, CategoryDao $categoryDao)
+    public function __construct(MyConexion $conexion, CategoryDao $categoryDao, EstadoPreguntaDao $estadoPreguntaDao)
     {
         $this->conexion = $conexion;
         $this->categoryDao = $categoryDao;
+        $this->estadoPreguntaDao = $estadoPreguntaDao;
     }
 
     public function getPreguntasPorCategoria($idCategoria)
@@ -34,14 +36,15 @@ class PreguntasDao
             }
         }
 
-        $sql = "INSERT INTO pregunta (genero_id,dificultad_id,texto,activa,usuario_id) VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO pregunta (genero_id,dificultad_id,texto,usuario_id,estado_id) VALUES (?,?,?,?,?)";
 
         $params = [
             $data["categoriaId"],
             1,
             $data["pregunta"],
             0,
-            $data["usuarioId"]
+            $data["usuarioId"],
+            $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::SUGERIDA->value)
         ];
 
         $types = "iisii";
@@ -70,117 +73,118 @@ class PreguntasDao
         $this->conexion->executePrepared($sql, $types, $params);
     }
 
-    public function getQuestionsWithFilter($filters)
+    // public function getQuestionsWithFilter($filters)
+    // {
+    //     $category = $filters['category_name'] ?? 'todas';
+
+    //     if (!$category || $category === 'todas') {
+    //         $filter = '1=1';
+    //         $types = '';
+    //         $params = [];
+    //     } else {
+    //         $filter = 'g.nombre = ?';
+    //         $types = 's';
+    //         $params = [$category];
+    //     }
+
+    //     $sql = "SELECT 
+    //         u.nombre_usuario AS usuario,
+    //         p.texto          AS pregunta,
+    //         p.id             AS pregunta_id,
+    //         r.texto          AS respuesta,
+    //         r.id             AS respuesta_id,
+    //         p.genero_id      AS genero_id,
+    //         r.es_correcta    AS es_correcta,
+    //         rep.id_reporte
+    //     FROM pregunta p
+    //     JOIN usuario u       ON p.usuario_id = u.id
+    //     JOIN genero g        ON g.id = p.genero_id
+    //     LEFT JOIN respuesta r ON r.pregunta_id = p.id
+    //     LEFT JOIN reporte rep ON rep.id_reporte = (
+    //         SELECT r2.id_reporte
+    //         FROM reporte r2
+    //         WHERE r2.id_pregunta = p.id
+    //         ORDER BY r2.id_reporte DESC
+    //             LIMIT 1
+    //         )
+    //         WHERE $filter
+    //         ORDER BY rep.id_reporte DESC, p.id DESC";
+
+    //     $result = $this->conexion->executePrepared($sql, $types, $params);
+
+    //     $questions = [];
+
+    //     foreach ($result as $row) {
+    //         $id = $row['pregunta_id'];
+
+    //         if (!isset($questions[$id])) {
+    //             $questions[$id] = [
+    //                 'pregunta_id' => $row['pregunta_id'],
+    //                 'pregunta' => $row['pregunta'],
+    //                 'genero_id' => $row['genero_id'],
+    //                 'usuario' => $row['usuario'],
+    //                 'respuestas' => [],
+    //                 'id_reporte' => $row['id_reporte'] ?? null,
+    //             ];
+    //         }
+    //         if (!empty($row['respuesta_id'])) {
+    //             $questions[$id]['respuestas'][] = [
+    //                 'respuesta' => $row['respuesta'],
+    //                 'respuesta_id' => $row['respuesta_id'],
+    //                 'es_correcta' => $row['es_correcta']
+    //             ];
+    //         }
+    //     }
+    //     return array_values($questions);
+    // }
+
+    public function obtenerPreguntasSugeridas()
     {
-        $category = $filters['category_name'] ?? 'todas';
-
-        if (!$category || $category === 'todas') {
-            $filter = '1=1';
-            $types = '';
-            $params = [];
-        } else {
-            $filter = 'g.nombre = ?';
-            $types = 's';
-            $params = [$category];
-        }
-
-        $sql = "SELECT 
+        $sql = " SELECT 
             u.nombre_usuario AS usuario,
-            p.texto          AS pregunta,
-            p.id             AS pregunta_id,
-            r.texto          AS respuesta,
-            r.id             AS respuesta_id,
-            p.genero_id      AS genero_id,
-            r.es_correcta    AS es_correcta,
-            rep.id_reporte
-        FROM pregunta p
-        JOIN usuario u       ON p.usuario_id = u.id
-        JOIN genero g        ON g.id = p.genero_id
-        LEFT JOIN respuesta r ON r.pregunta_id = p.id
-        LEFT JOIN reporte rep ON rep.id_reporte = (
-            SELECT r2.id_reporte
-            FROM reporte r2
-            WHERE r2.id_pregunta = p.id
-            ORDER BY r2.id_reporte DESC
-                LIMIT 1
-            )
-            WHERE $filter
-            ORDER BY rep.id_reporte DESC, p.id DESC";
+            p.texto AS enunciado,
+            p.id AS pregunta_id,
+            r.texto as respuesta,
+            r.es_correcta,
+            g.nombre as genero_nombre
+                FROM pregunta p
+                JOIN usuario u ON p.usuario_id = u.id
+                LEFT JOIN respuesta r ON r.pregunta_id = p.id
+                join genero g on g.id = p.genero_id
+            WHERE p.estado_id = ?";
 
-        $result = $this->conexion->executePrepared($sql, $types, $params);
+        $params = [$this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::SUGERIDA->value)];
+        $types = "i";
 
+        $result = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        );
         $questions = [];
 
         foreach ($result as $row) {
+
             $id = $row['pregunta_id'];
 
             if (!isset($questions[$id])) {
                 $questions[$id] = [
                     'pregunta_id' => $row['pregunta_id'],
-                    'pregunta' => $row['pregunta'],
-                    'genero_id' => $row['genero_id'],
+                    'enunciado' => $row['enunciado'],
+                    'genero_nombre' => $row['genero_nombre'],
                     'usuario' => $row['usuario'],
+                    'activa' => (int) $row['estado_id'] === $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::ACTIVA->value) ? true : false,
                     'respuestas' => [],
-                    'id_reporte' => $row['id_reporte'] ?? null,
                 ];
             }
+
             if (!empty($row['respuesta_id'])) {
                 $questions[$id]['respuestas'][] = [
                     'respuesta' => $row['respuesta'],
-                    'respuesta_id' => $row['respuesta_id'],
                     'es_correcta' => $row['es_correcta']
                 ];
             }
         }
+
         return array_values($questions);
-    }
-
-    public function getAllQuestionByUsers()
-    {
-        $sql = "SELECT u.nombre_usuario as usuario,
-        p.texto as pregunta,
-        p.id as pregunta_id,
-        r.texto as respuesta,
-        r.id as respuesta_id,
-        p.genero_id as genero_id,
-        r.es_correcta as es_correcta
-        from pregunta p
-        JOIN usuario u ON p.usuario_id = u.id
-        LEFT JOIN respuesta r ON r.pregunta_id = p.id
-        WHERE p.usuario_id != 2 and p.activa != 1"; // 2 es el id del admin
-
-        $result = $this->conexion->query($sql);
-
-        if (empty($result))
-            return [];
-
-        $questions = [];
-
-        foreach ($result as $row) {
-            $pid = $row['pregunta_id'];
-
-            if (!isset($questions[$pid])) {
-                $questions[$pid] = [
-                    'usuario' => $row['usuario'],
-                    'pregunta' => $row['pregunta'],
-                    'pregunta_id' => $pid,
-                    'genero_id' => $row['genero_id'],
-                    'genero_name' => $this->categoryDao->getById($row['genero_id'])['nombre'],
-                    'respuestas' => [],
-                ];
-            }
-
-            if (!empty($row['respuesta_id'])) {
-                $questions[$pid]['respuestas'][] = [
-                    'respuesta' => $row['respuesta'],
-                    'respuesta_id' => $row['respuesta_id'],
-                    'es_correcta' => $row['es_correcta']
-                ];
-            }
-        }
-        //array values es util para pasar a mustache ya que este no maneja bien los arrays asociativos
-        return array_values($questions);
-
     }
 
     public function obtenerPreguntaPorId($id)
@@ -352,7 +356,6 @@ class PreguntasDao
         return $this->conexion->executePrepared($sql, $types, $params) === 1;
     }
 
-
     public function actualizarEnunciadoRespuesta($respuestaId, $nuevoTexto)
     {
         $sql = 'UPDATE respuesta set texto = ? where id = ?';
@@ -432,7 +435,7 @@ class PreguntasDao
         r.id as respuesta_id,
         r.es_correcta,
         g.nombre as genero_nombre,
-        p.activa
+        p.estado_id
         
         FROM pregunta p 
         
@@ -455,7 +458,7 @@ class PreguntasDao
                     'genero_id' => $row['genero_id'],
                     'genero_nombre' => $row['genero_nombre'],
                     'usuario' => $row['usuario'],
-                    'activa' => $row['activa'],
+                    'activa' => (int) $row['estado_id'] === $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::ACTIVA->value) ? true : false,
                     'respuestas' => [],
                 ];
             }

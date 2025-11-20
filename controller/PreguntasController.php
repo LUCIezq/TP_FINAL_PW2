@@ -47,29 +47,50 @@ class PreguntasController
             "pregunta" => trim($_POST["pregunta"]),
             "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]),
             "indiceCorrecta" => filter_var($_POST["correcta"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,]]),
-            "usuarioId" => $_SESSION["user"]["id"]
+            "usuarioId" => $_SESSION["user"]["id"],
+            'respuestas' => $_POST['respuestas'] ?? []
         ];
 
+        $errors = [];
 
-        $result = $this->preguntasDao->createQuestion($data);
+        if (!$data["pregunta"]) {
+            $errors[] = "El enunciado de la pregunta es obligatorio.";
+        }
+        if (!$data["categoriaId"]) {
+            $errors[] = "La categoría seleccionada no es válida.";
+        }
+        if (!$data["indiceCorrecta"]) {
+            $errors[] = "La respuesta correcta no es valida.";
+        }
+        if ($data['respuestas'] === [] || count($data['respuestas']) < 2) {
+            $errors[] = "Se deben proporcionar al menos dos respuestas.";
+        } else {
+            foreach ($data['respuestas'] as $respuesta) {
+                if (trim($respuesta) === '') {
+                    $errors[] = "Todas las respuestas deben tener texto.";
+                    break;
+                }
+            }
+        }
 
-        if ($result["created"] !== true) {
-            $_SESSION["error_message"] = "Error al crear la pregunta.";
+        if (empty($errors)) {
+            $_SESSION["error_message"] = implode(" ", $errors);
             header('location: /preguntas/index');
             exit();
         }
 
-        $id = (int) $result['lastInsertId'];
+        try {
 
-        for ($i = 1; $i <= 4; $i++) {
-            $text = $_POST["respuesta" . $i];
-            $isCorrect = ($i == $data["indiceCorrecta"]) ? 1 : 0;
+            $result = $this->preguntasDao->createQuestion($data);
 
-            $this->preguntasDao->createAnswer($text, $isCorrect, $id);
+            if ($result["created"] !== true) {
+                $_SESSION["error_message"] = "Error al crear la pregunta.";
+                header('location: /preguntas/index');
+                exit();
+            }
+
+        } catch (Exception $e) {
+            $errors[] = "Error inesperado: " . $e->getMessage();
         }
-
-        $_SESSION["success_message"] = "Pregunta creada exitosamente.";
-        header('location: /preguntas/index');
-        exit();
     }
 }

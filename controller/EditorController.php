@@ -104,6 +104,7 @@ class EditorController
 
         $opcionesMenu = $this->obtenerOpcionesDashboard();
         $preguntasDelSistema = $this->preguntasDao->getAllSystemQuestions();
+        $preguntasSugeridas = $this->preguntasDao->obtenerPreguntasSugeridas();
 
         $this->mustacheRenderer->render("editor", [
             'preguntasDelSistema' => $preguntasDelSistema,
@@ -269,69 +270,62 @@ class EditorController
     public function modificar()
     {
 
-        // 1 - Recibir datos por POST
-        // 2 - Validar y sanitizar datos
-        // 3 - Consultar en la bd si existe la pregunta
-        // 4 - Si existe validar campo a campo para actualizar unicamente el que se modifico.
-        // 5 - Guardamos en un array todos los campos actualizados.
-        // 6 - LLamar al metodo del dao para actualizar la pregunta.
-        // 7 - Redirigir con mensaje de exito o error.
+        // $errors = [];
+        // $inputs = [];
 
-        $errors = [];
-        $inputs = [];
+        // if ($_SERVER["REQUEST_METHOD"] != "GET") {
+        //     header("Location:/editor/index");
+        //     exit();
+        // }
 
-        if ($_SERVER["REQUEST_METHOD"] != "POST") {
-            header("Location:/editor/index");
-            exit();
-        }
+        // $inputs = [
+        //     'pregunta_id' => filter_input(INPUT_GET, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+        //     'texto' => trim($_POST['texto'] ?? ''),
+        //     'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
 
-        $inputs = [
-            'pregunta_id' => filter_input(INPUT_POST, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
-            'texto' => trim($_POST['texto'] ?? ''),
-            'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+        //     'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+        //     'respuestas' => $_POST['respuestas'] ?? []
+        // ];
 
-            'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
-            'respuestas' => $_POST['respuestas'] ?? []
-        ];
+        // if (!$inputs['pregunta_id'])
+        //     $errors[] = "ID de pregunta inválido.";
+        // if ($inputs['texto'] === '')
+        //     $errors[] = "El texto de la pregunta no puede estar vacío.";
+        // if (!$inputs['genero_id'])
+        //     $errors[] = "Categoría inválida.";
+        // if (!$inputs['id_correcta'])
+        //     $errors[] = "Debe seleccionarse una respuesta correcta.";
+        // if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
+        //     $errors[] = "Todas las respuestas deben ser proporcionadas.";
 
-        if (!$inputs['pregunta_id'])
-            $errors[] = "ID de pregunta inválido.";
-        if ($inputs['texto'] === '')
-            $errors[] = "El texto de la pregunta no puede estar vacío.";
-        if (!$inputs['genero_id'])
-            $errors[] = "Categoría inválida.";
-        if (!$inputs['id_correcta'])
-            $errors[] = "Debe seleccionarse una respuesta correcta.";
-        if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
-            $errors[] = "Todas las respuestas deben ser proporcionadas.";
+        // foreach ($inputs['respuestas'] as $respuesta) {
+        //     if (empty(trim($respuesta))) {
+        //         $errors[] = "Las respuestas no pueden estar vacías.";
+        //         break;
+        //     }
+        // }
 
-        foreach ($inputs['respuestas'] as $respuesta) {
-            if (empty(trim($respuesta))) {
-                $errors[] = "Las respuestas no pueden estar vacías.";
-                break;
-            }
-        }
+        // if (!empty($errors)) {
+        //     $_SESSION['message'] = implode(' ', $errors);
+        //     header("Location:/editor/index");
+        //     exit();
+        // }
 
-        if (!empty($errors)) {
-            $_SESSION['message'] = implode(' ', $errors);
-            header("Location:/editor/index");
-            exit();
-        }
+        // try {
 
-        try {
+        //     $errors[] = $this->preguntasDao->actualizarPregunta($inputs);
 
-            $errors[] = $this->preguntasDao->actualizarPregunta($inputs);
+        //     empty($errors) ? $_SESSION['message'] = "Pregunta modificada correctamente." : $_SESSION['message'] = implode(' ', $errors);
 
-            empty($errors) ? $_SESSION['message'] = "Pregunta modificada correctamente." : $_SESSION['message'] = implode(' ', $errors);
+        //     header("Location:/editor/index");
+        //     exit();
 
-            header("Location:/editor/index");
-            exit();
+        // } catch (Exception $e) {
+        //     $_SESSION['message'] = "Error al modificar la pregunta." . $e->getMessage();
+        //     header("Location:/editor/index");
+        //     exit();
+        // }
 
-        } catch (Exception $e) {
-            $_SESSION['message'] = "Error al modificar la pregunta." . $e->getMessage();
-            header("Location:/editor/index");
-            exit();
-        }
     }
 
     public function procesarPregunta()
@@ -348,7 +342,7 @@ class EditorController
                 $this->aprobar();
                 break;
             case 'eliminar':
-                $this->rechazar();
+                $this->eliminarPreguntas();
                 break;
             case 'modificar':
                 $this->modificar();

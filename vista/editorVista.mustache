@@ -99,11 +99,78 @@
 
         <section id="preguntasSistema" class="d-flex flex-column gap-3"">
 
-        <div class=" card p-4 shadow-sm" style="height: 800px; overflow-y: scroll;">
+        <div class=" card p-4 shadow-sm" style=" height: 800px; overflow-y: scroll;">
 
             {{#preguntasDelSistema}}
 
-            <div class="d-flex align-items-center gap-4">
+            <div class="d-flex  align-items-center w-100 gap-3">
+                <div class="d-flex align-items-center gap-4 w-100">
+                    <input type="checkbox" class="form-check-input ms-3" name="ids[]" value="{{pregunta_id}}">
+
+                    <div class=" card shadow-sm mb-4 rounded-3 border-0 w-100" role="button" data-bs-toggle="collapse"
+                        data-bs-target="#{{pregunta_id}}">
+
+                        <div class="card-body w-100">
+
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <small class="text-muted d-block">
+                                        Creada por <strong>{{usuario}}</strong>
+                                    </small>
+                                    <h6 class="mt-1 fw-bold mb-0">{{enunciado}}</h6>
+                                </div>
+
+                                <div class="d-flex align-items-end gap-1">
+                                    <span class="badge text-bg-secondary">{{genero_nombre}}</span>
+                                    {{#activa}}
+                                    <span class="badge text-bg-success">Activa</span>
+                                    {{/activa}}
+                                    {{^activa}}
+                                    <span class="badge text-bg-danger">Inactiva</span>
+                                    {{/activa}}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="{{pregunta_id}}" class="collapse">
+
+                            <div class="list-group list-group-flush">
+                                {{#respuestas}}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{respuesta}}
+                                    {{#es_correcta}}
+                                    <span class="badge bg-success ms-2">Correcta</span>
+                                    {{/es_correcta}}
+                                </div>
+                                {{/respuestas}}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/preguntasDelSistema}}
+
+            {{^preguntasDelSistema}}
+            <p class="text-muted">No se encontraron preguntas del sistema.</p>
+            {{/preguntasDelSistema}}
+
+</div>
+
+</section>
+</form>
+
+<section id="preguntasSugeridas" class="mb-5 pt-4">
+    <h4 class="fw-bold mb-3">Preguntas sugeridas</h4>
+
+    <div class=" card p-4 shadow-sm" style=" height: 800px; overflow-y: scroll;">
+
+        {{#preguntasSugeridas}}
+
+        <div class="d-flex  align-items-center w-100 gap-3">
+            <div class="d-flex align-items-center gap-4 w-100">
                 <input type="checkbox" class="form-check-input ms-3" name="ids[]" value="{{pregunta_id}}">
 
                 <div class=" card shadow-sm mb-4 rounded-3 border-0 w-100" role="button" data-bs-toggle="collapse"
@@ -114,7 +181,7 @@
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
                                 <small class="text-muted d-block">
-                                    Creada por <strong>{{usuario}}</strong>
+                                    Sugerida por <strong>{{usuario}}</strong>
                                 </small>
                                 <h6 class="mt-1 fw-bold mb-0">{{enunciado}}</h6>
                             </div>
@@ -137,34 +204,24 @@
 
                         <div class="list-group list-group-flush">
                             {{#respuestas}}
-                            <div class="list-group-item d-flex justify-content-between align-items-center">{{respuesta}}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{respuesta}}
                                 {{#es_correcta}}
                                 <span class="badge bg-success ms-2">Correcta</span>
                                 {{/es_correcta}}
                             </div>
                             {{/respuestas}}
                         </div>
-
                     </div>
                 </div>
             </div>
+        </div>
 
-            {{/preguntasDelSistema}}
+        {{/preguntasSugeridas}}
 
-            {{^preguntasDelSistema}}
-            <p class="text-muted">No se encontraron preguntas del sistema.</p>
-            {{/preguntasDelSistema}}
-
-</div>
-
-</section>
-</form>
-
-<section id="preguntasSugeridas" class="mb-5 pt-4">
-    <h4 class="fw-bold mb-3">Preguntas sugeridas</h4>
-
-    <div class="card p-4 shadow-sm">
-        <p class="text-muted">Aquí aparecerán las sugeridas para aprobar, modificar o rechazar.</p>
+        {{^preguntasSugeridas}}
+        <p class="text-muted">No se encontraron preguntas sugeridas.</p>
+        {{/preguntasSugeridas}}
     </div>
 </section>
 
