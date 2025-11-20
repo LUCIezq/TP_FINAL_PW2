@@ -190,7 +190,7 @@ class EditorController
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            $idPreguntas = $_POST['selected'] ?? null;
+            $idPreguntas = $_POST['ids'] ?? null;
 
             if (empty($idPreguntas)) {
                 $_SESSION['message'] = 'No se seleccionaron preguntas para aprobar.';
@@ -329,6 +329,7 @@ class EditorController
                 $this->aprobar();
                 break;
             case 'eliminar':
+            case 'rechazar':
                 $this->eliminarPreguntas();
                 break;
             default:
