@@ -208,13 +208,39 @@ class PreguntasDao
         return array_values($questions)[0] ?? null;
     }
 
-    public function aprobarPregunta($id)
+    public function aprobarPregunta($preguntas)
     {
-        $sql = 'UPDATE pregunta set activa=1 where id = ?';
-        $params = [$id];
-        $types = 'i';
-        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+        $cantidad = count($preguntas);
+
+        if ($cantidad === 0)
+            return false;
+
+        $placeholders = implode(',', array_fill(0, $cantidad, '?'));
+
+        $types = 'i' . str_repeat('i', $cantidad);
+
+        $sql = "
+        UPDATE pregunta
+        SET estado_id = (
+            SELECT id FROM estado_pregunta 
+            WHERE nombre = ?
+        )
+        WHERE id IN ($placeholders)
+    ";
+
+        $params = [
+            $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(
+                EstadoPreguntaNombre::ACTIVA->value
+            )
+        ];
+
+        foreach ($preguntas as $p) {
+            $params[] = $p;
+        }
+
+        return $this->conexion->executePrepared($sql, $types, $params) > 0;
     }
+
 
     public function actualizarPregunta($data)
     {
@@ -352,7 +378,7 @@ class PreguntasDao
             return false;
         }
 
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $placeholders = implode(',', array_fill(0, count(value: $ids), '?'));
 
         $sql = "DELETE FROM pregunta WHERE id IN ($placeholders)";
 
