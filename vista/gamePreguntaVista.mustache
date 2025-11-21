@@ -99,28 +99,30 @@
                 method: "POST",
                 body: formData
             })
-                .then(res => res.json())
                 .then(data => {
-                    if (data.correcta && data.continuar) {
-
+                    if (data.fin) {
+                        mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
+                        setTimeout(() => window.location.href = "/home", 2500);
+                        return;
+                    }
+                    if (data.correcta === true) {
                         btn.classList.remove("btn-outline-primary");
                         btn.classList.add("btn-success");
                         mensajeDiv.innerHTML = "✅ ¡Correcto!";
                         setTimeout(() => {
                             window.location.href = "/game/siguientePregunta";
                         }, 1500);
+                        return;
                     }
-                    else if (data.fin) {
-                        mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
-                        setTimeout(() => window.location.href = "/home", 2500);
-                    }
-                    else if (data.correcta === false) {
-
+                    if (data.correcta === false) {
                         btn.classList.remove("btn-outline-primary");
                         btn.classList.add("btn-danger");
-                        mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" + data.correcta_texto + "</strong>";
+                        mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" 
+                                                + data.correcta_texto + "</strong>";
                         setTimeout(() => window.location.href = "/home", 3000);
+                        return;
                     }
+                mensajeDiv.innerHTML = "⚠ Error inesperado. Respuesta no reconocida.";
                 })
         });
     });

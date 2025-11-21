@@ -3,6 +3,8 @@ require_once __DIR__ . "/../model/dao/ReporteDao.php";
 require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no me lo corria en el xampp
 require_once __DIR__ . "/../model/dao/CategoryDao.php";
 require_once __DIR__ . "/../controller/ReporteController.php";
+require_once __DIR__ . '/../model/dao/EstadisticasDao.php';
+
 class ConfigFactory
 {
     private $config;
@@ -53,10 +55,14 @@ class ConfigFactory
 
         $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 
+        $this->objetos['EstadisticasDao'] = new EstadisticasDao($this->conexion);
+
         $this->objetos['UsuarioController'] = new UsuarioController(
             new UsuarioDao($this->conexion),
+            $this->objetos['EstadisticasDao'],
             $this->renderer
         );
+
 
         $this->objetos['PreguntasController'] = new PreguntasController(
             $this->renderer,
@@ -94,6 +100,8 @@ class ConfigFactory
             $this->renderer,
             new GameDao($this->conexion)
         );
+
+        
     }
 
 
