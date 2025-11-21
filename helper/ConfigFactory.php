@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../model/dao/ReporteDao.php";
 require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no me lo corria en el xampp
 require_once __DIR__ . "/../model/dao/CategoryDao.php";
+require_once __DIR__ . "/../model/dao/EstadoPreguntaDao.php";
 require_once __DIR__ . "/../controller/ReporteController.php";
 class ConfigFactory
 {
