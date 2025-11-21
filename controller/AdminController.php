@@ -12,41 +12,34 @@ class AdminController
     }
 
     public function index(): void
-    {
-        // Verificar login
-        if (!IsLogged::isLogged()) {
-            header("Location:/login/index");
-            exit();
-        }
-
-        // Verificar rol admin
-        $role = $_SESSION['user']['rol_id'] ?? null;
-
-        if ($role != UserRole::ADMIN) {
-            header("Location:/home/index");
-            exit();
-        }
-
-        // Cargar el modelo con la conexión REAL del sistema
-        require_once __DIR__ . "/../model/ReporteAdmin.php";
-        $reporte = new ReporteAdmin($this->conexion);
-
-        //Obtener datos para el dashboard
-        $data = [
-            "totalUsuarios" => $reporte->getTotalUsuarios(),
-            "totalPartidas" => $reporte->getTotalPartidas(),
-            "totalPreguntas" => $reporte->getTotalPreguntas(),
-            "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
-
-            // Gráficos
-            "usuariosPorPais" => $reporte->getUsuariosPorPais(),
-            "usuariosPorSexo" => $reporte->getUsuariosPorSexo(),
-            "usuariosPorEdad" => [],
-            "porcentajeCorrectas" => []
-        ];
-
-
-        // Renderizar la vista del dashboard
-        $this->mustacheRenderer->render("adminVista", $data);
+{
+    if (!IsLogged::isLogged()) {
+        header("Location:/login/index");
+        exit();
     }
+
+    $role = $_SESSION['user']['rol_id'] ?? null;
+    if ($role != UserRole::ADMIN) {
+        header("Location:/home/index");
+        exit();
+    }
+
+    require_once __DIR__ . "/../model/ReporteAdmin.php";
+    $reporte = new ReporteAdmin($this->conexion);
+
+    $data = [
+        "totalUsuarios" => $reporte->getTotalUsuarios(),
+        "totalPartidas" => $reporte->getTotalPartidas(),
+        "totalPreguntas" => $reporte->getTotalPreguntas(),
+        "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
+
+        // GRAFICOS - ¡IMPORTANTE json_encode!
+        "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais()),
+        "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo()),
+        "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad()),
+        "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario())
+    ];
+
+    $this->mustacheRenderer->render("adminVista", $data);
+}
 }
