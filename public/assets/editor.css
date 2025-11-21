@@ -67,3 +67,16 @@
         cursor: pointer;
         transition: .2s;
     }
+
+    /* Radio normal */
+.input-group-text input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #0d6efd; /* azul original */
+}
+
+/* Cuando está seleccionado → verde */
+.input-group-text input[type="radio"]:checked {
+    accent-color: #28a745 ; /* verde bootstrap */
+}
