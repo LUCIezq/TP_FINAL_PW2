@@ -7,9 +7,6 @@ class GameDao {
         $this->dbConnection = $dbConnection;
     }
 
-    /* ========================
-       GENERO
-    ======================== */
     public function obtenerGeneroPorNombre($nombre){
         $sql = "SELECT id FROM genero WHERE nombre = ? LIMIT 1";
         return $this->dbConnection->processData(
@@ -17,9 +14,6 @@ class GameDao {
         )[0] ?? null;
     }
 
-    /* ========================
-       RESPUESTAS
-    ======================== */
     public function obtenerRespuestas($preguntaId){
         $sql = "SELECT id, texto 
                 FROM respuesta 
@@ -31,9 +25,7 @@ class GameDao {
         );
     }
 
-    /* ========================
-       PARTIDA
-    ======================== */
+
     public function crearPartida($usuarioId, $generoId, $dificultadId){
         $sql = "INSERT INTO partida (usuario_id, genero_actual_id, dificultad_id)
                 VALUES (?, ?, ?)";
@@ -50,12 +42,10 @@ class GameDao {
         return $this->dbConnection->executePrepared($sql, "si", [$nuevoEstado, $partidaId]);
     }
 
-    /* ========================
-       PREGUNTAS (VERSIÓN SIMPLE ESTABLE)
-    ======================== */
+
     public function obtenerPreguntaSimple($generoId, $usuarioId){
 
-        // Primero: sin repetir
+   
         $sql = "SELECT id, texto 
                 FROM pregunta
                 WHERE genero_id = ?
@@ -73,7 +63,6 @@ class GameDao {
 
         if (!empty($data)) return $data[0];
 
-        // Si no quedan nuevas → permitir repetidas
         $sql2 = "SELECT id, texto
                  FROM pregunta
                  WHERE genero_id = ?
@@ -87,9 +76,7 @@ class GameDao {
         return $data2[0] ?? null;
     }
 
-    /* ========================
-       VALIDACIÓN DE RESPUESTAS
-    ======================== */
+
     public function verificarRespuesta($respuestaId, $preguntaId){
         $sql = "SELECT es_correcta 
                 FROM respuesta 
@@ -115,9 +102,6 @@ class GameDao {
         return $data[0]['texto'] ?? '';
     }
 
-    /* ========================
-       HISTORIAL
-    ======================== */
     public function insertarHistorial($usuarioId, $partidaId, $preguntaId, $esCorrecta){
         $sql = "INSERT INTO historial_partida 
                 (usuario_id, partida_id, pregunta_id, respondida_correctamente)
@@ -130,9 +114,7 @@ class GameDao {
         );
     }
 
-    /* ========================
-       PUNTAJE
-    ======================== */
+
     public function sumarPunto($usuarioId){
         $sql = "UPDATE usuario 
                 SET puntos = puntos + 1 
@@ -141,9 +123,7 @@ class GameDao {
         return $this->dbConnection->executePrepared($sql, "i", [$usuarioId]);
     }
 
-    /* ========================
-       ESTADISTICAS
-    ======================== */
+
     public function obtenerEstadisticasUsuario($usuarioId){
         $sql = "SELECT 
                     COUNT(*) AS partidas_jugadas,

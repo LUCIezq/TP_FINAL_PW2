@@ -9,9 +9,6 @@ class GameController {
         $this->gameDao = $gameDao;
     }
 
-    /* ======================
-       HOME / RULETA
-    ====================== */
     public function base(){
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
@@ -21,9 +18,6 @@ class GameController {
         $this->renderer->render("gameRuleta");
     }
 
-    /* ======================
-       INICIAR PARTIDA
-    ====================== */
     public function start(){
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
@@ -34,7 +28,6 @@ class GameController {
         $message = $_SESSION['message'] ?? null;
         if ($message) unset($_SESSION['message']);
 
-        /* Si había partida en curso → seguir */
         if (isset($_SESSION['partida'])) {
 
             $p = $_SESSION['partida'];
@@ -63,7 +56,7 @@ class GameController {
             return;
         }
 
-        /* CREAR PARTIDA NUEVA */
+ 
         $generoNombre = $_POST['genero'] ?? null;
 
         if (!$generoNombre){
@@ -114,9 +107,7 @@ class GameController {
         ]);
     }
 
-    /* ======================
-       VALIDAR RESPUESTA
-    ====================== */
+
     public function respuesta(){
 
         header('Content-Type: application/json');
@@ -143,7 +134,7 @@ class GameController {
             exit();
         }
 
-        /* guardar historial */
+
         $this->gameDao->insertarHistorial(
             $usuarioId,
             $partidaId,
@@ -151,7 +142,6 @@ class GameController {
             (int)$esCorrecta === 1
         );
 
-        /* respuesta correcta */
         if ((int)$esCorrecta === 1){
 
             $this->gameDao->sumarPunto($usuarioId);
@@ -177,7 +167,6 @@ class GameController {
             exit();
         }
 
-        /* respuesta incorrecta */
         $textoCorrecta = $this->gameDao->obtenerRespuestaCorrecta($preguntaId);
 
         $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
@@ -190,9 +179,7 @@ class GameController {
         ]);
     }
 
-    /* ======================
-       SIGUIENTE PREGUNTA
-    ====================== */
+
     public function siguientePregunta(){
         if (!IsLogged::isLogged() || !isset($_SESSION['partida'])){
             header("location: /home/index");
