@@ -25,7 +25,6 @@ class GameDao {
         );
     }
 
-
     public function crearPartida($usuarioId, $generoId, $dificultadId){
         $sql = "INSERT INTO partida (usuario_id, genero_actual_id, dificultad_id)
                 VALUES (?, ?, ?)";
@@ -42,10 +41,7 @@ class GameDao {
         return $this->dbConnection->executePrepared($sql, "si", [$nuevoEstado, $partidaId]);
     }
 
-
     public function obtenerPreguntaSimple($generoId, $usuarioId){
-
-   
         $sql = "SELECT id, texto 
                 FROM pregunta
                 WHERE genero_id = ?

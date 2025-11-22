@@ -99,13 +99,14 @@
                 method: "POST",
                 body: formData
             })
+                .then (response => response.json())
                 .then(data => {
                     if (data.fin) {
                         mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
                         setTimeout(() => window.location.href = "/home", 2500);
                         return;
                     }
-                    if (data.correcta === true) {
+                    if (data.correcta === true && data.continuar) {
                         btn.classList.remove("btn-outline-primary");
                         btn.classList.add("btn-success");
                         mensajeDiv.innerHTML = "✅ ¡Correcto!";
@@ -123,6 +124,10 @@
                         return;
                     }
                 mensajeDiv.innerHTML = "⚠ Error inesperado. Respuesta no reconocida.";
+                })
+                .catch(err => {
+                    consolo.error(err);
+                    mensajeDiv.innerHTML = "Error con el servidor";
                 })
         });
     });

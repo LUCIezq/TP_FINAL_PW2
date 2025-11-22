@@ -24,6 +24,10 @@ class GameController {
             exit();
         }
 
+        /*var_dump($_SESSION['partida'] ?? 'SIN PARTIDA');
+        exit;*/
+
+        unset($_SESSION['partida']);
         $usuarioId = $_SESSION['user']['id'];
         $message = $_SESSION['message'] ?? null;
         if ($message) unset($_SESSION['message']);
@@ -55,9 +59,10 @@ class GameController {
 
             return;
         }
-
  
         $generoNombre = $_POST['genero'] ?? null;
+      //  echo "<h1 style='color:red'>DEBUG → Género recibido: $generoNombre</h1>";
+       // exit;
 
         if (!$generoNombre){
             header("location: /game");
@@ -106,7 +111,6 @@ class GameController {
             "message" => $message
         ]);
     }
-
 
     public function respuesta(){
 
@@ -178,7 +182,6 @@ class GameController {
             "correcta_texto" => $textoCorrecta
         ]);
     }
-
 
     public function siguientePregunta(){
         if (!IsLogged::isLogged() || !isset($_SESSION['partida'])){
