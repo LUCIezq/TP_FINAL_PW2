@@ -33,10 +33,10 @@ class AdminController
         "totalPreguntas" => $reporte->getTotalPreguntas(),
         "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
 
-        "usuariosPorPais" =>($reporte->getUsuariosPorPais()),
-        "usuariosPorSexo" =>($reporte->getUsuariosPorSexo()),
-        "usuariosPorEdad" =>($reporte->getUsuariosPorEdad()),
-        "porcentajeCorrectasPorUsuario" =>($reporte->getPorcentajeCorrectasPorUsuario())
+        "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais()),
+        "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo()),
+        "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad()),
+        "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario())
     ];
 
     $this->mustacheRenderer->render("admin", $data);
