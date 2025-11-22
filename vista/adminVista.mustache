@@ -1,11 +1,14 @@
 {{> header }}
-<link rel="stylesheet" href="/public/assets/dashboardAdmin.css">
+<link href="/public/assets/dashboardAdmin.css" rel="stylesheet">
 
 <div class="admin-container">
-
-    <!-- SIDEBAR -->
+    
+    <!-- ========================= -->
+    <!--       SIDEBAR ADMIN       -->
+    <!-- ========================= -->
     <aside class="admin-sidebar">
         <h2 class="sidebar-title">ADMIN</h2>
+
         <ul class="sidebar-menu">
             <li><a href="/admin/index" class="active">📊 Dashboard</a></li>
             <li><a href="/editor/index">📝 Gestión de Preguntas</a></li>
@@ -14,117 +17,92 @@
         </ul>
     </aside>
 
-    <!-- MAIN -->
+    <!-- ========================= -->
+    <!--        MAIN CONTENT       -->
+    <!-- ========================= -->
     <main class="admin-main">
-
+        
         <h1 class="dashboard-title">Panel Administrativo</h1>
 
         <!-- FILTROS -->
-        <section class="filter-section mb-4">
-            <label class="fw-bold">Filtrar reportes por:</label>
-            <select id="filtroPeriodo" class="form-select w-auto d-inline-block ms-2">
+        <div class="filter-bar">
+            <label for="filtroPeriodo">Filtrar por:</label>
+            <select id="filtroPeriodo">
                 <option value="dia">Hoy</option>
                 <option value="semana">Última semana</option>
                 <option value="mes">Último mes</option>
                 <option value="anio">Último año</option>
             </select>
-        </section>
+        </div>
 
-        <!-- KPIs -->
-        <section class="kpi-grid mb-5">
+        <!-- ========================= -->
+        <!--           KPIs            -->
+        <!-- ========================= -->
+        <div class="kpi-grid">
 
-            <div class="kpi-card shadow-sm">
+            <div class="kpi-card">
                 <h4>Usuarios Registrados</h4>
                 <p>{{totalUsuarios}}</p>
             </div>
 
-            <div class="kpi-card shadow-sm">
+            <div class="kpi-card">
                 <h4>Partidas Jugadas</h4>
                 <p>{{totalPartidas}}</p>
             </div>
 
-            <div class="kpi-card shadow-sm">
+            <div class="kpi-card">
                 <h4>Preguntas Aprobadas</h4>
                 <p>{{totalPreguntas}}</p>
             </div>
 
-            <div class="kpi-card shadow-sm">
-                <h4>Preguntas Creadas por Usuarios</h4>
+            <div class="kpi-card">
+                <h4>Preguntas de Usuarios</h4>
                 <p>{{totalPreguntasUsuarios}}</p>
             </div>
 
-        </section>
+        </div>
 
-        <!-- TABLAS IMPRIMIBLES -->
-        <section class="data-section mb-5">
+        <!-- ========================= -->
+        <!--         GRÁFICOS          -->
+        <!-- ========================= -->
 
-            <h3 class="fw-bold mb-3">Datos imprimibles</h3>
+        <div class="charts-grid">
 
-            <button onclick="window.print()" class="btn btn-outline-primary mb-3">
-                🖨️ Imprimir tablas
-            </button>
-
-            <div class="table-responsive printable">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>País</th>
-                            <th>Sexo</th>
-                            <th>Edad</th>
-                            <th>% Correctas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#tablaUsuarios}}
-                        <tr>
-                            <td>{{nombre_usuario}}</td>
-                            <td>{{pais}}</td>
-                            <td>{{sexo}}</td>
-                            <td>{{edad}}</td>
-                            <td>{{porcentaje}}%</td>
-                        </tr>
-                        {{/tablaUsuarios}}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- GRÁFICOS -->
-        <section class="charts-grid">
-
-            <div class="chart-box shadow-sm">
+            <div class="chart-box">
                 <h3>Usuarios por País</h3>
                 <canvas id="chartPais"></canvas>
             </div>
 
-            <div class="chart-box shadow-sm">
+            <div class="chart-box">
                 <h3>Distribución por Sexo</h3>
                 <canvas id="chartSexo"></canvas>
             </div>
 
-            <div class="chart-box shadow-sm">
+            <div class="chart-box">
                 <h3>Distribución por Edad</h3>
                 <canvas id="chartEdad"></canvas>
             </div>
 
-            <div class="chart-box shadow-sm">
-                <h3>% Correctas por Usuario</h3>
+            <div class="chart-box">
+                <h3>% de Respuestas Correctas por Usuario</h3>
                 <canvas id="chartPrecision"></canvas>
             </div>
 
-        </section>
+        </div>
 
     </main>
 </div>
 
+<!-- ========================= -->
+<!--        CHART JS CDN       -->
+<!-- ========================= -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     const dataPais = {{{usuariosPorPais}}};
     const dataSexo = {{{usuariosPorSexo}}};
     const dataEdad = {{{usuariosPorEdad}}};
-    const dataPrecision = {{{porcentajeCorrectasPorUsuario}}};
+    const dataPrecision = {{{porcentajeCorrectasPorUsuarios}}};
 
     // País
     new Chart(document.getElementById("chartPais"), {
@@ -136,7 +114,7 @@
                 data: dataPais.map(i => i.cantidad),
                 backgroundColor: '#1fb286'
             }]
-        }
+        },
     });
 
     // Sexo
@@ -180,11 +158,3 @@
         }
     });
 </script>
-
-<style>
-    @media print {
-        body * { visibility: hidden; }
-        .printable, .printable * { visibility: visible; }
-        .printable { position: absolute; top: 0; left: 0; width: 100%; }
-    }
-</style>
