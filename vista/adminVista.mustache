@@ -1,108 +1,48 @@
-<div class="admin-container">
+<!DOCTYPE html>
+<html lang="es">
 
-    <!-- ========================= -->
-    <!--       SIDEBAR ADMIN       -->
-    <!-- ========================= -->
-    <aside class="admin-sidebar">
-        <h2 class="sidebar-title">ADMIN</h2>
+<head>
+  <meta charset="UTF-8">
+  <title>Questify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <ul class="sidebar-menu">
-            <li><a href="/admin/index" class="active">📊 Dashboard</a></li>
-            <li><a href="/editor/index">📝 Gestión de Preguntas</a></li>
-            <li><a href="/login/logout">🚪 Cerrar sesión</a></li>
-        </ul>
-    </aside>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- ========================= -->
-    <!--        MAIN CONTENT       -->
-    <!-- ========================= -->
-    <main class="admin-main flex-fill">
-        <div class="content-wrapper">
+  <!-- CSS global del sitio -->
+  <link href="/public/assets/header.css" rel="stylesheet">
+  <link href="/public/assets/footer.css" rel="stylesheet">
 
-            <h1 class="dashboard-title">Panel Administrativo</h1>
+  <!-- CSS opcional de cada vista (si corresponde) -->
+  {{{cssExtra}}}
+</head>
 
-            <!-- FILTROS -->
-            <div class="filter-bar">
-                <label for="filtroPeriodo">Filtrar por:</label>
-                <select id="filtroPeriodo">
-                    <option value="dia">Hoy</option>
-                    <option value="semana">Última semana</option>
-                    <option value="mes">Último mes</option>
-                    <option value="anio">Último año</option>
-                </select>
-            </div>
+<body class="layout">
 
-            <!-- ========================= -->
-            <!--           KPIs            -->
-            <!-- ========================= -->
-            <div class="kpi-grid">
+<header class="site-header" role="banner">
+  <div class="site-header__bar">
+    <div class="container py-3 d-flex align-items-center justify-content-between">
 
-                <div class="kpi-card">
-                    <h4>Usuarios Registrados</h4>
-                    <p>{{totalUsuarios}}</p>
-                </div>
+      <a href="/home/index" class="site-title m-0">Questify</a>
 
-                <div class="kpi-card">
-                    <h4>Partidas Jugadas</h4>
-                    <p>{{totalPartidas}}</p>
-                </div>
+      {{#isLogged}}
+      <div class="d-flex align-items-center gap-3">
 
-                <div class="kpi-card">
-                    <h4>Preguntas Aprobadas</h4>
-                    <p>{{totalPreguntas}}</p>
-                </div>
+        {{#isPlayer}}
+        <img src="{{usuario.foto_perfil}}" width="40" height="40" class="rounded-circle object-fit-cover">
+        <span class="fw-semibold">
+          Bienvenido,
+          <a href="/usuario/perfil/{{usuario.id}}" class="text-decoration-none">{{usuario.nombre_usuario}}</a>
+        </span>
+        {{/isPlayer}}
 
-                <div class="kpi-card">
-                    <h4>Preguntas de Usuarios</h4>
-                    <p>{{totalPreguntasUsuarios}}</p>
-                </div>
+        {{^isPlayer}}
+        <a class="btn btn-sm btn-primary" href="/login/logout">Cerrar sesión</a>
+        {{/isPlayer}}
 
-            </div>
+      </div>
+      {{/isLogged}}
 
-            <!-- ========================= -->
-            <!--         GRÁFICOS          -->
-            <!-- ========================= -->
-
-            <div class="charts-grid">
-
-                <div class="chart-box">
-                    <h3>Usuarios por País</h3>
-                    <canvas id="chartPais"></canvas>
-                </div>
-
-                <div class="chart-box">
-                    <h3>Distribución por Sexo</h3>
-                    <canvas id="chartSexo"></canvas>
-                </div>
-
-                <div class="chart-box">
-                    <h3>Distribución por Edad</h3>
-                    <canvas id="chartEdad"></canvas>
-                </div>
-
-                <div class="chart-box">
-                    <h3>% de Respuestas Correctas por Usuario</h3>
-                    <canvas id="chartPrecision"></canvas>
-                </div>
-
-            </div>
-
-        </div>
-    </main>
-
-</div>
-
-<!-- ========================= -->
-<!-- SCRIPTS -->
-<!-- ========================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    window.dataPais = {{{usuariosPorPais}}};
-    window.dataSexo = {{{usuariosPorSexo}}};
-    window.dataEdad = {{{usuariosPorEdad}}};
-    window.dataPrecision = {{{porcentajeCorrectasPorUsuario}}};
-</script>
-
-<script src="/public/js/adminDashboardCharts.js"></script>
+    </div>
+  </div>
+</header>
