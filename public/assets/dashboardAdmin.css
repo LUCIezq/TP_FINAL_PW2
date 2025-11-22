@@ -11,6 +11,7 @@ body {
 /* CONTENEDOR GENERAL */
 .admin-container {
     display: flex;
+    height: 100%;
     min-height: 100vh;
 }
 
@@ -25,9 +26,10 @@ body {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
+
+    /* 🔥 Para que llegue al fondo */
+    min-height: 100vh;
+    height: auto;
 }
 
 .sidebar-title {
@@ -70,6 +72,14 @@ body {
 .admin-main {
     flex-grow: 1;
     padding: 40px 50px;
+
+    /* 🔥 Para que el contenido empuje al footer */
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrapper {
+    flex-grow: 1;
 }
 
 .dashboard-title {

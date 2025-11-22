@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/public/assets/dashboardAdmin.css">
+link href="/public/assets/dashboardAdmin.css" rel="stylesheet">
 
 <div class="admin-container">
     
@@ -20,71 +20,75 @@
     <!--        MAIN CONTENT       -->
     <!-- ========================= -->
     <main class="admin-main">
-        
-        <h1 class="dashboard-title">Panel Administrativo</h1>
 
-        <!-- FILTROS -->
-        <div class="filter-bar">
-            <label for="filtroPeriodo">Filtrar por:</label>
-            <select id="filtroPeriodo">
-                <option value="dia">Hoy</option>
-                <option value="semana">Última semana</option>
-                <option value="mes">Último mes</option>
-                <option value="anio">Último año</option>
-            </select>
-        </div>
+        <div class="content-wrapper">
 
-        <!-- ========================= -->
-        <!--           KPIs            -->
-        <!-- ========================= -->
-        <div class="kpi-grid">
+            <h1 class="dashboard-title">Panel Administrativo</h1>
 
-            <div class="kpi-card">
-                <h4>Usuarios Registrados</h4>
-                <p>{{totalUsuarios}}</p>
+            <!-- FILTROS -->
+            <div class="filter-bar">
+                <label for="filtroPeriodo">Filtrar por:</label>
+                <select id="filtroPeriodo">
+                    <option value="dia">Hoy</option>
+                    <option value="semana">Última semana</option>
+                    <option value="mes">Último mes</option>
+                    <option value="anio">Último año</option>
+                </select>
             </div>
 
-            <div class="kpi-card">
-                <h4>Partidas Jugadas</h4>
-                <p>{{totalPartidas}}</p>
+            <!-- ========================= -->
+            <!--           KPIs            -->
+            <!-- ========================= -->
+            <div class="kpi-grid">
+
+                <div class="kpi-card">
+                    <h4>Usuarios Registrados</h4>
+                    <p>{{totalUsuarios}}</p>
+                </div>
+
+                <div class="kpi-card">
+                    <h4>Partidas Jugadas</h4>
+                    <p>{{totalPartidas}}</p>
+                </div>
+
+                <div class="kpi-card">
+                    <h4>Preguntas Aprobadas</h4>
+                    <p>{{totalPreguntas}}</p>
+                </div>
+
+                <div class="kpi-card">
+                    <h4>Preguntas de Usuarios</h4>
+                    <p>{{totalPreguntasUsuarios}}</p>
+                </div>
+
             </div>
 
-            <div class="kpi-card">
-                <h4>Preguntas Aprobadas</h4>
-                <p>{{totalPreguntas}}</p>
-            </div>
+            <!-- ========================= -->
+            <!--         GRÁFICOS          -->
+            <!-- ========================= -->
 
-            <div class="kpi-card">
-                <h4>Preguntas de Usuarios</h4>
-                <p>{{totalPreguntasUsuarios}}</p>
-            </div>
+            <div class="charts-grid">
 
-        </div>
+                <div class="chart-box">
+                    <h3>Usuarios por País</h3>
+                    <canvas id="chartPais"></canvas>
+                </div>
 
-        <!-- ========================= -->
-        <!--         GRÁFICOS          -->
-        <!-- ========================= -->
+                <div class="chart-box">
+                    <h3>Distribución por Sexo</h3>
+                    <canvas id="chartSexo"></canvas>
+                </div>
 
-        <div class="charts-grid">
+                <div class="chart-box">
+                    <h3>Distribución por Edad</h3>
+                    <canvas id="chartEdad"></canvas>
+                </div>
 
-            <div class="chart-box">
-                <h3>Usuarios por País</h3>
-                <canvas id="chartPais"></canvas>
-            </div>
+                <div class="chart-box">
+                    <h3>% de Respuestas Correctas por Usuario</h3>
+                    <canvas id="chartPrecision"></canvas>
+                </div>
 
-            <div class="chart-box">
-                <h3>Distribución por Sexo</h3>
-                <canvas id="chartSexo"></canvas>
-            </div>
-
-            <div class="chart-box">
-                <h3>Distribución por Edad</h3>
-                <canvas id="chartEdad"></canvas>
-            </div>
-
-            <div class="chart-box">
-                <h3>% de Respuestas Correctas por Usuario</h3>
-                <canvas id="chartPrecision"></canvas>
             </div>
 
         </div>
@@ -92,9 +96,6 @@
     </main>
 </div>
 
-<!-- ========================= -->
-<!--        CHART JS CDN       -->
-<!-- ========================= -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -103,7 +104,6 @@
     const dataEdad = {{{usuariosPorEdad}}};
     const dataPrecision = {{{porcentajeCorrectasPorUsuarios}}};
 
-    // País
     new Chart(document.getElementById("chartPais"), {
         type: 'bar',
         data: {
@@ -113,10 +113,9 @@
                 data: dataPais.map(i => i.cantidad),
                 backgroundColor: '#1fb286'
             }]
-        },
+        }
     });
 
-    // Sexo
     new Chart(document.getElementById("chartSexo"), {
         type: 'pie',
         data: {
@@ -128,7 +127,6 @@
         }
     });
 
-    // Edad
     new Chart(document.getElementById("chartEdad"), {
         type: 'bar',
         data: {
@@ -141,7 +139,6 @@
         }
     });
 
-    // Precisión
     new Chart(document.getElementById("chartPrecision"), {
         type: 'line',
         data: {
