@@ -263,36 +263,85 @@ body {
     color: white;
 }
 
-/* 
-ESTILOS DE IMPRESIÓN
- */
+.btn-print {
+    background-color: #5a4ee3;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: 0.2s;
+    margin-top: 15px;     
+    margin-bottom: 25px;   
+}
+
+/* ===========================================
+ESTILOS SOLO PARA IMPRESIÓN
+=========================================== */
 @media print {
 
-    /* Ocultar elementos que no deben imprimirse */
+    /* OCULTAR TODO LO QUE NO SE DEBE IMPRIMIR */
     .admin-sidebar,
     .dashboard-title,
     .filter-bar,
+    .kpi-grid,
     .btn-print {
         display: none !important;
     }
 
-    /* Mostrar tablas sin sombras y sin bordes decorativos */
-    .table-box {
+    /* GRÁFICOS: mostrar completos y centrados */
+    .chart-box {
         page-break-after: always;
-        box-shadow: none !important;
-        border: none !important;
+        box-shadow: none ;
+        border: none ;
+        padding: 0;
     }
 
-    /* Mostrar gráficos Chart.js como imágenes */
     canvas {
-        display: block !important;
-        margin-bottom: 25px;
-        max-width: 100% !important;
-        height: auto !important;
+        display: block ;
+        max-width: 100% ;
+        height: auto;
+        margin-bottom: 20px;
     }
 
+    /* TABLAS: estilo limpio para impresión */
+    .table-box {
+        box-shadow: none;
+        border: none ;
+        margin-bottom: 40px;
+        page-break-inside: avoid;
+        padding: 0 ;
+    }
+
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .report-table th,
+    .report-table td {
+        border: 1px solid #000 ;
+        padding: 6px;
+        color: #000 ;
+    }
+
+    .report-table th {
+        background: #e8e8e8 ;
+        -webkit-print-color-adjust: exact ;
+        print-color-adjust: exact ;
+    }
+
+    /* QUITAR FONDOS Y BORDES */
     body {
-        background: white !important;
+        background: #ffffff ;
+    }
+
+    .content-wrapper {
+        padding: 0 ;
+        margin: 0 ;
     }
 }
-
