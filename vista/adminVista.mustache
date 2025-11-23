@@ -1,6 +1,6 @@
 <div class="admin-container">
 
-    <!--       SIDEBAR ADMIN       -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar">
         <h2 class="sidebar-title">ADMIN</h2>
 
@@ -10,25 +10,28 @@
         </ul>
     </aside>
 
-    <!--        MAIN CONTENT       -->
+    <!-- MAIN CONTENT -->
     <main class="admin-main flex-fill">
         <div class="content-wrapper">
 
             <h1 class="dashboard-title">Panel Administrativo</h1>
 
-            <!-- FILTROS -->
-         <form method="GET" action="/admin/index" class="filter-bar">
-            <label for="filtroPeriodo">Filtrar por:</label>
+            <!-- FILTRO -->
+            <form method="GET" action="/admin/index" class="filter-bar">
+                <label for="filtroPeriodo">Filtrar por:</label>
 
-             <select id="filtroPeriodo" name="periodo" onchange="this.form.submit()">
-                  <option value="dia" {{#isDia}}selected{{/isDia}}>Hoy</option>
-                  <option value="semana" {{#isSemana}}selected{{/isSemana}}>Última semana</option>
-                  <option value="mes" {{#isMes}}selected{{/isMes}}>Último mes</option>
-                  <option value="anio" {{#isAnio}}selected{{/isAnio}}>Último año</option>
-             </select>
-        </form>
+                <select id="filtroPeriodo" name="periodo" onchange="this.form.submit()">
+                    <option value="dia" {{#isDia}}selected{{/isDia}}>Hoy</option>
+                    <option value="semana" {{#isSemana}}selected{{/isSemana}}>Última semana</option>
+                    <option value="mes" {{#isMes}}selected{{/isMes}}>Último mes</option>
+                    <option value="anio" {{#isAnio}}selected{{/isAnio}}>Último año</option>
+                </select>
+            </form>
 
-            <!--           KPIs            -->
+            <!-- BOTÓN IMPRIMIR -->
+            <button onclick="window.print()" class="btn-print">🖨️ Imprimir Reportes</button>
+
+            <!-- KPI GRID -->
             <div class="kpi-grid">
 
                 <div class="kpi-card">
@@ -53,8 +56,7 @@
 
             </div>
 
-            <!--         GRÁFICOS          -->
-
+            <!-- GRAFICOS -->
             <div class="charts-grid">
 
                 <div class="chart-box">
@@ -75,6 +77,99 @@
                 <div class="chart-box">
                     <h3>% de Respuestas Correctas por Usuario</h3>
                     <canvas id="chartPrecision"></canvas>
+                </div>
+
+            </div>
+
+
+            <!-- =======================
+                  TABLAS PARA IMPRIMIR
+            ========================== -->
+
+            <div class="tables-section">
+
+                <!-- Usuarios por País -->
+                <div class="table-box">
+                    <h3>Usuarios por País (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>País</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#usuariosPorPais}}
+                            <tr>
+                                <td>{{pais}}</td>
+                                <td>{{total}}</td>
+                            </tr>
+                            {{/usuariosPorPais}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sexo -->
+                <div class="table-box">
+                    <h3>Distribución por Sexo (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Sexo</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#usuariosPorSexo}}
+                            <tr>
+                                <td>{{sexo}}</td>
+                                <td>{{total}}</td>
+                            </tr>
+                            {{/usuariosPorSexo}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Edad -->
+                <div class="table-box">
+                    <h3>Distribución por Edad (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Edad</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#usuariosPorEdad}}
+                            <tr>
+                                <td>{{edad}}</td>
+                                <td>{{total}}</td>
+                            </tr>
+                            {{/usuariosPorEdad}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Precisión -->
+                <div class="table-box">
+                    <h3>% de Respuestas Correctas por Usuario (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Precisión (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#porcentajeCorrectasPorUsuario}}
+                            <tr>
+                                <td>{{username}}</td>
+                                <td>{{porcentaje}}</td>
+                            </tr>
+                            {{/porcentajeCorrectasPorUsuario}}
+                        </tbody>
+                    </table>
                 </div>
 
             </div>

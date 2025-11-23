@@ -212,3 +212,87 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===========================================
+   BOTÓN DE IMPRESIÓN
+=========================================== */
+.btn-print {
+    background-color: #5a4ee3;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: 0.2s;
+    margin-bottom: 20px;
+}
+
+.btn-print:hover {
+    background-color: #1fb286;
+}
+
+/* ===========================================
+    TABLAS DE DATOS
+=========================================== */
+.table-box {
+    margin-top: 35px;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    border-top: 5px solid #5a4ee3;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.report-table th,
+.report-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 15px;
+}
+
+.report-table th {
+    background-color: #1fb286;
+    color: white;
+}
+
+/* 
+ESTILOS DE IMPRESIÓN
+ */
+@media print {
+
+    /* Ocultar elementos que no deben imprimirse */
+    .admin-sidebar,
+    .dashboard-title,
+    .filter-bar,
+    .btn-print {
+        display: none !important;
+    }
+
+    /* Mostrar tablas sin sombras y sin bordes decorativos */
+    .table-box {
+        page-break-after: always;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    /* Mostrar gráficos Chart.js como imágenes */
+    canvas {
+        display: block !important;
+        margin-bottom: 25px;
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    body {
+        background: white !important;
+    }
+}
+
