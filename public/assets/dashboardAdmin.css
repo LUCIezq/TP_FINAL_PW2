@@ -11,8 +11,8 @@ body {
 /* CONTENEDOR GENERAL */
 .admin-container {
     display: flex;
-    height: 100%;
     min-height: 100vh;
+    height: 100%;
 }
 
 /* ================================
@@ -26,10 +26,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 25px;
-
-    /* 🔥 Para que llegue al fondo */
     min-height: 100vh;
-    height: auto;
 }
 
 .sidebar-title {
@@ -51,17 +48,17 @@ body {
 .sidebar-menu a {
     display: block;
     padding: 12px 15px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255,255,255,0.15);
     border-radius: 10px;
     color: white;
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.2s ease-in-out;
+    transition: 0.2s ease;
 }
 
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
-    background-color: white;
+    background: white;
     color: #1fb286;
     font-weight: 600;
 }
@@ -72,8 +69,6 @@ body {
 .admin-main {
     flex-grow: 1;
     padding: 40px 50px;
-
-    /* 🔥 Para que el contenido empuje al footer */
     display: flex;
     flex-direction: column;
 }
@@ -93,7 +88,7 @@ body {
    BARRA DE FILTRO
 ================================ */
 .filter-bar {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -113,6 +108,36 @@ body {
 }
 
 /* ================================
+   BOTÓN IMPRIMIR
+================================ */
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #1fb286;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.btn-print:hover {
+    background-color: #5a4ee3;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.btn-print:active {
+    transform: scale(0.98);
+}
+
+/* ================================
    KPI CARDS
 ================================ */
 .kpi-grid {
@@ -128,7 +153,7 @@ body {
     border-radius: 18px;
     box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
     border-left: 6px solid #5a4ee3;
-    transition: transform .2s;
+    transition: 0.2s;
 }
 
 .kpi-card:hover {
@@ -172,7 +197,6 @@ body {
     font-weight: 600;
 }
 
-/* CUANDO NO HAY DATOS */
 .nodata {
     text-align: center;
     font-size: 18px;
@@ -181,61 +205,8 @@ body {
 }
 
 /* ================================
-   RESPONSIVE
+   TABLAS PARA EXPORTACIÓN/IMPRESIÓN
 ================================ */
-@media (max-width: 1100px) {
-    .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .admin-sidebar {
-        width: 200px;
-    }
-}
-
-@media (max-width: 780px) {
-    .admin-container {
-        flex-direction: column;
-    }
-
-    .admin-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-
-    .kpi-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ===========================================
-   BOTÓN DE IMPRESIÓN
-=========================================== */
-.btn-print {
-    background-color: #5a4ee3;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: 0.2s;
-    margin-bottom: 20px;
-}
-
-.btn-print:hover {
-    background-color: #1fb286;
-}
-
-/* ===========================================
-    TABLAS DE DATOS
-=========================================== */
 .table-box {
     margin-top: 35px;
     background: white;
@@ -263,26 +234,41 @@ body {
     color: white;
 }
 
-.btn-print {
-    background-color: #5a4ee3;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: 0.2s;
-    margin-top: 15px;     
-    margin-bottom: 25px;   
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 1100px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        width: 200px;
+    }
 }
 
-/* ===========================================
-ESTILOS SOLO PARA IMPRESIÓN
-=========================================== */
+@media (max-width: 780px) {
+    .admin-container {
+        flex-direction: column;
+    }
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================================
+   ESTILOS SOLO PARA IMPRESIÓN
+================================ */
 @media print {
 
-    /* OCULTAR TODO LO QUE NO SE DEBE IMPRIMIR */
+    /* Ocultar elementos inútiles */
     .admin-sidebar,
     .dashboard-title,
     .filter-bar,
@@ -291,57 +277,49 @@ ESTILOS SOLO PARA IMPRESIÓN
         display: none !important;
     }
 
-    /* GRÁFICOS: mostrar completos y centrados */
+    /* Gráficos */
     .chart-box {
         page-break-after: always;
-        box-shadow: none ;
-        border: none ;
-        padding: 0;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
     }
 
     canvas {
-        display: block ;
-        max-width: 100% ;
-        height: auto;
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
         margin-bottom: 20px;
     }
 
-    /* TABLAS: estilo limpio para impresión */
+    /* Tablas */
     .table-box {
-        box-shadow: none;
-        border: none ;
+        box-shadow: none !important;
+        border: none !important;
         margin-bottom: 40px;
         page-break-inside: avoid;
-        padding: 0 ;
-    }
-
-    .report-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        font-size: 14px;
+        padding: 0 !important;
     }
 
     .report-table th,
     .report-table td {
-        border: 1px solid #000 ;
+        border: 1px solid #000 !important;
+        color: #000 !important;
         padding: 6px;
-        color: #000 ;
     }
 
     .report-table th {
-        background: #e8e8e8 ;
-        -webkit-print-color-adjust: exact ;
-        print-color-adjust: exact ;
+        background: #e8e8e8 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
-    /* QUITAR FONDOS Y BORDES */
     body {
-        background: #ffffff ;
+        background: #fff !important;
     }
 
     .content-wrapper {
-        padding: 0 ;
-        margin: 0 ;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 }
