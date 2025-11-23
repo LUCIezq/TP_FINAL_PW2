@@ -6,7 +6,6 @@
 
         <ul class="sidebar-menu">
             <li><a href="/admin/index" class="active">📊 Dashboard</a></li>
-            <li><a href="/editor/index">📝 Gestión de Preguntas</a></li>
             <li><a href="/login/logout">🚪 Cerrar sesión</a></li>
         </ul>
     </aside>
@@ -18,15 +17,16 @@
             <h1 class="dashboard-title">Panel Administrativo</h1>
 
             <!-- FILTROS -->
-            <div class="filter-bar">
-                <label for="filtroPeriodo">Filtrar por:</label>
-                <select id="filtroPeriodo">
-                    <option value="dia">Hoy</option>
-                    <option value="semana">Última semana</option>
-                    <option value="mes">Último mes</option>
-                    <option value="anio">Último año</option>
-                </select>
-            </div>
+         <form method="GET" action="/admin/index" class="filter-bar">
+            <label for="filtroPeriodo">Filtrar por:</label>
+
+             <select id="filtroPeriodo" name="periodo" onchange="this.form.submit()">
+                  <option value="dia" {{#isDia}}selected{{/isDia}}>Hoy</option>
+                  <option value="semana" {{#isSemana}}selected{{/isSemana}}>Última semana</option>
+                  <option value="mes" {{#isMes}}selected{{/isMes}}>Último mes</option>
+                  <option value="anio" {{#isAnio}}selected{{/isAnio}}>Último año</option>
+             </select>
+        </form>
 
             <!--           KPIs            -->
             <div class="kpi-grid">

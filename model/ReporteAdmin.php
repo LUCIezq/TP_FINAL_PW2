@@ -8,100 +8,142 @@ class ReporteAdmin
     {
         $this->db = $conexion;
     }
-    public function getTotalUsuarios(): int
+    
+    /*
+    Filtro
+     */
+    private function getWhereFecha($periodo)
     {
-        $sql = "SELECT COUNT(*) AS total FROM usuario";
-        $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        switch ($periodo) {
+            case 'dia':
+                return "AND fecha >= CURDATE()";
+            case 'semana':
+                return "AND fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+            case 'mes':
+                return "AND fecha >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+            case 'anio':
+                return "AND fecha >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+            default:
+                return "";
+        }
     }
 
-    public function getTotalPartidas(): int
+    /*
+     *   KPIs(indicadores) PRINCIPALES
+     */
+
+    public function getTotalUsuarios($periodo)
     {
-        $sql = "SELECT COUNT(*) AS total FROM partida";
-        $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        $where = $this->getWhereFecha($periodo);
+
+        $sql = "SELECT COUNT(*) AS total
+                FROM usuario
+                WHERE 1=1 $where";
+
+        $data = $this->db->query($sql);
+
+        return $data[0]['total'] ?? 0;
     }
 
-    public function getTotalPreguntas(): int
+    public function getTotalPartidas($periodo)
     {
-        $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE activa = 1";
-        $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        $where = $this->getWhereFecha($periodo);
+
+        $sql = "SELECT COUNT(*) AS total
+                FROM partida
+                WHERE 1=1 $where";
+
+        $data = $this->db->query($sql);
+
+        return $data[0]['total'] ?? 0;
     }
 
-    public function getTotalPreguntasUsuarios(): int
+    public function getTotalPreguntas($periodo)
     {
-        $sql = "SELECT COUNT(*) AS total FROM pregunta";
-        $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        $where = $this->getWhereFecha($periodo);
+
+        $sql = "SELECT COUNT(*) AS total
+                FROM pregunta
+                WHERE aprobada = 1 $where";
+
+        $data = $this->db->query($sql);
+
+        return $data[0]['total'] ?? 0;
     }
 
-    // =============================
-    //          GRÁFICOS
-    // =============================
-
-    public function getUsuariosPorPais(): array
+    public function getTotalPreguntasUsuarios($periodo)
     {
-        $sql = "
-            SELECT 
-                CASE 
-                    WHEN pais IS NULL OR pais = '' THEN 'Sin especificar'
-                    ELSE pais
-                END AS pais,
-                COUNT(*) AS cantidad
-            FROM usuario
-            GROUP BY pais
-        ";
+        $where = $this->getWhereFecha($periodo);
 
-        return $this->db->query($sql);
+        $sql = "SELECT COUNT(*) AS total
+                FROM pregunta
+                WHERE aprobada = 0 $where";
+
+        $data = $this->db->query($sql);
+
+        return $data[0]['total'] ?? 0;
     }
 
-    public function getUsuariosPorSexo(): array
-    {
-        $sql = "
-            SELECT 
-                CASE 
-                    WHEN s.nombre IS NULL THEN 'Sin especificar'
-                    ELSE s.nombre
-                END AS sexo,
-                COUNT(*) AS cantidad
-            FROM usuario u
-            LEFT JOIN sexo s ON u.sexo_id = s.id
-            GROUP BY sexo
-        ";
 
-        return $this->db->query($sql);
+    /*
+    GRÁFICOS (trabajando con arrays)
+     */
+
+    public function getUsuariosPorPais($periodo)
+    {
+        $where = $this->getWhereFecha($periodo);
+
+        $sql = "SELECT pais, COUNT(*) AS total
+                FROM usuario
+                WHERE 1=1 $where
+                GROUP BY pais";
+
+        $data = $this->db->query($sql);
+
+        return $data; // ya es array
     }
 
-    public function getUsuariosPorEdad(): array
+    public function getUsuariosPorSexo($periodo)
     {
-        $sql = "
-            SELECT 
-                CASE
-                    WHEN fecha_nacimiento IS NULL THEN 'Sin especificar'
-                    WHEN TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) < 18 THEN 'Menores'
-                    WHEN TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) >= 65 THEN 'Jubilados'
-                    ELSE 'Adultos'
-                END AS grupo,
-                COUNT(*) AS cantidad
-            FROM usuario
-            GROUP BY grupo
-        ";
+        $where = $this->getWhereFecha($periodo);
 
-        return $this->db->query($sql);
+        $sql = "SELECT sexo, COUNT(*) AS total
+                FROM usuario
+                WHERE 1=1 $where
+                GROUP BY sexo";
+
+        $data = $this->db->query($sql);
+
+        return $data;
     }
 
-    public function getPorcentajeCorrectasPorUsuario(): array
+    public function getUsuariosPorEdad($periodo)
     {
-        $sql = "
-            SELECT 
-                u.nombre_usuario,
-                ROUND((SUM(h.respondida_correctamente) / COUNT(*)) * 100, 1) AS porcentaje
-            FROM historial_partida h
-            INNER JOIN usuario u ON u.id = h.usuario_id
-            GROUP BY h.usuario_id
-        ";
+        $where = $this->getWhereFecha($periodo);
 
-        return $this->db->query($sql);
+        $sql = "SELECT edad, COUNT(*) AS total
+                FROM usuario
+                WHERE 1=1 $where
+                GROUP BY edad";
+
+        $data = $this->db->query($sql);
+
+        return $data;
+    }
+
+    public function getPorcentajeCorrectasPorUsuario($periodo)
+    {
+        $where = $this->getWhereFecha($periodo);
+
+        $sql = "SELECT u.username,
+                       AVG(r.correcta) * 100 AS porcentaje
+                FROM respuesta r
+                JOIN usuario u ON u.id = r.usuario_id
+                WHERE 1=1 $where
+                GROUP BY u.username";
+
+        $data = $this->db->query($sql);
+
+        return $data;
     }
 }

@@ -10,7 +10,7 @@ class AdminController
         $this->mustacheRenderer = $mustacheRenderer;
         $this->conexion = $conexion;
     }
-
+    
     public function index(): void
 {
     if (!IsLogged::isLogged()) {
@@ -27,7 +27,14 @@ class AdminController
     require_once __DIR__ . "/../model/ReporteAdmin.php";
     $reporte = new ReporteAdmin($this->conexion);
 
+        $periodo = $_GET['periodo'] ?? 'dia';
+
     $data = [
+        "isDia" => $periodo === "dia",
+        "isSemana" => $periodo === "semana",
+        "isMes" => $periodo === "mes",
+        "isAnio" => $periodo === "anio",
+
         "totalUsuarios" => $reporte->getTotalUsuarios(),
         "totalPartidas" => $reporte->getTotalPartidas(),
         "totalPreguntas" => $reporte->getTotalPreguntas(),
