@@ -263,7 +263,6 @@ RESPONSIVE — MÓVIL
 }
 
 /* 
-RESPONSIVE — EXTRA SMALL
  */
 @media (max-width: 480px) {
 
@@ -274,5 +273,65 @@ RESPONSIVE — EXTRA SMALL
     .chart-box h3,
     .table-box h3 {
         font-size: 18px;
+    }
+}
+
+@media print {
+
+    .admin-sidebar,
+    .dashboard-title,
+    .filter-bar,
+    .kpi-grid,
+    .btn-print,
+    header,
+    nav,
+    footer {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    body, .admin-main, .content-wrapper {
+        background: #ffffff !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .chart-box,
+    .table-box {
+        display: block !important;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 0 25px 0 !important;
+        padding: 0 !important;
+    }
+
+
+    canvas {
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 auto 20px auto !important;
+    }
+
+    .report-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 14px !important;
+        margin-top: 10px !important;
+    }
+
+    .report-table th,
+    .report-table td {
+        border: 1px solid #000 !important;
+        padding: 6px !important;
+        color: #000 !important;
+    }
+
+    .report-table th {
+        background: #e8e8e8 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
