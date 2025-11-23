@@ -8,11 +8,6 @@ class ReporteAdmin
     {
         $this->db = $conexion;
     }
-
-    // =============================
-    //     KPI PRINCIPALES
-    // =============================
-
     public function getTotalUsuarios(): int
     {
         $sql = "SELECT COUNT(*) AS total FROM usuario";
@@ -29,7 +24,6 @@ class ReporteAdmin
 
     public function getTotalPreguntas(): int
     {
-        // Todas las preguntas activas
         $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE activa = 1";
         $result = $this->db->query($sql);
         return $result[0]['total'] ?? 0;
@@ -37,7 +31,6 @@ class ReporteAdmin
 
     public function getTotalPreguntasUsuarios(): int
     {
-        // Preguntas creadas por usuarios (todas lo son)
         $sql = "SELECT COUNT(*) AS total FROM pregunta";
         $result = $this->db->query($sql);
         return $result[0]['total'] ?? 0;
@@ -49,18 +42,34 @@ class ReporteAdmin
 
     public function getUsuariosPorPais(): array
     {
-        $sql = "SELECT pais, COUNT(*) AS cantidad FROM usuario GROUP BY pais";
+        $sql = "
+            SELECT 
+                CASE 
+                    WHEN pais IS NULL OR pais = '' THEN 'Sin especificar'
+                    ELSE pais
+                END AS pais,
+                COUNT(*) AS cantidad
+            FROM usuario
+            GROUP BY pais
+        ";
+
         return $this->db->query($sql);
     }
 
     public function getUsuariosPorSexo(): array
     {
         $sql = "
-            SELECT s.nombre AS sexo, COUNT(*) AS cantidad
+            SELECT 
+                CASE 
+                    WHEN s.nombre IS NULL THEN 'Sin especificar'
+                    ELSE s.nombre
+                END AS sexo,
+                COUNT(*) AS cantidad
             FROM usuario u
             LEFT JOIN sexo s ON u.sexo_id = s.id
-            GROUP BY sexo_id
+            GROUP BY sexo
         ";
+
         return $this->db->query($sql);
     }
 
@@ -69,6 +78,7 @@ class ReporteAdmin
         $sql = "
             SELECT 
                 CASE
+                    WHEN fecha_nacimiento IS NULL THEN 'Sin especificar'
                     WHEN TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) < 18 THEN 'Menores'
                     WHEN TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) >= 65 THEN 'Jubilados'
                     ELSE 'Adultos'
@@ -83,7 +93,6 @@ class ReporteAdmin
 
     public function getPorcentajeCorrectasPorUsuario(): array
     {
-        // Se calcula desde historial_partida
         $sql = "
             SELECT 
                 u.nombre_usuario,
