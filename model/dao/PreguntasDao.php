@@ -48,8 +48,9 @@ class PreguntasDao
         $idPregunta = $this->conexion->executePrepared($sql, $types, $params);
 
         $result = null;
+
         foreach ($respuestas as $index => $text) {
-            $isCorrect = ($index == $data["indiceCorrecta"]) ? 1 : 0;
+            $isCorrect = ($index === $data["indiceCorrecta"]) ? 1 : 0;
 
             $result = $this->createAnswer($text, $isCorrect, $idPregunta);
         }

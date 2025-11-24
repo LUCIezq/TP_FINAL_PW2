@@ -8,19 +8,12 @@
         <div class="card-body">
             <h3 class="text-center mb-4 fw-bold text-primary">Sugerir nueva pregunta</h3>
 
-            {{#success_message}}
+            {{#message}}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{success_message}}
+                {{message}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {{/success_message}}
-
-            {{#error_message}}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{error_message}}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {{/error_message}}
+            {{/message}}
 
 
             <form action="/preguntas/createQuestion" method="post" class="needs-validation">

@@ -57,7 +57,6 @@ class EditorController
         // }
 
         // $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
-        // $categories = $this->categoryDao->getAll();
 
         // foreach ($categories as &$category) {
         //     $category['checked'] = $filters['category_name'] === $category['nombre'] ? 'checked' : '';
@@ -105,11 +104,13 @@ class EditorController
         $opcionesMenu = $this->obtenerOpcionesDashboard();
         $preguntasDelSistema = $this->preguntasDao->getAllSystemQuestions();
         $preguntasSugeridas = $this->preguntasDao->obtenerPreguntasSugeridas();
+        $categorias = $this->categoryDao->getAll();
+
 
         $this->mustacheRenderer->render("editor", [
             'preguntasDelSistema' => $preguntasDelSistema,
             "isLogged" => IsLogged::isLogged(),
-            // "categories" => $categories,
+            "categories" => $categorias,
             'preguntasSugeridas' => $preguntasSugeridas,
             "message" => $message,
             "usuario" => $_SESSION['user'],

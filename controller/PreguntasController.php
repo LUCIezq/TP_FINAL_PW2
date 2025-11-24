@@ -17,11 +17,9 @@ class PreguntasController
     public function index()
     {
 
-        $success_message = $_SESSION["success_message"];
-        $error_message = $_SESSION["error_message"];
+        $message = $_SESSION["message"];
 
-        unset($_SESSION["success_message"]);
-        unset($_SESSION["error_message"]);
+        unset($_SESSION["message"]);
 
 
         if (!IsLogged::isLogged()) {
@@ -31,8 +29,7 @@ class PreguntasController
 
         $categories = $this->categoryDao->getAll();
 
-        $this->mustacheRenderer->render("preguntas", ["categories" => $categories, "success_message" => $success_message, "error_message" => $error_message]);
-
+        $this->mustacheRenderer->render("preguntas", ["categories" => $categories, "message" => $message]);
     }
 
     public function createQuestion()
@@ -45,8 +42,8 @@ class PreguntasController
 
         $data = [
             "pregunta" => trim($_POST["pregunta"]),
-            "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]),
-            "indiceCorrecta" => filter_var($_POST["correcta"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,]]),
+            "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT),
+            "indiceCorrecta" => filter_input(INPUT_POST, "correcta", FILTER_VALIDATE_INT),
             "usuarioId" => $_SESSION["user"]["id"],
             'respuestas' => $_POST['respuestas'] ?? []
         ];
@@ -60,7 +57,7 @@ class PreguntasController
         if (!$data["categoriaId"]) {
             $errors[] = "La categoría seleccionada no es válida.";
         }
-        if (!$data["indiceCorrecta"]) {
+        if ($data['indiceCorrecta'] < 0 || $data['indiceCorrecta'] > 4) {
             $errors[] = "La respuesta correcta no es valida.";
         }
         if ($data['respuestas'] === [] || count($data['respuestas']) < 2) {
@@ -74,8 +71,8 @@ class PreguntasController
             }
         }
 
-        if (empty($errors)) {
-            $_SESSION["error_message"] = implode(" ", $errors);
+        if (!empty($errors)) {
+            $_SESSION["message"] = implode(" ", $errors);
             header('location: /preguntas/index');
             exit();
         }
@@ -84,9 +81,16 @@ class PreguntasController
 
             $result = $this->preguntasDao->createQuestion($data);
 
-            $result == true ? $_SESSION["success_message"] = "Pregunta creada exitosamente y está en revisión." : $_SESSION["error_message"] = "Error al crear la pregunta.";
-            header('location: /preguntas/index');
-            exit();
+            $result == true ? $_SESSION["message"] = "Pregunta creada exitosamente. Ya se encuentra en revision" : $_SESSION["message"] = "Error al crear la pregunta.";
+            $rol = $_SESSION["user"]['rol_id'];
+
+            if ((int) $rol === UserRole::EDITOR) {
+                header('location: /editor/index');
+                exit();
+            } else {
+                header('location: /preguntas/index');
+                exit();
+            }
 
         } catch (Exception $e) {
             $errors[] = "Error inesperado: " . $e->getMessage();

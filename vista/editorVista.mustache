@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <select class="form-select" required name="categoria">
+                    <select class="form-select" required name="categoria" required>
                         <option disabled selected>Seleccione una categoría</option>
                         {{#categories}}
                         <option value="{{id}}">{{nombre}}</option>
@@ -50,28 +50,28 @@
 
                         <div class="input-group">
                             <div class="input-group-text">
-                                <input type="radio" name="correcta" required>
+                                <input type="radio" name="correcta" required value="0">
                             </div>
                             <input type="text" name="respuestas[]" class="form-control" required placeholder="Opción 1">
                         </div>
 
                         <div class="input-group">
                             <div class="input-group-text">
-                                <input type="radio" name="correcta" required>
+                                <input type="radio" name="correcta" required value="1">
                             </div>
                             <input type="text" name="respuestas[]" class="form-control" required placeholder="Opción 2">
                         </div>
 
                         <div class="input-group">
                             <div class="input-group-text">
-                                <input type="radio" name="correcta" required>
+                                <input type="radio" name="correcta" required value="2">
                             </div>
                             <input type="text" name="respuestas[]" class="form-control" required placeholder="Opción 3">
                         </div>
 
                         <div class="input-group">
                             <div class="input-group-text">
-                                <input type="radio" name="correcta" required>
+                                <input type="radio" name="correcta" required value="3">
                             </div>
                             <input type="text" name="respuestas[]" class="form-control" required placeholder="Opción 4">
                         </div>
