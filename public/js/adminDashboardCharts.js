@@ -1,19 +1,22 @@
-
- // UTILIDAD: verificar si un array tiene datos
-
+// ==========================
+// UTILIDAD: verificar si hay datos
+// ==========================
 function hasData(arr) {
     return Array.isArray(arr) && arr.length > 0;
 }
 
-
-//  DATOS RECIBIDOS DESDE PHP
+// ==========================
+// DATOS DESDE PHP
+// ==========================
 const dataPais = window.dataPais || [];
 const dataSexo = window.dataSexo || [];
 const dataEdad = window.dataEdad || [];
 const dataPrecision = window.dataPrecision || [];
 
-//   GRÁFICO: USUARIOS POR PAÍS
 
+// ==========================
+// GRÁFICO: USUARIOS POR PAÍS
+// ==========================
 if (hasData(dataPais)) {
     new Chart(document.getElementById("chartPais"), {
         type: 'bar',
@@ -38,11 +41,9 @@ if (hasData(dataPais)) {
 }
 
 
-
-
-//   GRÁFICO: SEXO
-
-
+// ==========================
+// GRÁFICO: DISTRIBUCIÓN POR SEXO
+// ==========================
 if (hasData(dataSexo)) {
     new Chart(document.getElementById("chartSexo"), {
         type: 'pie',
@@ -60,9 +61,9 @@ if (hasData(dataSexo)) {
 }
 
 
-
-//   GRÁFICO: EDAD
-
+// ==========================
+// GRÁFICO: DISTRIBUCIÓN POR EDAD
+// ==========================
 if (hasData(dataEdad)) {
     new Chart(document.getElementById("chartEdad"), {
         type: 'bar',
@@ -81,10 +82,9 @@ if (hasData(dataEdad)) {
 }
 
 
-
-
-//   GRÁFICO: PRECISIÓN / PORCENTAJE
-
+// ==========================
+// GRÁFICO: PRECISIÓN POR USUARIO
+// ==========================
 if (hasData(dataPrecision)) {
     new Chart(document.getElementById("chartPrecision"), {
         type: 'line',
