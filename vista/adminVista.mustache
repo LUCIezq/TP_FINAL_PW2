@@ -85,7 +85,6 @@
             <!-- =======================
                   TABLAS PARA IMPRIMIR
             ========================== -->
-
             <div class="tables-section">
 
                 <!-- Usuarios por País -->
@@ -102,7 +101,7 @@
                             {{#usuariosPorPais}}
                             <tr>
                                 <td>{{pais}}</td>
-                                <td>{{total}}</td>
+                                <td>{{cantidad}}</td>
                             </tr>
                             {{/usuariosPorPais}}
                         </tbody>
@@ -123,7 +122,7 @@
                             {{#usuariosPorSexo}}
                             <tr>
                                 <td>{{sexo}}</td>
-                                <td>{{total}}</td>
+                                <td>{{cantidad}}</td>
                             </tr>
                             {{/usuariosPorSexo}}
                         </tbody>
@@ -136,15 +135,15 @@
                     <table class="report-table">
                         <thead>
                             <tr>
-                                <th>Edad</th>
+                                <th>Grupo</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             {{#usuariosPorEdad}}
                             <tr>
-                                <td>{{edad}}</td>
-                                <td>{{total}}</td>
+                                <td>{{grupo}}</td>
+                                <td>{{cantidad}}</td>
                             </tr>
                             {{/usuariosPorEdad}}
                         </tbody>
@@ -164,7 +163,7 @@
                         <tbody>
                             {{#porcentajeCorrectasPorUsuario}}
                             <tr>
-                                <td>{{username}}</td>
+                                <td>{{nombre_usuario}}</td>
                                 <td>{{porcentaje}}</td>
                             </tr>
                             {{/porcentajeCorrectasPorUsuario}}
@@ -184,10 +183,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    window.dataPais = {{{usuariosPorPais}}};
-    window.dataSexo = {{{usuariosPorSexo}}};
-    window.dataEdad = {{{usuariosPorEdad}}};
-    window.dataPrecision = {{{porcentajeCorrectasPorUsuario}}};
+    window.dataPais = {{{usuariosPorPaisJson}}};
+    window.dataSexo = {{{usuariosPorSexoJson}}};
+    window.dataEdad = {{{usuariosPorEdadJson}}};
+    window.dataPrecision = {{{porcentajeCorrectasPorUsuarioJson}}};
 </script>
 
 <script src="/public/js/adminDashboardCharts.js"></script>

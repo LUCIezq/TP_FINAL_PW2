@@ -9,41 +9,83 @@ class ReporteAdmin
         $this->db = $conexion;
     }
 
-
-    
-    public function getTotalUsuarios(): int
+    // =====================================================
+    //   FECHAS COMPATIBLES CON INFINITYFREE
+    // =====================================================
+    public function fechaDesde(string $filtro): string
     {
-        $sql = "SELECT COUNT(*) AS total FROM usuario";
-        $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        switch ($filtro) {
+            case "hoy":     
+                return date("Y-m-d");
+            case "semana":  
+                return date("Y-m-d", strtotime("-7 days"));
+            case "mes":     
+                return date("Y-m-d", strtotime("-1 month"));
+            case "anio":    
+                return date("Y-m-d", strtotime("-1 year"));
+            default:
+                return "1970-01-01";
+        }
     }
 
-    public function getTotalPartidas(): int
+    // =====================================================
+    //                     MÉTRICAS
+    // =====================================================
+
+    public function getTotalUsuarios(string $fechaDesde): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM partida";
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM usuario
+            WHERE DATE(fecha_creacion) >= '$fechaDesde'
+        ";
+
         $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        return $result[0]["total"] ?? 0;
+    }
+
+    public function getTotalPartidas(string $fechaDesde): int
+    {
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM partida
+            WHERE DATE(created_at) >= '$fechaDesde'
+        ";
+
+        $result = $this->db->query($sql);
+        return $result[0]["total"] ?? 0;
     }
 
     public function getTotalPreguntas(): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM pregunta WHERE activa = 1";
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM pregunta
+            WHERE estado_id = 1
+        ";
+
         $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        return $result[0]["total"] ?? 0;
     }
 
-    public function getTotalPreguntasUsuarios(): int
+    public function getTotalPreguntasUsuarios(string $fechaDesde): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM pregunta";
+        // No filtramos por fecha, pero si querés se agrega DATE(fecha_creacion)
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM pregunta
+            WHERE usuario_id NOT IN (1,2)
+        ";
+
         $result = $this->db->query($sql);
-        return $result[0]['total'] ?? 0;
+        return $result[0]["total"] ?? 0;
     }
 
-    // =============================
-    //          GRÁFICOS
-    // =============================
+    // =====================================================
+    //               GRÁFICOS
+    // =====================================================
 
-    public function getUsuariosPorPais(): array
+    public function getUsuariosPorPais(string $fechaDesde): array
     {
         $sql = "
             SELECT 
@@ -53,13 +95,14 @@ class ReporteAdmin
                 END AS pais,
                 COUNT(*) AS cantidad
             FROM usuario
+            WHERE DATE(fecha_creacion) >= '$fechaDesde'
             GROUP BY pais
         ";
 
         return $this->db->query($sql);
     }
 
-    public function getUsuariosPorSexo(): array
+    public function getUsuariosPorSexo(string $fechaDesde): array
     {
         $sql = "
             SELECT 
@@ -70,13 +113,14 @@ class ReporteAdmin
                 COUNT(*) AS cantidad
             FROM usuario u
             LEFT JOIN sexo s ON u.sexo_id = s.id
+            WHERE DATE(u.fecha_creacion) >= '$fechaDesde'
             GROUP BY sexo
         ";
 
         return $this->db->query($sql);
     }
 
-    public function getUsuariosPorEdad(): array
+    public function getUsuariosPorEdad(string $fechaDesde): array
     {
         $sql = "
             SELECT 
@@ -88,13 +132,14 @@ class ReporteAdmin
                 END AS grupo,
                 COUNT(*) AS cantidad
             FROM usuario
+            WHERE DATE(fecha_creacion) >= '$fechaDesde'
             GROUP BY grupo
         ";
 
         return $this->db->query($sql);
     }
 
-    public function getPorcentajeCorrectasPorUsuario(): array
+    public function getPorcentajeCorrectasPorUsuario(string $fechaDesde): array
     {
         $sql = "
             SELECT 
@@ -102,6 +147,7 @@ class ReporteAdmin
                 ROUND((SUM(h.respondida_correctamente) / COUNT(*)) * 100, 1) AS porcentaje
             FROM historial_partida h
             INNER JOIN usuario u ON u.id = h.usuario_id
+            WHERE DATE(h.fecha_respuesta) >= '$fechaDesde'
             GROUP BY h.usuario_id
         ";
 
