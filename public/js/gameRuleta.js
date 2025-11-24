@@ -80,8 +80,8 @@ btn.addEventListener("click", () => {
 
             const angNorm = ((anguloActual % TWO_PI) + TWO_PI) % TWO_PI;
             const relative = ((-Math.PI / 2) - angNorm + TWO_PI) % TWO_PI;
-
             let indiceGanador = Math.floor((relative + EPS) / arcSize) % numSectores;
+            
             if (indiceGanador < 0) indiceGanador += numSectores;
 
             const genero = generos[indiceGanador];

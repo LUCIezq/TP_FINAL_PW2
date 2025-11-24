@@ -57,21 +57,76 @@ class GameDao {
             $this->dbConnection->executePrepared($sql, "ii", [$generoId, $usuarioId])
         );
 
-        if (!empty($data)) return $data[0];
-
+        //----------------- Y ESTO??? ---------------
+    /*if (!empty($data)) return $data[0];
         $sql2 = "SELECT id, texto
                  FROM pregunta
                  WHERE genero_id = ?
                  ORDER BY RAND()
                  LIMIT 1";
-
         $data2 = $this->dbConnection->processData(
             $this->dbConnection->executePrepared($sql2, "i", [$generoId])
         );
-
-        return $data2[0] ?? null;
+        return $data2[0] ?? null;*/
     }
 
+    //IMPLEMENTAR
+    public function obtenerPreguntaSegunDificultad($generoId, $usuarioId, $tipoDificultad) {
+
+        if ($tipoDificultad === "dificil") {
+            $filtro = "IFNULL(estad.ratio, 100) < 30";
+        } elseif ($tipoDificultad === "medio") {
+            $filtro = "IFNULL(estad.ratio, 100) BETWEEN 30 AND 70";
+        } else {
+            $filtro = "IFNULL(estad.ratio, 100) > 70";
+        }
+
+        //sin repetir
+        $sql = "SELECT p.id, p.texto
+                FROM pregunta p
+                LEFT JOIN (
+                    SELECT pregunta_id,
+                           (SUM(respondida_correctamente) / COUNT(*)) * 100 AS ratio
+                    FROM historial_partida
+                    GROUP BY pregunta_id
+                ) estad ON p.id = estad.pregunta_id
+                WHERE p.genero_id = ?
+                  AND $filtro
+                  AND p.id NOT IN (
+                        SELECT pregunta_id 
+                        FROM historial_partida
+                        WHERE usuario_id = ?
+                  )
+                ORDER BY RAND()
+                LIMIT 1";
+
+        $result = $this->dbConnection->processData(
+                     $this->dbConnection->executePrepared($sql, "ii", [$generoId, $usuarioId])
+                 );
+
+        if (!empty($result)) return $result[0];
+
+        //POR QUE??----------------
+        // 2) Si no hay no repetidas → permitir repetidas
+        $sql2 = "SELECT p.id, p.texto
+                 FROM pregunta p
+                 LEFT JOIN (
+                    SELECT pregunta_id,
+                           (SUM(respondida_correctamente) / COUNT(*)) * 100 AS ratio
+                    FROM historial_partida
+                    GROUP BY pregunta_id
+                 ) estad ON p.id = estad.pregunta_id
+                 WHERE p.genero_id = ?
+                   AND $filtro
+                 ORDER BY RAND()
+                 LIMIT 1";
+
+        $result2 = $this->dbConnection->processData(
+                      $this->dbConnection->executePrepared($sql2, "i", [$generoId])
+                  );
+
+        return $result2[0] ?? null;
+    }
 
     public function verificarRespuesta($respuestaId, $preguntaId){
         $sql = "SELECT es_correcta 
@@ -88,7 +143,8 @@ class GameDao {
     public function obtenerRespuestaCorrecta($preguntaId){
         $sql = "SELECT texto 
                 FROM respuesta 
-                WHERE pregunta_id = ? AND es_correcta = 1 
+                WHERE pregunta_id = ? 
+                AND es_correcta = 1 
                 LIMIT 1";
 
         $data = $this->dbConnection->processData(
@@ -110,15 +166,12 @@ class GameDao {
         );
     }
 
-
     public function sumarPunto($usuarioId){
         $sql = "UPDATE usuario 
                 SET puntos = puntos + 1 
                 WHERE id = ?";
-
         return $this->dbConnection->executePrepared($sql, "i", [$usuarioId]);
     }
-
 
     public function obtenerEstadisticasUsuario($usuarioId){
         $sql = "SELECT 
@@ -137,5 +190,27 @@ class GameDao {
             'partidas_ganadas' => 0,
             'partidas_perdidas' => 0
         ];
+    }
+    //IMPLEMENTAR----------
+    public function obtenerDificultadIdealUsuario($usuarioId) {
+        $sql = "SELECT 
+                    COUNT(*) AS total_respondidas,
+                    SUM(respondida_correctamente) AS total_correctas
+                FROM historial_partida
+                WHERE usuario_id = ?";
+        $data = $this->dbConnection->processData(
+                    $this->dbConnection->executePrepared($sql, "i", [$usuarioId])
+                );
+
+        $total = $data[0]["total_respondidas"] ?? 0;
+        $correctas = $data[0]["total_correctas"] ?? 0;
+
+        if ($total == 0) return 'facil';
+
+        $ratio = ($correctas / $total) * 100;
+
+        if ($ratio > 70) return 'dificil';
+        if ($ratio >= 30) return 'medio';
+        return 'facil';
     }
 }

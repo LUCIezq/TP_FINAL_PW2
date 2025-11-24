@@ -18,20 +18,21 @@ class GameController {
         $this->renderer->render("gameRuleta");
     }
 
+    //empezar partida
     public function start(){
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
             exit();
         }
-
-        /*var_dump($_SESSION['partida'] ?? 'SIN PARTIDA');
-        exit;*/
-
-        unset($_SESSION['partida']);
         $usuarioId = $_SESSION['user']['id'];
-        $message = $_SESSION['message'] ?? null;
-        if ($message) unset($_SESSION['message']);
-
+        //limpiar siempre genero anterior, partida anterior
+        unset($_SESSION['partida']);
+        
+        //$message = $_SESSION['message'] ?? null;
+        //recibimos genero dede la urleta
+        $generoNombre = $_POST['genero'] ?? null;
+        
+       /* if ($message) unset($_SESSION['message']);
         if (isset($_SESSION['partida'])) {
 
             $p = $_SESSION['partida'];
@@ -58,11 +59,7 @@ class GameController {
             ]);
 
             return;
-        }
- 
-        $generoNombre = $_POST['genero'] ?? null;
-      //  echo "<h1 style='color:red'>DEBUG → Género recibido: $generoNombre</h1>";
-       // exit;
+        }*/
 
         if (!$generoNombre){
             header("location: /game");
@@ -80,19 +77,17 @@ class GameController {
 
         $generoId = (int)$genero['id'];
 
-        $partidaId = $this->gameDao->crearPartida(
-            $usuarioId,
-            $generoId,
-            1
-        );
+        //crear partida, por ahora con dificultad fija, cambiar a dinamina
+        $partidaId = $this->gameDao->crearPartida($usuarioId,$generoId,1);
 
+        //guardar estado en sesion
         $_SESSION['partida'] = [
             'id' => $partidaId,
             'usuario_id' => $usuarioId,
             'genero_id' => $generoId,
             'preguntas_respondidas' => 0
         ];
-
+        //lujego implementar metodo.
         $pregunta = $this->gameDao->obtenerPreguntaSimple($generoId, $usuarioId);
 
         if (!$pregunta){
@@ -107,8 +102,8 @@ class GameController {
             "partida_id" => $partidaId,
             "pregunta" => $pregunta,
             "respuestas" => $respuestas,
-            "usuario_id" => $usuarioId,
-            "message" => $message
+            "usuario_id" => $usuarioId
+            //"message" => $message
         ]);
     }
 
@@ -137,8 +132,7 @@ class GameController {
             echo json_encode(["error" => "Error al validar"]);
             exit();
         }
-
-
+        //registrar en historial
         $this->gameDao->insertarHistorial(
             $usuarioId,
             $partidaId,
@@ -153,7 +147,6 @@ class GameController {
             $_SESSION['partida']['preguntas_respondidas']++;
 
             if ($_SESSION['partida']['preguntas_respondidas'] >= 5){
-
                 $this->gameDao->actualizarEstadoPartida($partidaId, "COMPLETADA");
                 unset($_SESSION['partida']);
 
