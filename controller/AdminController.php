@@ -47,24 +47,29 @@ class AdminController
         // =============================
 
         $data = [
-            "isDia" => $periodo === "dia",
-            "isSemana" => $periodo === "semana",
-            "isMes" => $periodo === "mes",
-            "isAnio" => $periodo === "anio",
+    "isDia" => $periodo === "dia",
+    "isSemana" => $periodo === "semana",
+    "isMes" => $periodo === "mes",
+    "isAnio" => $periodo === "anio",
 
-            "totalUsuarios" => $reporte->getTotalUsuarios($fechaDesde),
-            "totalPartidas" => $reporte->getTotalPartidas($fechaDesde),
-            "totalPreguntas" => $reporte->getTotalPreguntas(),
-            "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios($fechaDesde),
+    "totalUsuarios" => $reporte->getTotalUsuarios($fechaDesde),
+    "totalPartidas" => $reporte->getTotalPartidas($fechaDesde),
+    "totalPreguntas" => $reporte->getTotalPreguntas(),
+    "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios($fechaDesde),
 
-            // =============================
-            //            GRÁFICOS
-            // =============================
-            "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais($fechaDesde)),
-            "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo($fechaDesde)),
-            "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad($fechaDesde)),
-            "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario($fechaDesde))
-        ];
+    // TABLAS (ARRAYS)
+    "usuariosPorPais" => $reporte->getUsuariosPorPais($fechaDesde),
+    "usuariosPorSexo" => $reporte->getUsuariosPorSexo($fechaDesde),
+    "usuariosPorEdad" => $reporte->getUsuariosPorEdad($fechaDesde),
+    "porcentajeCorrectasPorUsuario" => $reporte->getPorcentajeCorrectasPorUsuario($fechaDesde),
+
+    // GRÁFICOS (JSON)
+    "usuariosPorPaisJson" => json_encode($reporte->getUsuariosPorPais($fechaDesde)),
+    "usuariosPorSexoJson" => json_encode($reporte->getUsuariosPorSexo($fechaDesde)),
+    "usuariosPorEdadJson" => json_encode($reporte->getUsuariosPorEdad($fechaDesde)),
+    "porcentajeCorrectasPorUsuarioJson" => json_encode($reporte->getPorcentajeCorrectasPorUsuario($fechaDesde))
+];
+
 
         $this->mustacheRenderer->render("admin", $data);
     }
