@@ -8,6 +8,25 @@
 </div>
 {{/message}}
 
+<div style="background:black;color:#0f0;padding:10px;">
+    DEBUG (bruto): 
+    partida_id: {{partida_id}} <br>
+    pregunta_id: {{pregunta.id}} <br>
+    tiempo_restante: {{tiempo_restante}} <br>
+</div>
+<div style="background:#222;color:#0ff;padding:10px;margin-top:10px;">
+    {{#debug}}
+        <strong>DEBUG Controller:</strong><br>
+        pregunta_actual_id: {{pregunta_actual_id}} <br>
+        tiempo_restante_calc: {{tiempo_restante_calc}} <br>
+    {{/debug}}
+
+    {{^debug}}
+        <strong>NO LLEGA debug desde controller</strong>
+    {{/debug}}
+</div>
+
+
 <div class="container text-center py-5">
     <div class="barra-tiempo-container">
     <div id="barra-tiempo"></div>

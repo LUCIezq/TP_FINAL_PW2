@@ -255,14 +255,6 @@ class GameDao {
         return 'facil';
     }
 
-    /*public function obtenerTextoPregunta($preguntaId){
-        $sql = "SELECT id, texto FROM pregunta WHERE id = ?";
-        $data = $this->dbConnection->processData(
-            $this->dbConnection->executePrepared($sql, "i", [$preguntaId])
-        );
-        return $data[0] ?? null;
-    }*/
-
    public function obtenerPreguntaPorId($id){
         $sql = "SELECT id, texto FROM pregunta WHERE id = ?";
         $data = $this->dbConnection->processData(
@@ -270,6 +262,5 @@ class GameDao {
         );
             return $data[0] ?? null;
     }
-
 
 }

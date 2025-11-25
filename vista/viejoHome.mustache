@@ -70,27 +70,87 @@
             <span class="panel-sky__title">Partidas</span>
           </header>
 
+
+          <!-- Herramientas opcionales 
+          <div class="panel-sky__tools">
+            ejemplo opcional de filtros -->
+            <!--
+            <select class="form-select form-select-sm w-auto">
+              <option value="">Todas</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="jugando">En juego</option>
+              <option value="finalizada">Finalizadas</option>
+            </select>
+           
+          </div> -->
+
           <!-- Lista de partidas -->
           <ul class="panel-sky__list">
+            {{#partidas}}
+            <li class="sky-item">
+              <div class="sky-item__avatar">
+                <img src="{{oponente_foto}}" alt="{{oponente_nombre}}">
+              </div>
 
-              <li class="sky-item d-flex justify-content-between">
-                <span>Partidas jugadas</span>
-                <span class="badge bg-primary">{{estadisticas.partidas_jugadas}}</span>
-              </li>
+              <div class="sky-item__body">
+                <div class="sky-item__topline">
+                  <span class="sky-item__time">Hace {{hace}}</span>
+                  {{#estado}}
+                  <span class="badge bg-secondary rounded-pill">{{estado}}</span>
+                  {{/estado}}
+                </div>
+                <div class="sky-item__title">
+                  {{titulo}} <span class="text-muted">vs {{oponente_usuario}}</span>
+                </div>
+              </div>
 
-              <li class="sky-item d-flex justify-content-between">
-                <span>Partidas ganadas</span>
-                <span class="badge bg-success">{{estadisticas.partidas_ganadas}}</span>
-              </li>
+              <div class="sky-item__actions">
+                <button class="btn btn-light btn-icon" title="Aceptar / Continuar">
+                  <i class="bi bi-check2-square"></i>
+                </button>
+                <button class="btn btn-light btn-icon" title="Ver detalles">
+                  <i class="bi bi-camera"></i>
+                </button>
+              </div>
+            </li>
+            {{/partidas}}
 
-              <li class="sky-item d-flex justify-content-between">
-                <span>Partidas perdidas</span>
-                <span class="badge bg-danger">{{estadisticas.partidas_perdidas}}</span>
-              </li>
-
+            {{^partidas}}
+            <li class="sky-empty">
+              <span>No hay partidas todavía</span>
+            </li>
+            {{/partidas}}
           </ul>
-
         </section>
+
+
+        <!-- = Últimos jugadores (derecha) = -->
+        <!--<section class="panel-beige shadow-sm">
+        <header class="panel-beige__header">
+            <span class="panel-beige__title">Jugadores Disponibles</span>
+        </header>
+
+        <ul class="panel-beige__list">
+            {{#jugadores}}
+            <li class="panel-beige__item">
+                <a class="panel-beige__avatar" href="/usuario/perfil/{{id_usuario}}">
+                    <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
+                </a>
+
+                <div class="panel-beige__body">
+                    <a class="panel-beige__name" href="/usuario/perfil/{{id_usuario}}">
+                        {{nombre}} {{apellido}}
+                    </a>
+                    <div class="panel-beige__meta">@{{nombre_usuario}}</div>
+                </div>
+            </li>
+            {{/jugadores}}
+
+            {{^jugadores}}
+            <li class="panel-beige__empty">No hay jugadores disponibles.</li>
+            {{/jugadores}}
+        </ul>
+    </section>-->
 
     <section class="panel-sky shadow-sm">
       <header class="panel-sky__header">
@@ -124,7 +184,10 @@
 
       </ul>
     </section>
-    </div>
+
+        
+
+      </div>
 
       <!-- botón inferior crear preguntas -->
       <div class="mt-3">
