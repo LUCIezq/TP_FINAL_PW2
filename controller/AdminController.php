@@ -13,40 +13,52 @@ class AdminController
     
     public function index(): void
     {
+        /* VALIDACIÓN DE LOGIN */
         if (!IsLogged::isLogged()) {
             header("Location:/login/index");
             exit();
         }
 
         $role = $_SESSION['user']['rol_id'] ?? null;
+
         if ($role != UserRole::ADMIN) {
             header("Location:/home/index");
             exit();
         }
 
+        
         require_once __DIR__ . "/../model/ReporteAdmin.php";
         $reporte = new ReporteAdmin($this->conexion);
 
-        // =============================
-        //     FILTRO DE TIEMPO
-        // =============================
-        // valores posibles: dia, semana, mes, anio
+
+        /* MANEJO SEGURO DEL PERIODO*/
         $periodo = $_GET['periodo'] ?? 'dia';
 
-        // convertir periodo a fechaDesde
         switch ($periodo) {
-            case "dia":     $fechaDesde = $reporte->fechaDesde("hoy"); break;
-            case "semana":  $fechaDesde = $reporte->fechaDesde("semana"); break;
-            case "mes":     $fechaDesde = $reporte->fechaDesde("mes"); break;
-            case "anio":    $fechaDesde = $reporte->fechaDesde("anio"); break;
-            default:        $fechaDesde = $reporte->fechaDesde("hoy");
-        }
+    case "dia":
+        $fechaDesde = date("Y-m-d 00:00:00");
+        break;
 
-        // =============================
-        //          MÉTRICAS
-        // =============================
+    case "semana":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-7 days"));
+        break;
 
-        $data = [
+    case "mes":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-1 month"));
+        break;
+
+    case "anio":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-1 year"));
+        break;
+
+    default:
+        $fechaDesde = date("Y-m-d 00:00:00");
+        break;
+}
+
+
+
+    $data = [
     "isDia" => $periodo === "dia",
     "isSemana" => $periodo === "semana",
     "isMes" => $periodo === "mes",
@@ -55,20 +67,21 @@ class AdminController
     "totalUsuarios" => $reporte->getTotalUsuarios($fechaDesde),
     "totalPartidas" => $reporte->getTotalPartidas($fechaDesde),
     "totalPreguntas" => $reporte->getTotalPreguntas(),
-    "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios($fechaDesde),
+    "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
 
-    // TABLAS (ARRAYS)
-    "usuariosPorPais" => $reporte->getUsuariosPorPais($fechaDesde),
-    "usuariosPorSexo" => $reporte->getUsuariosPorSexo($fechaDesde),
-    "usuariosPorEdad" => $reporte->getUsuariosPorEdad($fechaDesde),
-    "porcentajeCorrectasPorUsuario" => $reporte->getPorcentajeCorrectasPorUsuario($fechaDesde),
+    // JSON PARA LOS GRÁFICOS
+    "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais($fechaDesde)),
+    "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo($fechaDesde)),
+    "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad($fechaDesde)),
+    "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario($fechaDesde)),
 
-    // GRÁFICOS (JSON)
-    "usuariosPorPaisJson" => json_encode($reporte->getUsuariosPorPais($fechaDesde)),
-    "usuariosPorSexoJson" => json_encode($reporte->getUsuariosPorSexo($fechaDesde)),
-    "usuariosPorEdadJson" => json_encode($reporte->getUsuariosPorEdad($fechaDesde)),
-    "porcentajeCorrectasPorUsuarioJson" => json_encode($reporte->getPorcentajeCorrectasPorUsuario($fechaDesde))
+    // ARRAYS PARA LAS TABLAS
+    "usuariosPorPaisTable" => $reporte->getUsuariosPorPais($fechaDesde),
+    "usuariosPorSexoTable" => $reporte->getUsuariosPorSexo($fechaDesde),
+    "usuariosPorEdadTable" => $reporte->getUsuariosPorEdad($fechaDesde),
+    "precisionUsuariosTable" => $reporte->getPorcentajeCorrectasPorUsuario($fechaDesde),
 ];
+
 
         $this->mustacheRenderer->render("admin", $data);
     }

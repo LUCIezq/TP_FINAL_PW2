@@ -9,93 +9,74 @@ class ReporteAdmin
         $this->db = $conexion;
     }
 
-    // =====================================================
-    //   FECHAS COMPATIBLES CON INFINITYFREE
-    // =====================================================
-    public function fechaDesde(string $filtro): string
+    /*  Validacion para fechas*/
+    private function safeDate(?string $fecha): string
     {
-        switch ($filtro) {
-            case "hoy":     
-                return date("Y-m-d");
-            case "semana":  
-                return date("Y-m-d", strtotime("-7 days"));
-            case "mes":     
-                return date("Y-m-d", strtotime("-1 month"));
-            case "anio":    
-                return date("Y-m-d", strtotime("-1 year"));
-            default:
-                return "1970-01-01";
+        if (!$fecha || trim($fecha) === "" || strtolower($fecha) === "null") {
+            return "1970-01-01 00:00:00"; // fecha mínima segura
         }
+        return $fecha;
     }
 
-    // =====================================================
-    //                     MÉTRICAS
-    // =====================================================
+    
 
     public function getTotalUsuarios(string $fechaDesde): int
     {
-        $sql = "
-            SELECT COUNT(*) AS total
-            FROM usuario
-            WHERE DATE(fecha_creacion) >= '$fechaDesde'
-        ";
+        $fecha = $this->safeDate($fechaDesde);
+
+        $sql = "SELECT COUNT(*) AS total 
+                FROM usuario 
+                WHERE fecha_creacion >= '$fecha'";
 
         $result = $this->db->query($sql);
-        return $result[0]["total"] ?? 0;
+        return $result[0]['total'] ?? 0;
     }
 
     public function getTotalPartidas(string $fechaDesde): int
     {
-        $sql = "
-            SELECT COUNT(*) AS total
-            FROM partida
-            WHERE DATE(created_at) >= '$fechaDesde'
-        ";
+        $fecha = $this->safeDate($fechaDesde);
+
+        $sql = "SELECT COUNT(*) AS total 
+                FROM partida 
+                WHERE created_at >= '$fecha'";
 
         $result = $this->db->query($sql);
-        return $result[0]["total"] ?? 0;
+        return $result[0]['total'] ?? 0;
     }
 
     public function getTotalPreguntas(): int
     {
-        $sql = "
-            SELECT COUNT(*) AS total
-            FROM pregunta
-            WHERE estado_id = 1
-        ";
+        $sql = "SELECT COUNT(*) AS total 
+                FROM pregunta 
+                WHERE activa = 1";
 
         $result = $this->db->query($sql);
-        return $result[0]["total"] ?? 0;
+        return $result[0]['total'] ?? 0;
     }
 
-    public function getTotalPreguntasUsuarios(string $fechaDesde): int
+    public function getTotalPreguntasUsuarios(): int
     {
-        // No filtramos por fecha, pero si querés se agrega DATE(fecha_creacion)
-        $sql = "
-            SELECT COUNT(*) AS total
-            FROM pregunta
-            WHERE usuario_id NOT IN (1,2)
-        ";
+        $sql = "SELECT COUNT(*) AS total 
+                FROM pregunta";
 
         $result = $this->db->query($sql);
-        return $result[0]["total"] ?? 0;
+        return $result[0]['total'] ?? 0;
     }
 
-    // =====================================================
-    //               GRÁFICOS
-    // =====================================================
+    
+    /* GRÁFICOS */
 
     public function getUsuariosPorPais(string $fechaDesde): array
     {
+        $fecha = $this->safeDate($fechaDesde);
+
         $sql = "
             SELECT 
-                CASE 
-                    WHEN pais IS NULL OR pais = '' THEN 'Sin especificar'
-                    ELSE pais
-                END AS pais,
+                CASE WHEN pais IS NULL OR pais = '' THEN 'Sin especificar'
+                     ELSE pais END AS pais,
                 COUNT(*) AS cantidad
             FROM usuario
-            WHERE DATE(fecha_creacion) >= '$fechaDesde'
+            WHERE fecha_creacion >= '$fecha'
             GROUP BY pais
         ";
 
@@ -104,16 +85,16 @@ class ReporteAdmin
 
     public function getUsuariosPorSexo(string $fechaDesde): array
     {
+        $fecha = $this->safeDate($fechaDesde);
+
         $sql = "
             SELECT 
-                CASE 
-                    WHEN s.nombre IS NULL THEN 'Sin especificar'
-                    ELSE s.nombre
-                END AS sexo,
+                CASE WHEN s.nombre IS NULL THEN 'Sin especificar'
+                     ELSE s.nombre END AS sexo,
                 COUNT(*) AS cantidad
             FROM usuario u
             LEFT JOIN sexo s ON u.sexo_id = s.id
-            WHERE DATE(u.fecha_creacion) >= '$fechaDesde'
+            WHERE u.fecha_creacion >= '$fecha'
             GROUP BY sexo
         ";
 
@@ -122,6 +103,8 @@ class ReporteAdmin
 
     public function getUsuariosPorEdad(string $fechaDesde): array
     {
+        $fecha = $this->safeDate($fechaDesde);
+
         $sql = "
             SELECT 
                 CASE
@@ -132,7 +115,7 @@ class ReporteAdmin
                 END AS grupo,
                 COUNT(*) AS cantidad
             FROM usuario
-            WHERE DATE(fecha_creacion) >= '$fechaDesde'
+            WHERE fecha_creacion >= '$fecha'
             GROUP BY grupo
         ";
 
@@ -141,13 +124,15 @@ class ReporteAdmin
 
     public function getPorcentajeCorrectasPorUsuario(string $fechaDesde): array
     {
+        $fecha = $this->safeDate($fechaDesde);
+
         $sql = "
             SELECT 
                 u.nombre_usuario,
                 ROUND((SUM(h.respondida_correctamente) / COUNT(*)) * 100, 1) AS porcentaje
             FROM historial_partida h
             INNER JOIN usuario u ON u.id = h.usuario_id
-            WHERE DATE(h.fecha_respuesta) >= '$fechaDesde'
+            WHERE h.fecha_respuesta >= '$fecha'
             GROUP BY h.usuario_id
         ";
 
