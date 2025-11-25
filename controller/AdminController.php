@@ -12,40 +12,68 @@ class AdminController
     }
     
     public function index(): void
-{
-    if (!IsLogged::isLogged()) {
-        header("Location:/login/index");
-        exit();
-    }
+    {
+        /* =============================
+              VALIDACIÓN DE LOGIN
+        ============================== */
+        if (!IsLogged::isLogged()) {
+            header("Location:/login/index");
+            exit();
+        }
 
-    $role = $_SESSION['user']['rol_id'] ?? null;
-    if ($role != UserRole::ADMIN) {
-        header("Location:/home/index");
-        exit();
-    }
+        $role = $_SESSION['user']['rol_id'] ?? null;
 
-    require_once __DIR__ . "/../model/ReporteAdmin.php";
-    $reporte = new ReporteAdmin($this->conexion);
+        if ($role != UserRole::ADMIN) {
+            header("Location:/home/index");
+            exit();
+        }
 
+        /* =============================
+              CARGAR MODELO
+        ============================== */
+        require_once __DIR__ . "/../model/ReporteAdmin.php";
+        $reporte = new ReporteAdmin($this->conexion);
+
+        /* =============================
+           MANEJO SEGURO DEL PERIODO
+        ============================== */
         $periodo = $_GET['periodo'] ?? 'dia';
 
+        $fechaDesde = match ($periodo) {
+            "dia"    => date("Y-m-d 00:00:00"),
+            "semana" => date("Y-m-d H:i:s", strtotime("-7 days")),
+            "mes"    => date("Y-m-d H:i:s", strtotime("-1 month")),
+            "anio"   => date("Y-m-d H:i:s", strtotime("-1 year")),
+            default  => date("Y-m-d 00:00:00")
+        };
+
+
     $data = [
-        "isDia" => $periodo === "dia",
-        "isSemana" => $periodo === "semana",
-        "isMes" => $periodo === "mes",
-        "isAnio" => $periodo === "anio",
+    "isDia" => $periodo === "dia",
+    "isSemana" => $periodo === "semana",
+    "isMes" => $periodo === "mes",
+    "isAnio" => $periodo === "anio",
 
-        "totalUsuarios" => $reporte->getTotalUsuarios(),
-        "totalPartidas" => $reporte->getTotalPartidas(),
-        "totalPreguntas" => $reporte->getTotalPreguntas(),
-        "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
+    "totalUsuarios" => $reporte->getTotalUsuarios($fechaDesde),
+    "totalPartidas" => $reporte->getTotalPartidas($fechaDesde),
+    "totalPreguntas" => $reporte->getTotalPreguntas(),
+    "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
 
-        "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais()),
-        "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo()),
-        "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad()),
-        "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario())
-    ];
+    // JSON PARA LOS GRÁFICOS
+    "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais($fechaDesde)),
+    "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo($fechaDesde)),
+    "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad($fechaDesde)),
+    "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario($fechaDesde)),
 
-    $this->mustacheRenderer->render("admin", $data);
-}
+    // ARRAYS PARA LAS TABLAS
+    "usuariosPorPaisTable" => $reporte->getUsuariosPorPais($fechaDesde),
+    "usuariosPorSexoTable" => $reporte->getUsuariosPorSexo($fechaDesde),
+    "usuariosPorEdadTable" => $reporte->getUsuariosPorEdad($fechaDesde),
+    "precisionUsuariosTable" => $reporte->getPorcentajeCorrectasPorUsuario($fechaDesde),
+];
+
+
+        /*  RENDERIZAR VISTA */
+        $this->mustacheRenderer->render("admin", $data);
+    }
 }
