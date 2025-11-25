@@ -18,7 +18,7 @@ $url = sprintf(
 $ch = curl_init($url);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 5,
+    CURLOPT_TIMEOUT => 15,
     CURLOPT_HTTPHEADER => [
         'User-Agent: TP_FINAL_PW2/1.0 (tu-email@example.com)',
         'Accept: application/json'
