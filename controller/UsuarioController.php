@@ -59,6 +59,11 @@ class UsuarioController
 
     }
 
+    public function editar()
+    {
+        
+    }
+
     public function getCountryAndCity()
     {
 

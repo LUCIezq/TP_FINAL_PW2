@@ -329,7 +329,7 @@ class PreguntasDao
     }
     public function inactivarPregunta($id)
     {
-        $sql = 'UPDATE pregunta set activa=0 where id = ?';
+        $sql = 'UPDATE pregunta set estado_id=2 where id = ?';
         $params = [$id];
         $types = 'i';
         return $this->conexion->executePrepared($sql, $types, $params) === 1;

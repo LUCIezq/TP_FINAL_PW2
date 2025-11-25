@@ -38,7 +38,7 @@ class GameDao
             FROM pregunta p
             WHERE p.genero_id = ?
             AND p.dificultad_id = ?
-            AND p.activa = 1
+            AND p.estado_id = 1
             AND p.id NOT IN (
                 SELECT h.pregunta_id
                 FROM historial_partida h

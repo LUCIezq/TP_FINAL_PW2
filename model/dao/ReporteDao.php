@@ -76,7 +76,6 @@ class ReporteDao
 
     public function guardarReporte(Reporte $reporte)
     {
-        $state = '';
 
         $preguntaBd = $this->preguntasDao->obtenerPreguntaPorId($reporte->getPreguntaId());
 

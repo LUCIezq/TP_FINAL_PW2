@@ -52,28 +52,7 @@
                 puntos: <strong>{{usuario.puntos}}</strong>
               </p>
 
-              <div class="d-flex flex-wrap gap-2 mt-2">
-                <!-- Chips: experiencia y nivel -->
-                <span class="chip chip-info">
-                  {{#usuario.experienciaTitulo}}{{usuario.experienciaTitulo}}{{/usuario.experienciaTitulo}}{{^usuario.experienciaTitulo}}Puntos
-                  de experiencia{{/usuario.experienciaTitulo}}
-                </span>
-                <span class="chip chip-level">Nv. {{usuario.nivel}}</span>
-              </div>
-            </div>
-          </div>
 
-          <!-- Barra de experiencia -->
-          <div class="mt-4">
-            <div class="d-flex justify-content-between small mb-1">
-              <span>Nivel {{usuario.nivel}}</span>
-              <span>{{usuario.expActual}} / {{usuario.expSiguiente}} XP</span>
-            </div>
-            <div class="exp-bar">
-              <!-- <div class="exp-fill" style="width: {{usuario.expPorcentaje}}%;"></div> -->
-            </div>
-            <div class="small text-muted mt-1">
-              {{usuario.expRestante}} XP restante para Nv. {{usuario.nivelSiguiente}}
             </div>
           </div>
 
