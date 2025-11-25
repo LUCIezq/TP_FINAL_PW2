@@ -243,29 +243,7 @@ class UsuarioDao
         return $this->dbConnection->processData($result)[0] ?? null;
     }
 
-    /*
-     * 🔋🔋🔋🔋🔋🔋 metodo que funciona bien, agregando nuevos campos
-     * public function findById($id)
-    {
-        $sql = "SELECT
-                id,
-                nombre,
-                apellido,
-                email,
-                nombre_usuario,
-                foto_perfil,
-                nivel_id,
-                puntos
-            FROM usuario
-            WHERE id = ? AND rol_id = ?";
-        $types = "ii";
-        $params = [$id, 1];
-
-        $result = $this->dbConnection->executePrepared($sql, $types, $params);
-
-        return $this->dbConnection->processData($result)[0] ?? null;
-    }
-     */
+   
     public function existsInBd($id)
     {
 
@@ -317,5 +295,35 @@ class UsuarioDao
     {
         return $this->dbConnection;
     }
+
+    public function getRankingPromedio()
+    {
+        $sql = "SELECT 
+                u.id,
+                u.nombre,
+                u.apellido,
+                u.nombre_usuario,
+                u.foto_perfil,
+                u.puntos,
+                COUNT(p.id) AS partidas_jugadas,
+                ROUND(
+                    CASE 
+                        WHEN COUNT(p.id) = 0 THEN 0
+                        ELSE u.puntos / COUNT(p.id)
+                    END
+                , 1) AS promedio
+            FROM usuario u
+            LEFT JOIN partida p 
+                ON p.usuario_id = u.id
+                AND p.estado IN ('COMPLETADA','PERDIDA')
+            WHERE u.rol_id = ?
+            AND u.verificado = 1
+            GROUP BY u.id
+            ORDER BY promedio DESC;";
+
+        $result = $this->dbConnection->executePrepared($sql, "i", [UserRole::JUGADOR]);
+        return $this->dbConnection->processData($result);
+    }
+
 
 }

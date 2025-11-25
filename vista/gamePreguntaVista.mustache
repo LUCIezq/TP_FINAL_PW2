@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="/public/assets/barraTiempo.css">
+
+
 {{#message}}
 <div class="alert alert-info alert-dismissible fade show" role="alert">
     {{message}}
@@ -5,9 +8,32 @@
 </div>
 {{/message}}
 
-<div class="container text-center py-5">
-    <div class="bg-light p-4 rounded-3 mb-4" style="display: flex; flex-direction: column; align-items: center;">
+<div style="background:black;color:#0f0;padding:10px;">
+    DEBUG (bruto): 
+    partida_id: {{partida_id}} <br>
+    pregunta_id: {{pregunta.id}} <br>
+    tiempo_restante: {{tiempo_restante}} <br>
+</div>
+<div style="background:#222;color:#0ff;padding:10px;margin-top:10px;">
+    {{#debug}}
+        <strong>DEBUG Controller:</strong><br>
+        pregunta_actual_id: {{pregunta_actual_id}} <br>
+        tiempo_restante_calc: {{tiempo_restante_calc}} <br>
+    {{/debug}}
 
+    {{^debug}}
+        <strong>NO LLEGA debug desde controller</strong>
+    {{/debug}}
+</div>
+
+
+<div class="container text-center py-5">
+    <div class="barra-tiempo-container">
+    <div id="barra-tiempo"></div>
+</div>
+
+<div id="timer" class="timer-display">20s</div>
+    <div class="bg-light p-4 rounded-3 mb-4" style="display: flex; flex-direction: column; align-items: center;">
         <div class="dropdown" style="align-self: flex-end;">
             <button type="button" style="border: none; background: transparent;" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -65,11 +91,11 @@
         </div>
         <p class="fs-5 font-weight-bold">{{pregunta.texto}}</p>
     </div>
-
+ 
     <form id="formPregunta" method="POST" action="/game/respuesta">
         <input type="hidden" name="partida_id" value="{{partida_id}}">
         <input type="hidden" name="pregunta_id" value="{{pregunta.id}}">
-
+        
         <div class="d-grid gap-3 col-6 mx-auto mt-4">
             {{#respuestas}}
             <button type="button" class="btn btn-outline-primary btn-lg opcion-respuesta" data-id="{{id}}"
@@ -84,13 +110,69 @@
 </div>
 
 <script>
-    const botones = document.querySelectorAll(".opcion-respuesta");
+    let tiempo = Number("{{tiempo_restante}}");
+    if (isNaN(tiempo) || tiempo < 0) tiempo = 0;
+
+    const DURACION = 20;
+
+    const tiempoDiv = document.getElementById("timer");
+    const barraTiempo = document.getElementById("barra-tiempo");
+    const botonesRespuestas = document.querySelectorAll(".opcion-respuesta");
     const form = document.getElementById("formPregunta");
     const mensajeDiv = document.getElementById("mensaje");
+
+    function actualizarTimer() {
+        tiempoDiv.innerText = tiempo + "s";
+
+        let porcentaje = (tiempo / DURACION) * 100;
+        barraTiempo.style.width = porcentaje + "%";
+
+        if (tiempo > 10) {
+            barraTiempo.style.background = "#28a745"; 
+        } else if (tiempo > 5) {
+            barraTiempo.style.background = "#ffc107"; 
+        } else {
+            barraTiempo.style.background = "#dc3545"; 
+        }
+
+        if (tiempo <= 0) {
+            barraTiempo.style.width = "0%";
+            tiempoDiv.innerText = "⏳ Tiempo agotado";
+
+            botonesRespuestas.forEach(b => b.disabled = true);
+
+            const formData = new FormData(form);
+            formData.append("respuesta_id", -1);
+            formData.append("timeout", 1);
+
+            fetch("/game/respuesta", {
+                method: "POST",
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                mensajeDiv.innerHTML =
+                    "⏳ Se acabó el tiempo.<br>La respuesta correcta era:<br><strong>" +
+                    data.correcta_texto +
+                    "</strong>";
+
+                setTimeout(() => window.location.href = "/home", 3000);
+            });
+
+            clearInterval(intervalo);
+        }
+
+        tiempo--;
+    }
+
+    const intervalo = setInterval(actualizarTimer, 1000);
+
+    const botones = document.querySelectorAll(".opcion-respuesta");
 
     botones.forEach(btn => {
         btn.addEventListener("click", () => {
             botones.forEach(b => b.disabled = true);
+            clearInterval(intervalo);
 
             const formData = new FormData(form);
             formData.append("respuesta_id", btn.dataset.id);
@@ -99,29 +181,35 @@
                 method: "POST",
                 body: formData
             })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.correcta && data.continuar) {
+            .then(r => r.json())
+            .then(data => {
 
-                        btn.classList.remove("btn-outline-primary");
-                        btn.classList.add("btn-success");
-                        mensajeDiv.innerHTML = "✅ ¡Correcto!";
-                        setTimeout(() => {
-                            window.location.href = "/game/siguientePregunta";
-                        }, 1500);
-                    }
-                    else if (data.fin) {
-                        mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
-                        setTimeout(() => window.location.href = "/home", 2500);
-                    }
-                    else if (data.correcta === false) {
+                if (data.fin) {
+                    mensajeDiv.innerHTML = "🎉 ¡Partida completada!";
+                    setTimeout(() => window.location.href = "/home", 2500);
+                    return;
+                }
 
-                        btn.classList.remove("btn-outline-primary");
-                        btn.classList.add("btn-danger");
-                        mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" + data.correcta_texto + "</strong>";
-                        setTimeout(() => window.location.href = "/home", 3000);
-                    }
-                })
+                if (data.correcta === true && data.continuar) {
+                    btn.classList.add("btn-success");
+                    mensajeDiv.innerHTML = "✅ ¡Correcto!";
+                    setTimeout(() => window.location.href = "/game/siguientePregunta", 1500);
+                    return;
+                }
+
+                if (data.correcta === false) {
+                    btn.classList.add("btn-danger");
+                    mensajeDiv.innerHTML =
+                        "❌ Incorrecto.<br>La respuesta correcta era:<br><strong>" +
+                        data.correcta_texto +
+                        "</strong>";
+                    setTimeout(() => window.location.href = "/home", 3000);
+                    return;
+                }
+
+                mensajeDiv.innerHTML = "⚠ Error inesperado.";
+            })
+            .catch(() => mensajeDiv.innerHTML = "Error con el servidor");
         });
     });
 </script>
