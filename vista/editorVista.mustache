@@ -243,12 +243,51 @@
 
 
 <section id="preguntasReportadas" class="mb-5 pt-4">
-    <h4 class="fw-bold mb-3">Preguntas reportadas</h4>
+    <div class="d-flex justify-content-between w-100">
+        <h4 class="fw-bold mb-3">Preguntas reportadas</h4>
+    </div>
+    <div class=" card p-4 shadow-sm" style=" height: fit-content; overflow-y: scroll;">
 
-    <div class="card p-4 shadow-sm">
-        <p class="text-muted">No se encontraron preguntas reportadas.</p>
+        {{#preguntasReportadas}}
+
+        <div class="d-flex  align-items-center w-100 gap-3">
+            <div class="d-flex align-items-center gap-4 w-100">
+
+                <div class=" card shadow-sm mb-4 rounded-3 border-0 w-100" ">
+                    <div class=" card-body w-100">
+
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <small class="text-muted d-block">
+                                Reportada por <strong>{{usuario}}</strong>
+                            </small>
+                            <h6 class="mt-1 fw-bold mb-0">
+                                <a href="/reporte/ver/?id={{pregunta_id}}">{{enunciado}}</a>
+                            </h6>
+                        </div>
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <span class="badge text-bg-warning">{{reporte_nombre}}</span>
+
+                            <span>
+                                Cantidad de reportes:
+                                <b>
+                                    {{cantidad_reportes}}
+                                </b>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 
+    {{/preguntasReportadas}}
+
+    {{^preguntasReportadas}}
+    <p class="text-muted">No se encontraron preguntas reportadas.</p>
+    {{/preguntasReportadas}}
+    </div>
 </section>
 
 <section id="categorias" class="mb-5 pt-4">
@@ -269,10 +308,12 @@
         <p class="text-muted">Listado de categorías existentes:</p>
 
         <ul class="list-group">
+            {{#categories}}
             <li class="list-group-item d-flex justify-content-between">
-                <span>Categoría ejemplo</span>
+                <span>{{nombre}}</span>
                 <button class="btn btn-sm btn-outline-danger">Eliminar</button>
             </li>
+            {{/categories}}
         </ul>
 
     </div>

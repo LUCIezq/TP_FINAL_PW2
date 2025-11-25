@@ -36,75 +36,12 @@ class EditorController
         $message = $_SESSION["message"] ?? null;
         unset($_SESSION["message"]);
 
-        // $filters = [
-        //     'category_name' => htmlspecialchars(trim($_GET["category_name"] ?? "todas"), ENT_QUOTES, 'UTF-8'),
-        //     'eliminar_categoria_id' => filter_input(
-        //         INPUT_GET,
-        //         'eliminar_categoria_id',
-        //         FILTER_VALIDATE_INT,
-        //         [
-        //             'options' => [
-        //                 'min_range' => 1
-        //             ]
-        //         ]
-        //     )
-        // ];
-
-        // if ($filters['eliminar_categoria_id']) {
-        //     $_SESSION["message"] = $this->eliminarCategoria($filters['eliminar_categoria_id']);
-        //     header("Location:/editor/index");
-        //     exit();
-        // }
-
-        // $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
-
-        // foreach ($categories as &$category) {
-        //     $category['checked'] = $filters['category_name'] === $category['nombre'] ? 'checked' : '';
-        //     $category['esIdValido'] = $category['id'] != '' ? true : false;
-        // }
-
-        // foreach ($questions as &$p) {
-        //     $p['categorias'] = [];
-
-        //     foreach ($categories as $c) {
-        //         $p['categorias'][] = [
-        //             'id' => $c['id'],
-        //             'nombre' => $c['nombre'],
-        //             'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
-        //         ];
-        //     }
-        // }
-
-        // $preguntasSugeridas = $this->preguntasDao->getAllQuestionByUsers();
-
-        // foreach ($preguntasSugeridas as &$p) {
-        //     $p['categorias'] = [];
-
-        //     foreach ($categories as $c) {
-        //         $p['categorias'][] = [
-        //             'id' => $c['id'],
-        //             'nombre' => $c['nombre'],
-        //             'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
-        //         ];
-        //     }
-        // }
-
-        // array_unshift($categories, ['id' => '', 'nombre' => 'todas', 'checked' => $filters['category_name'] === 'todas' ? 'checked' : '']);
-        // unset($p);
-
-        // $this->mustacheRenderer->render("editor", [
-        //     "questions" => $questions,
-        //     "isLogged" => IsLogged::isLogged(),
-        //     "categories" => $categories,
-        //     'preguntasSugeridas' => $preguntasSugeridas,
-        //     "message" => $message,
-        //     "usuario" => $_SESSION['user']
-        // ]);
 
         $opcionesMenu = $this->obtenerOpcionesDashboard();
         $preguntasDelSistema = $this->preguntasDao->getAllSystemQuestions();
         $preguntasSugeridas = $this->preguntasDao->obtenerPreguntasSugeridas();
         $categorias = $this->categoryDao->getAll();
+        $preguntasReportadas = $this->reporteDao->getAllReportes();
 
 
         $this->mustacheRenderer->render("editor", [
@@ -112,6 +49,7 @@ class EditorController
             "isLogged" => IsLogged::isLogged(),
             "categories" => $categorias,
             'preguntasSugeridas' => $preguntasSugeridas,
+            'preguntasReportadas' => $preguntasReportadas,
             "message" => $message,
             "usuario" => $_SESSION['user'],
             'opcionesMenu' => $opcionesMenu
@@ -337,6 +275,45 @@ class EditorController
                 header("Location:/editor/index");
                 exit();
         }
+    }
+
+    public function procesarReporte()
+    {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('location:/editor/index');
+            exit();
+        }
+
+        $accion = filter_input(INPUT_POST, "accion", FILTER_SANITIZE_STRING);
+
+        if ($accion === null || $accion === false || trim($accion) === "") {
+            $_SESSION["message"] = "La accion es incorrecta";
+            header("location:/editor/index");
+            exit();
+        }
+
+        $idPregunta = filter_input(INPUT_POST, "pregunta_id", FILTER_VALIDATE_INT);
+
+        if (!$idPregunta) {
+            $_SESSION["message"] = "El id de la pregunta es invalido";
+            header('location:/editor/index');
+            exit();
+        }
+
+        switch ($accion) {
+            case 'aprobar';
+                $state = $this->reporteDao->aprobarReporte($idPregunta);
+                $type = 'aprobado';
+                break;
+            case 'rechazar':
+                $state = $this->reporteDao->rechazarReporte($idPregunta);
+                $type = 'rechazado';
+                break;
+        }
+
+        $state === true ? $_SESSION['message'] = 'Reporte' . $type . ' con exito.' : $_SESSION['message'] = 'Hubo un error al aprobar el reporte';
+        header('location:/editor/index');
+        exit();
     }
 
     public function crearPregunta()

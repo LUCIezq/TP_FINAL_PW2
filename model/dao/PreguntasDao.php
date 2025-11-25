@@ -130,13 +130,15 @@ class PreguntasDao
         $sql = "SELECT 
                 p.id AS pregunta_id,
                 p.texto AS pregunta_texto,
-                p.activa,
+                ep.nombre as estado_nombre,
                 g.id AS genero_id,
                 g.nombre AS genero_nombre,
                 r.id AS respuesta_id,
                 r.texto AS respuesta_texto
+                
             FROM pregunta p
             JOIN genero g ON g.id = p.genero_id
+            JOIN estado_pregunta ep on ep.id = p.estado_id
             JOIN respuesta r ON r.pregunta_id = p.id
             WHERE p.id = ?";
 
@@ -154,7 +156,6 @@ class PreguntasDao
         $pregunta = [
             'id' => $rows[0]['pregunta_id'],
             'texto' => $rows[0]['pregunta_texto'],
-            'activa' => $rows[0]['activa'],
             'genero_id' => $rows[0]['genero_id'],
             'genero_nombre' => $rows[0]['genero_nombre'],
             'respuestas' => []

@@ -13,6 +13,14 @@ class ReporteController
         $this->preguntasDao = $preguntasDao;
     }
 
+    public function index()
+    {
+        $message = $_SESSION["message"];
+        unset($_SESSION["message"]);
+
+        $this->mustacheRenderer->render("reporte", [$message => $message]);
+    }
+
     public function reportar()
     {
 

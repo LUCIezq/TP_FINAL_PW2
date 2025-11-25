@@ -13,9 +13,37 @@ class ReporteDao
 
     public function getAllReportes()
     {
-        $sql = "SELECT * FROM reporte";
+        $sql = "SELECT r.id_reporte,count(r.id_reporte) as cantidad_reportes,
+        p.id as pregunta_id,
+        p.texto as enunciado,
+        u.nombre_usuario as usuario,
+        er.nombre,
+        r.motivo,
+        r.comentario,
+        r.fecha_reporte,
+        er.nombre as reporte_nombre
+        FROM reporte r
+        JOIN usuario u on u.id = r.id_usuario
+        JOIN estado_reporte er on er.id_estado_reporte = r.id_estado_reporte
+        JOIN pregunta p on p.id = r.id_pregunta
+        where r.id_estado_reporte = 1
+        GROUP BY p.id";
         $result = $this->db->executePrepared($sql, "", []);
         return $this->db->processData($result);
+    }
+
+    public function aprobarReporte($idPregunta)
+    {
+
+        $sql = 'UPDATE reporte 
+        set id_estado_reporte = ?
+        WHERE id_pregunta = ?';
+
+        $types = 'is';
+
+        $params = [2, $idPregunta];
+
+        return $this->db->executePrepared($sql, $types, $params) > 0;
     }
 
     public function obtenerReportesPorIdPregunta($idPregunta)
@@ -23,10 +51,27 @@ class ReporteDao
         $sql = 'SELECT *,usuario.nombre_usuario from reporte
         JOIN usuario ON reporte.id_usuario = usuario.id 
         WHERE id_pregunta = ?';
+
         $params = [$idPregunta];
+
         $types = "i";
+
         $result = $this->db->executePrepared($sql, $types, $params);
         return $this->db->processData($result);
+    }
+
+    public function rechazarReporte($idPregunta)
+    {
+
+        $sql = 'UPDATE reporte 
+        set id_estado_reporte = ?
+        WHERE id_pregunta = ?';
+
+        $types = 'is';
+
+        $params = [3, $idPregunta];
+
+        return $this->db->executePrepared($sql, $types, $params) > 0;
     }
 
     public function guardarReporte(Reporte $reporte)

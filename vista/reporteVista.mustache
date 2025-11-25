@@ -4,14 +4,22 @@
         <i class="bi bi-arrow-left"></i> Volver
     </a>
 
+
+    {{#message}}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{/message}}
+
     {{#pregunta}}
     <div class="card border-0 shadow-sm mb-3" style="font-size: 0.92rem;">
         <div class="card-body py-3">
             <h4 class="m-0 fw-semibold ">Pregunta</h4>
             <div class="d-flex justify-content-between align-items-center">
-                {{#cantidadReportes}}
+                <!-- {{#cantidadReportes}}
                 <span class="badge bg-danger">{{cantidadReportes}} reportes</span>
-                {{/cantidadReportes}}
+                {{/cantidadReportes}} -->
             </div>
 
             <p class="mt-2 mb-3" style="font-size: 1.5rem; text-decoration: underline;">{{texto}}</p>
@@ -64,5 +72,32 @@
         No hay reportes para esta pregunta.
     </div>
     {{/preguntaConReportes}}
+
+    <hr class="my-4">
+
+    <form action="/editor/procesarReporte" method="POST" class="mt-3">
+
+        <div class="d-flex flex-column gap-2">
+
+            {{#pregunta}}
+            <input type="hidden" name="pregunta_id" value="{{id}}">
+            {{/pregunta}}
+
+            <button type="submit" name="accion" value="aprobar" class="btn btn-outline-success btn-sm">
+                Aprobar reporte
+            </button>
+
+            <button type="submit" name="accion" value="rechazar" class="btn btn-outline-danger btn-sm">
+                Rechazar reporte
+            </button>
+
+            <button type="submit" name="accion" value="modificar" class="btn btn-outline-secondary btn-sm">
+                Editar pregunta
+            </button>
+
+        </div>
+
+    </form>
+
 
 </div>
