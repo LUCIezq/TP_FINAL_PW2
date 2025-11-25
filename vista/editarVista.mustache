@@ -1,0 +1,70 @@
+<div class="container my-4" style="max-width: 700px;">
+
+    <a href="/editor/index" class="btn btn-light border mb-4">
+        ← Volver
+    </a>
+
+    <h3 class="mb-3">Editar Pregunta</h3>
+
+    {{#pregunta}}
+
+    <form action="/editor/modificar" method="POST" class="card border-0 shadow-sm p-4">
+
+        <input type="hidden" name="id" value="{{id}}">
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Enunciado</label>
+            <input type="text" name="texto" value="{{texto}}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Género</label>
+            <select name="genero_id" class="form-select">
+                {{#generos}}
+                <option value="{{id}}" {{#seleccionado}}selected{{/seleccionado}}>
+                    {{nombre}}
+                </option>
+                {{/generos}}
+            </select>
+        </div>
+
+        <h6 class="fw-bold mt-4 mb-2">Respuestas</h6>
+
+        <div class="d-flex flex-column gap-2">
+
+            {{#respuestas}}
+            <div class="card border-0 shadow-sm p-3">
+
+                <input type="hidden" name="respuestas[{{id}}][id]" value="{{id}}">
+
+                <input type="text" name="respuestas[{{id}}][texto]" class="form-control" value="{{texto}}">
+
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="radio" name="correcta" value="{{id}}"
+                        {{#correcta}}checked{{/correcta}}>
+                    <label class="form-check-label">Correcta</label>
+                </div>
+
+            </div>
+            {{/respuestas}}
+
+        </div>
+
+        <div class="mb-3 mt-4">
+            <label class="form-label fw-semibold">Estado</label>
+            <select name="estado" class="form-select">
+                {{#estadosPregunta}}
+                <option value="{{id}}" {{#selected}}selected{{/selected}}>{{nombre}}</option>
+                {{/estadosPregunta}}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-dark mt-3 w-100">
+            Guardar cambios
+        </button>
+
+    </form>
+
+    {{/pregunta}}
+
+</div>

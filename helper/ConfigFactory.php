@@ -76,7 +76,8 @@ class ConfigFactory
             $this->renderer,
             new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
             new CategoryDao($this->conexion),
-            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)))
+            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))),
+            new EstadoPreguntaDao($this->conexion)
         );
         $this->objetos['AdminController'] = new AdminController(
             $this->renderer,

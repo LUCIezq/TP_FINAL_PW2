@@ -134,7 +134,9 @@ class PreguntasDao
                 g.id AS genero_id,
                 g.nombre AS genero_nombre,
                 r.id AS respuesta_id,
-                r.texto AS respuesta_texto
+                r.texto AS respuesta_texto,
+                r.es_correcta AS correcta,
+                ep.id as estado_id
                 
             FROM pregunta p
             JOIN genero g ON g.id = p.genero_id
@@ -158,13 +160,15 @@ class PreguntasDao
             'texto' => $rows[0]['pregunta_texto'],
             'genero_id' => $rows[0]['genero_id'],
             'genero_nombre' => $rows[0]['genero_nombre'],
+            'estado_id' => $rows[0]['estado_id'],
             'respuestas' => []
         ];
 
         foreach ($rows as $row) {
             $pregunta['respuestas'][] = [
                 'id' => $row['respuesta_id'],
-                'texto' => $row['respuesta_texto']
+                'texto' => $row['respuesta_texto'],
+                'correcta' => $row['correcta']
             ];
         }
 
@@ -251,11 +255,12 @@ class PreguntasDao
         $types = '';
         $hayCambios = false;
 
-        $preguntaForm_id = $data['pregunta_id'];
+        $preguntaForm_id = $data['id'];
         $textoForm = $data['texto'];
         $genero_idForm = $data['genero_id'];
-        $id_correctaForm = $data['id_correcta'];
+        $id_correctaForm = $data['correcta'];
         $respuestasForm = $data['respuestas'];
+        $estadoIdForm = $data['estado_id'];
 
         $preguntaEnBd = $this->obtenerPreguntaPorId($preguntaForm_id);
 
@@ -269,14 +274,12 @@ class PreguntasDao
             $types .= 's';
         }
 
-        $generoPreguntaBd = $preguntaEnBd['genero_id'];
         $generos = $this->categoryDao->getAll();
-
         if (!in_array($genero_idForm, array_column($generos, 'id'))) {
             return 'Genero invalido.';
         }
 
-        if ($generoPreguntaBd !== (int) $genero_idForm) {
+        if ($preguntaEnBd['genero_id'] !== (int) $genero_idForm) {
             $cambios[] = 'genero_id = ?';
             $params[] = $genero_idForm;
             $types .= 'i';
@@ -292,27 +295,38 @@ class PreguntasDao
         $respuestasBd = $this->obtenerRespuestasPorId($preguntaEnBd['id']);
 
         foreach ($respuestasBd as $respuestaBd) {
-            $respuestaId = $respuestaBd['id'];
-            if (isset($respuestasForm[$respuestaId]) && $respuestasForm[$respuestaId] !== $respuestaBd['texto']) {
-                $this->actualizarEnunciadoRespuesta($respuestaId, $respuestasForm[$respuestaId]);
+            $rid = $respuestaBd['id'];
+
+            if (
+                isset($respuestasForm[$rid]) &&
+                $respuestasForm[$rid]['texto'] !== $respuestaBd['texto']
+            ) {
+
+                $this->actualizarEnunciadoRespuesta($rid, $respuestasForm[$rid]['texto']);
                 $hayCambios = true;
             }
         }
 
+        if ($preguntaEnBd['estado_id'] !== (int) $estadoIdForm) {
+            $cambios[] = 'estado_id = ?';
+            $params[] = $estadoIdForm;
+            $types .= 'i';
+        }
         if (empty($cambios) && !$hayCambios) {
             return 'No hay cambios para actualizar.';
         }
 
         if (count($cambios) > 0) {
+            $sql = 'UPDATE pregunta SET ' . implode(',', $cambios) . ' WHERE id = ?';
 
-            $sql = 'UPDATE pregunta set ' . implode(',', $cambios) . ' where id = ?';
+            $params[] = $preguntaForm_id;
+            $types .= 'i';
 
-            $this->conexion->executePrepared($sql, $types . 'i', [...$params, $preguntaForm_id]);
+            $this->conexion->executePrepared($sql, $types, $params);
         }
 
         return "Pregunta actualizada correctamente.";
     }
-
     public function inactivarPregunta($id)
     {
         $sql = 'UPDATE pregunta set activa=0 where id = ?';

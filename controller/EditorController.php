@@ -5,15 +5,23 @@ class EditorController
     private EditorDao $dao;
     private MustacheRenderer $mustacheRenderer;
     private PreguntasDao $preguntasDao;
+    private EstadoPreguntaDao $estadoPreguntaDao;
     private CategoryDao $categoryDao;
 
     private ReporteDao $reporteDao;
 
-    public function __construct(EditorDao $dao, MustacheRenderer $mustacheRenderer, PreguntasDao $preguntasDao, CategoryDao $categoryDao, ReporteDao $reporteDao)
-    {
+    public function __construct(
+        EditorDao $dao,
+        MustacheRenderer $mustacheRenderer,
+        PreguntasDao $preguntasDao,
+        CategoryDao $categoryDao,
+        ReporteDao $reporteDao,
+        EstadoPreguntaDao $estadoPreguntaDao
+    ) {
         $this->dao = $dao;
         $this->mustacheRenderer = $mustacheRenderer;
         $this->preguntasDao = $preguntasDao;
+        $this->estadoPreguntaDao = $estadoPreguntaDao;
         $this->categoryDao = $categoryDao;
         $this->reporteDao = $reporteDao;
     }
@@ -214,65 +222,93 @@ class EditorController
 
     }
 
+    public function editarPregunta()
+    {
+        $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+
+        $pregunta = $this->preguntasDao->obtenerPreguntaPorId($id);
+        $generos = $this->categoryDao->getAll();
+
+        foreach ($generos as &$genero) {
+            $genero['seleccionado'] = ((int) $genero['id'] === $pregunta['genero_id']);
+        }
+
+        $estadosPregunta = $this->estadoPreguntaDao->obtenerTodosLosEstados();
+
+        foreach ($estadosPregunta as &$e) {
+            $e['selected'] = ((int) $e['id'] === $pregunta['estado_id']);
+        }
+
+        $this->mustacheRenderer->render("editar", [
+            "pregunta" => $pregunta,
+            "generos" => $generos,
+            "estadosPregunta" => $estadosPregunta
+        ]);
+
+    }
+
+
     public function modificar()
     {
+        $errors = [];
+        $inputs = [];
 
-        // $errors = [];
-        // $inputs = [];
+        if ($_SERVER["REQUEST_METHOD"] != "POST") {
+            header("Location:/editor/index");
+            exit();
+        }
 
-        // if ($_SERVER["REQUEST_METHOD"] != "GET") {
-        //     header("Location:/editor/index");
-        //     exit();
-        // }
+        $inputs = [
+            'id' => filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'texto' => trim($_POST['texto'] ?? ''),
+            'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
 
-        // $inputs = [
-        //     'pregunta_id' => filter_input(INPUT_GET, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
-        //     'texto' => trim($_POST['texto'] ?? ''),
-        //     'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'correcta' => filter_input(INPUT_POST, 'correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'respuestas' => $_POST['respuestas'] ?? [],
+            'estado_id' => filter_input(INPUT_POST, 'estado', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT)
+        ];
 
-        //     'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
-        //     'respuestas' => $_POST['respuestas'] ?? []
-        // ];
+        if (!$inputs['id'])
+            $errors[] = "ID de pregunta inválido.";
+        if ($inputs['texto'] === '')
+            $errors[] = "El texto de la pregunta no puede estar vacío.";
+        if (!$inputs['genero_id'])
+            $errors[] = "Categoría inválida.";
+        if (!$inputs['correcta'])
+            $errors[] = "Debe seleccionarse una respuesta correcta.";
+        if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
+            $errors[] = "Todas las respuestas deben ser proporcionadas.";
+        if ($inputs['estado_id'] == false) {
+            $errors[] = "Estado inválido.";
+        }
 
-        // if (!$inputs['pregunta_id'])
-        //     $errors[] = "ID de pregunta inválido.";
-        // if ($inputs['texto'] === '')
-        //     $errors[] = "El texto de la pregunta no puede estar vacío.";
-        // if (!$inputs['genero_id'])
-        //     $errors[] = "Categoría inválida.";
-        // if (!$inputs['id_correcta'])
-        //     $errors[] = "Debe seleccionarse una respuesta correcta.";
-        // if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
-        //     $errors[] = "Todas las respuestas deben ser proporcionadas.";
+        foreach ($inputs['respuestas'] as $respuesta) {
+            if (empty(trim($respuesta['texto']))) {
+                $errors[] = "Las respuestas no pueden estar vacías.";
+                break;
+            }
+        }
 
-        // foreach ($inputs['respuestas'] as $respuesta) {
-        //     if (empty(trim($respuesta))) {
-        //         $errors[] = "Las respuestas no pueden estar vacías.";
-        //         break;
-        //     }
-        // }
+        if (!empty($errors)) {
+            $_SESSION['message'] = implode(' ', $errors);
+            header("Location:/editor/index");
+            exit();
+        }
 
-        // if (!empty($errors)) {
-        //     $_SESSION['message'] = implode(' ', $errors);
-        //     header("Location:/editor/index");
-        //     exit();
-        // }
+        try {
 
-        // try {
+            $errors[] = $this->preguntasDao->actualizarPregunta($inputs);
 
-        //     $errors[] = $this->preguntasDao->actualizarPregunta($inputs);
+            empty($errors) ? $_SESSION['message'] = "Pregunta modificada correctamente." : $_SESSION['message'] = implode(' ', $errors);
 
-        //     empty($errors) ? $_SESSION['message'] = "Pregunta modificada correctamente." : $_SESSION['message'] = implode(' ', $errors);
+            header("Location:/editor/index");
+            exit();
 
-        //     header("Location:/editor/index");
-        //     exit();
-
-        // } catch (Exception $e) {
-        //     $_SESSION['message'] = "Error al modificar la pregunta." . $e->getMessage();
-        //     header("Location:/editor/index");
-        //     exit();
-        // }
-
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Error al modificar la pregunta." . $e->getMessage();
+            header("Location:/editor/index");
+            exit();
+        }
     }
 
     public function procesarSugerida()

@@ -9,6 +9,12 @@ class EstadoPreguntaDao
         $this->conexion = $conexion;
     }
 
+    public function obtenerTodosLosEstados()
+    {
+        $sql = "SELECT * FROM estado_pregunta";
+        return $this->conexion->query($sql);
+    }
+
     public function obtenerEstadoPorNombre($nombre)
     {
         $sql = "SELECT * FROM estado_pregunta WHERE nombre = :nombre";

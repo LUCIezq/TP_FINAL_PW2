@@ -75,29 +75,31 @@
 
     <hr class="my-4">
 
-    <form action="/editor/procesarReporte" method="POST" class="mt-3">
+    <div class="d-flex flex-column gap-2 w-100">
+        <form action="/editor/procesarReporte" method="POST" class="mt-3">
 
-        <div class="d-flex flex-column gap-2">
+            <div class="d-flex flex-column gap-2">
 
-            {{#pregunta}}
-            <input type="hidden" name="pregunta_id" value="{{id}}">
-            {{/pregunta}}
+                {{#pregunta}}
+                <input type="hidden" name="pregunta_id" value="{{id}}">
+                {{/pregunta}}
 
-            <button type="submit" name="accion" value="aprobar" class="btn btn-outline-success btn-sm">
-                Aprobar reporte
-            </button>
+                <button type="submit" name="accion" value="aprobar" class="btn btn-outline-success btn-sm">
+                    Aprobar reporte
+                </button>
 
-            <button type="submit" name="accion" value="rechazar" class="btn btn-outline-danger btn-sm">
-                Rechazar reporte
-            </button>
+                <button type="submit" name="accion" value="rechazar" class="btn btn-outline-danger btn-sm">
+                    Rechazar reporte
+                </button>
 
-            <button type="submit" name="accion" value="modificar" class="btn btn-outline-secondary btn-sm">
-                Editar pregunta
-            </button>
+            </div>
 
-        </div>
+        </form>
 
-    </form>
-
+        {{#pregunta}}
+        <a href="/editor/editarPregunta?id={{id}}" class="btn btn-outline-secondary btn-sm">Modificar
+            pregunta</a>
+        {{/pregunta}}
+    </div>
 
 </div>
