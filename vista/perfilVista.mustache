@@ -1,0 +1,56 @@
+{{#message}}
+<div class="alert alert-info" role="alert">
+    {{message}}
+</div>
+{{/message}}
+
+{{#usuario}}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm border-0 p-4" style="max-width: 600px; width: 100%;">
+
+        <form action="/usuario/actualizarPerfil" method="POST" enctype="multipart/form-data"
+            class="d-flex flex-column gap-3">
+
+            <input type="hidden" name="id" value="{{id}}">
+
+            <div>
+                <label class="form-label">Nombre</label>
+                <input type="text" name="nombre" class="form-control" value="{{nombre}}" required>
+            </div>
+
+            <div>
+                <label class="form-label">Apellido</label>
+                <input type="text" name="apellido" class="form-control" value="{{apellido}}" required>
+            </div>
+
+            <div>
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="{{email}}" required>
+            </div>
+
+            <div>
+                <label class="form-label">Usuario</label>
+                <input type="text" name="username" class="form-control" value="{{nombre_usuario}}" required>
+            </div>
+
+            <div>
+                <label class="form-label">Imagen de perfil</label>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex gap-2">
+                        <img src="{{foto_perfil}}" style="width: 70px; border-radius: 50%;" alt="">
+                    </div>
+                    <input type="file" name="imagen" accept="image/*" class="form-control">
+                    {{#imagen}}
+                    <small class="text-muted d-block mt-1">Imagen actual: {{imagen}}</small>
+                    {{/imagen}}
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-dark w-100 mt-2">Guardar cambios</button>
+
+        </form>
+
+    </div>
+</div>
+{{/usuario}}
