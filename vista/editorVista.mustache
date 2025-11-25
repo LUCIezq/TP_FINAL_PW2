@@ -297,10 +297,12 @@
 
         <div class="mb-3">
             <label class="form-label">Crear nueva categoría</label>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Nombre de categoría">
-                <button class="btn btn-primary">Crear</button>
-            </div>
+            <form action="/editor/crearCategoria" method="post">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombre de categoría" required>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            </form>
         </div>
 
         <hr>
@@ -311,7 +313,10 @@
             {{#categories}}
             <li class="list-group-item d-flex justify-content-between">
                 <span>{{nombre}}</span>
-                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                <form method="post" action="/editor/eliminarCategoria">
+                    <input type="hidden" name="idCategoria" value="{{id}}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                </form>
             </li>
             {{/categories}}
         </ul>
@@ -320,27 +325,3 @@
 </section>
 
 </div>
-
-<script>
-
-    document.querySelectorAll('.opcion input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            const input = document.getElementById(radio.value);
-            if (input) input.focus();
-        });
-    });
-
-    const formCat = document.getElementById('form');
-    document.querySelectorAll('#form button[data-id]').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.preventDefault();
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'eliminar_categoria_id';
-            input.value = btn.dataset.id;
-            formCat.appendChild(input);
-            formCat.submit();
-        });
-    });
-
-</script>

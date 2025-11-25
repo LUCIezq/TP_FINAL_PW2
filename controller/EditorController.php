@@ -88,15 +88,37 @@ class EditorController
         ];
     }
 
-    private function eliminarCategoria($idCategoria)
+    public function eliminarCategoria()
     {
-        $preguntas = $this->preguntasDao->getPreguntasPorCategoria($idCategoria);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $idCategoria = filter_input(INPUT_POST, 'idCategoria', FILTER_VALIDATE_INT);
 
-        if (count($preguntas) > 0) {
-            return "No se puede eliminar la categoría porque tiene preguntas asociadas.";
+            if (!$idCategoria) {
+                $_SESSION['message'] = "ID de categoría inválido.";
+                header("Location:/editor/index");
+                exit();
+            }
+            try {
+                $preguntas = $this->preguntasDao->getPreguntasPorCategoria($idCategoria);
+
+                if (count($preguntas) > 0) {
+                    $_SESSION['message'] = "No se puede eliminar la categoría porque tiene preguntas asociadas.";
+                    header("Location:/editor/index");
+                    exit();
+                }
+
+                $state = $this->categoryDao->eliminarCategoria($idCategoria);
+
+                $_SESSION['message'] = $state;
+                header("Location:/editor/index");
+                exit();
+
+            } catch (Exception $e) {
+                $_SESSION["message"] = "Error al eliminar la categoría.";
+                header("Location:/editor/index");
+                exit();
+            }
         }
-
-        return $this->categoryDao->eliminarCategoria($idCategoria);
     }
 
     public function crearCategoria()
@@ -311,7 +333,7 @@ class EditorController
                 break;
         }
 
-        $state === true ? $_SESSION['message'] = 'Reporte' . $type . ' con exito.' : $_SESSION['message'] = 'Hubo un error al aprobar el reporte';
+        $state === true ? $_SESSION['message'] = 'Reporte ' . $type . ' con exito.' : $_SESSION['message'] = 'Hubo un error al aprobar el reporte';
         header('location:/editor/index');
         exit();
     }

@@ -12,8 +12,9 @@ class CategoriaController
 
     public function eliminarCategoria()
     {
-
     }
+
+    
 
     public function getAll(): array
     {
