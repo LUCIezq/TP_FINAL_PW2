@@ -4,6 +4,7 @@ require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no 
 require_once __DIR__ . "/../model/dao/CategoryDao.php";
 require_once __DIR__ . "/../controller/ReporteController.php";
 require_once __DIR__ . '/../model/dao/EstadisticasDao.php';
+require_once __DIR__ . '/../model/dao/GameDao.php';
 
 class ConfigFactory
 {
@@ -51,8 +52,11 @@ class ConfigFactory
             new ValidatorModelDao(new UsuarioDao($this->conexion))
         );
 
-        $this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion), new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
+        //$this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion), new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 
+        $this->objetos['HomeController'] = new HomeController($this->renderer,new UsuarioDao($this->conexion),new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)),
+            new GameDao($this->conexion)   // ste es el cuarto parámetro nuevo
+        );
         $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 
         $this->objetos['EstadisticasDao'] = new EstadisticasDao($this->conexion);

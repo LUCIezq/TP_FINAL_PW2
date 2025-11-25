@@ -6,11 +6,12 @@ class HomeController
     private UsuarioDao $usuarioDao;
     private SolicitudPartidaDao $solicitudPartidaDao;
 
-    public function __construct(MustacheRenderer $mustacheRenderer, UsuarioDao $usuarioDao, SolicitudPartidaDao $solicitudPartidaDao)
+    public function __construct(MustacheRenderer $mustacheRenderer, UsuarioDao $usuarioDao, SolicitudPartidaDao $solicitudPartidaDao, GameDao $gameDao)
     {
         $this->mustacheRenderer = $mustacheRenderer;
         $this->usuarioDao = $usuarioDao;
         $this->solicitudPartidaDao = $solicitudPartidaDao;
+        $this->gameDao = $gameDao;
     }
 
     public function index(): void
@@ -27,6 +28,17 @@ class HomeController
             header("location: /login/index");
             exit();
         }
+        // Si existe una partida en curso y el usuario volvió al Home → PERDIDA
+        if (isset($_SESSION['partida'])) {
+            $partidaId = $_SESSION['partida']['id'];
+
+            // Marcar como perdida
+            $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
+
+            // Borrar sesión
+            unset($_SESSION['partida']);
+        }
+
 
         if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
             $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);

@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="/public/assets/barraTiempo.css">
+
+
 {{#message}}
 <div class="alert alert-info alert-dismissible fade show" role="alert">
     {{message}}
@@ -89,7 +91,9 @@
 </div>
 
 <script>
-    let tiempo = 20;
+    let tiempo = Number("{{tiempo_restante}}");
+    if (isNaN(tiempo) || tiempo < 0) tiempo = 0;
+
     const DURACION = 20;
 
     const tiempoDiv = document.getElementById("timer");
@@ -99,7 +103,6 @@
     const mensajeDiv = document.getElementById("mensaje");
 
     function actualizarTimer() {
-
         tiempoDiv.innerText = tiempo + "s";
 
         let porcentaje = (tiempo / DURACION) * 100;
@@ -114,7 +117,6 @@
         }
 
         if (tiempo <= 0) {
-
             barraTiempo.style.width = "0%";
             tiempoDiv.innerText = "⏳ Tiempo agotado";
 
@@ -122,7 +124,7 @@
 
             const formData = new FormData(form);
             formData.append("respuesta_id", -1);
-            formData.append("timeout", 1);  
+            formData.append("timeout", 1);
 
             fetch("/game/respuesta", {
                 method: "POST",
@@ -150,7 +152,6 @@
 
     botones.forEach(btn => {
         btn.addEventListener("click", () => {
-
             botones.forEach(b => b.disabled = true);
             clearInterval(intervalo);
 
@@ -193,5 +194,3 @@
         });
     });
 </script>
-
-
