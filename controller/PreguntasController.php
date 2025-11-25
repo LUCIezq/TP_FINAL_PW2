@@ -17,11 +17,9 @@ class PreguntasController
     public function index()
     {
 
-        $success_message = $_SESSION["success_message"];
-        $error_message = $_SESSION["error_message"];
+        $message = $_SESSION["message"];
 
-        unset($_SESSION["success_message"]);
-        unset($_SESSION["error_message"]);
+        unset($_SESSION["message"]);
 
 
         if (!IsLogged::isLogged()) {
@@ -31,8 +29,7 @@ class PreguntasController
 
         $categories = $this->categoryDao->getAll();
 
-        $this->mustacheRenderer->render("preguntas", ["categories" => $categories, "success_message" => $success_message, "error_message" => $error_message]);
-
+        $this->mustacheRenderer->render("preguntas", ["categories" => $categories, "message" => $message]);
     }
 
     public function createQuestion()
@@ -45,31 +42,58 @@ class PreguntasController
 
         $data = [
             "pregunta" => trim($_POST["pregunta"]),
-            "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]),
-            "indiceCorrecta" => filter_var($_POST["correcta"], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,]]),
-            "usuarioId" => $_SESSION["user"]["id"]
+            "categoriaId" => filter_var($_POST["categoria"], FILTER_VALIDATE_INT),
+            "indiceCorrecta" => filter_input(INPUT_POST, "correcta", FILTER_VALIDATE_INT),
+            "usuarioId" => $_SESSION["user"]["id"],
+            'respuestas' => $_POST['respuestas'] ?? []
         ];
 
 
-        $result = $this->preguntasDao->createQuestion($data);
+        $errors = [];
 
-        if ($result["created"] !== true) {
-            $_SESSION["error_message"] = "Error al crear la pregunta.";
+        if (!$data["pregunta"]) {
+            $errors[] = "El enunciado de la pregunta es obligatorio.";
+        }
+        if (!$data["categoriaId"]) {
+            $errors[] = "La categoría seleccionada no es válida.";
+        }
+        if ($data['indiceCorrecta'] < 0 || $data['indiceCorrecta'] > 4) {
+            $errors[] = "La respuesta correcta no es valida.";
+        }
+        if ($data['respuestas'] === [] || count($data['respuestas']) < 2) {
+            $errors[] = "Se deben proporcionar al menos dos respuestas.";
+        } else {
+            foreach ($data['respuestas'] as $respuesta) {
+                if (trim($respuesta) === '') {
+                    $errors[] = "Todas las respuestas deben tener texto.";
+                    break;
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            $_SESSION["message"] = implode(" ", $errors);
             header('location: /preguntas/index');
             exit();
         }
 
-        $id = (int) $result['lastInsertId'];
+        try {
 
-        for ($i = 1; $i <= 4; $i++) {
-            $text = $_POST["respuesta" . $i];
-            $isCorrect = ($i == $data["indiceCorrecta"]) ? 1 : 0;
+            $result = $this->preguntasDao->createQuestion($data);
 
-            $this->preguntasDao->createAnswer($text, $isCorrect, $id);
+            $result == true ? $_SESSION["message"] = "Pregunta creada exitosamente. Ya se encuentra en revision" : $_SESSION["message"] = "Error al crear la pregunta.";
+            $rol = $_SESSION["user"]['rol_id'];
+
+            if ((int) $rol === UserRole::EDITOR) {
+                header('location: /editor/index');
+                exit();
+            } else {
+                header('location: /preguntas/index');
+                exit();
+            }
+
+        } catch (Exception $e) {
+            $errors[] = "Error inesperado: " . $e->getMessage();
         }
-
-        $_SESSION["success_message"] = "Pregunta creada exitosamente.";
-        header('location: /preguntas/index');
-        exit();
     }
 }

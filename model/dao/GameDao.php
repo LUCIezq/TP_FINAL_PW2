@@ -83,22 +83,26 @@ class GameDao {
         }
 
         $sql = "SELECT p.id, p.texto
-                FROM pregunta p
-                LEFT JOIN (
-                    SELECT pregunta_id,
-                           (SUM(respondida_correctamente) / COUNT(*)) * 100 AS ratio
-                    FROM historial_partida
-                    GROUP BY pregunta_id
-                ) estad ON p.id = estad.pregunta_id
-                WHERE p.genero_id = ?
-                AND $filtro
-                AND p.id NOT IN (
-                        SELECT pregunta_id 
-                        FROM historial_partida
-                        WHERE usuario_id = ?
-                )
-                ORDER BY RAND()
-                LIMIT 1";
+            FROM pregunta p
+            WHERE p.genero_id = ?
+            AND p.dificultad_id = ?
+            AND p.estado_id = 1
+            AND p.id NOT IN (
+                SELECT h.pregunta_id
+                FROM historial_partida h
+                JOIN pregunta pq ON pq.id = h.pregunta_id
+                WHERE h.usuario_id = ?
+                    AND pq.genero_id = ?
+                    AND pq.dificultad_id = ?
+            )
+            ORDER BY RAND()
+            LIMIT 1";
+
+        $types = "iiiii";
+        $params = [$generoId, $dificultadId, $usuarioId, $generoId, $dificultadId];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+        $data = $this->dbConnection->processData($result);
 
         $result = $this->dbConnection->processData(
             $this->dbConnection->executePrepared($sql, "ii", [$generoId, $usuarioId])

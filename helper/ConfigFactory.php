@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../model/dao/ReporteDao.php";
 require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no me lo corria en el xampp
 require_once __DIR__ . "/../model/dao/CategoryDao.php";
+require_once __DIR__ . "/../model/dao/EstadoPreguntaDao.php";
 require_once __DIR__ . "/../controller/ReporteController.php";
 require_once __DIR__ . '/../model/dao/EstadisticasDao.php';
 require_once __DIR__ . '/../model/dao/GameDao.php';
@@ -71,7 +72,7 @@ class ConfigFactory
         $this->objetos['PreguntasController'] = new PreguntasController(
             $this->renderer,
             new CategoryDao($this->conexion),
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion))
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))
         );
 
         $this->objetos['CategoriaController'] = new CategoriaController(
@@ -83,19 +84,25 @@ class ConfigFactory
                 $this->conexion,
             ),
             $this->renderer,
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
             new CategoryDao($this->conexion),
-            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion)))
+            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))),
+            new EstadoPreguntaDao($this->conexion)
         );
         $this->objetos['AdminController'] = new AdminController(
             $this->renderer,
             $this->conexion
         );
 
+        // $this->objetos['ReporteController'] = new ReporteController(new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))));
+
         $this->objetos['ReporteController'] = new ReporteController(
-            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))),
+            new ReporteDao(
+                $this->conexion,
+                new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))
+            ),
             $this->renderer,
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion)),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
         );
 
         require_once 'model/dao/GameDao.php';

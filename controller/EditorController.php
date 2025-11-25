@@ -5,23 +5,29 @@ class EditorController
     private EditorDao $dao;
     private MustacheRenderer $mustacheRenderer;
     private PreguntasDao $preguntasDao;
+    private EstadoPreguntaDao $estadoPreguntaDao;
     private CategoryDao $categoryDao;
 
     private ReporteDao $reporteDao;
 
-    public function __construct(EditorDao $dao, MustacheRenderer $mustacheRenderer, PreguntasDao $preguntasDao, CategoryDao $categoryDao, ReporteDao $reporteDao)
-    {
+    public function __construct(
+        EditorDao $dao,
+        MustacheRenderer $mustacheRenderer,
+        PreguntasDao $preguntasDao,
+        CategoryDao $categoryDao,
+        ReporteDao $reporteDao,
+        EstadoPreguntaDao $estadoPreguntaDao
+    ) {
         $this->dao = $dao;
         $this->mustacheRenderer = $mustacheRenderer;
         $this->preguntasDao = $preguntasDao;
+        $this->estadoPreguntaDao = $estadoPreguntaDao;
         $this->categoryDao = $categoryDao;
         $this->reporteDao = $reporteDao;
     }
 
     public function index()
     {
-        $message = $_SESSION["message"] ?? null;
-        unset($_SESSION["message"]);
 
         if (!IsLogged::isLogged()) {
             header("Location:/login/index");
@@ -35,82 +41,92 @@ class EditorController
             exit();
         }
 
-        $filters = [
-            'category_name' => htmlspecialchars(trim($_GET["category_name"] ?? "todas"), ENT_QUOTES, 'UTF-8'),
-            'eliminar_categoria_id' => filter_input(
-                INPUT_GET,
-                'eliminar_categoria_id',
-                FILTER_VALIDATE_INT,
-                [
-                    'options' => [
-                        'min_range' => 1
-                    ]
-                ]
-            )
-        ];
+        $message = $_SESSION["message"] ?? null;
+        unset($_SESSION["message"]);
 
-        if ($filters['eliminar_categoria_id']) {
-            $_SESSION["message"] = $this->eliminarCategoria($filters['eliminar_categoria_id']);
-            header("Location:/editor/index");
-            exit();
-        }
 
-        $questions = $this->preguntasDao->getQuestionsWithFilter($filters);
-        $categories = $this->categoryDao->getAll();
+        $opcionesMenu = $this->obtenerOpcionesDashboard();
+        $preguntasDelSistema = $this->preguntasDao->getAllSystemQuestions();
+        $preguntasSugeridas = $this->preguntasDao->obtenerPreguntasSugeridas();
+        $categorias = $this->categoryDao->getAll();
+        $preguntasReportadas = $this->reporteDao->getAllReportes();
 
-        foreach ($categories as &$category) {
-            $category['checked'] = $filters['category_name'] === $category['nombre'] ? 'checked' : '';
-            $category['esIdValido'] = $category['id'] != '' ? true : false;
-        }
-
-        foreach ($questions as &$p) {
-            $p['categorias'] = [];
-
-            foreach ($categories as $c) {
-                $p['categorias'][] = [
-                    'id' => $c['id'],
-                    'nombre' => $c['nombre'],
-                    'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
-                ];
-            }
-        }
-
-        $preguntasSugeridas = $this->preguntasDao->getAllQuestionByUsers();
-
-        foreach ($preguntasSugeridas as &$p) {
-            $p['categorias'] = [];
-
-            foreach ($categories as $c) {
-                $p['categorias'][] = [
-                    'id' => $c['id'],
-                    'nombre' => $c['nombre'],
-                    'selected' => ($c['id'] == $p['genero_id']) ? 'selected' : ''
-                ];
-            }
-        }
-
-        array_unshift($categories, ['id' => '', 'nombre' => 'todas', 'checked' => $filters['category_name'] === 'todas' ? 'checked' : '']);
-        unset($p);
 
         $this->mustacheRenderer->render("editor", [
-            "questions" => $questions,
+            'preguntasDelSistema' => $preguntasDelSistema,
             "isLogged" => IsLogged::isLogged(),
-            "categories" => $categories,
+            "categories" => $categorias,
             'preguntasSugeridas' => $preguntasSugeridas,
+            'preguntasReportadas' => $preguntasReportadas,
             "message" => $message,
-            "usuario" => $_SESSION['user']
+            "usuario" => $_SESSION['user'],
+            'opcionesMenu' => $opcionesMenu
         ]);
     }
 
-    private function eliminarCategoria($idCategoria)
+    private function obtenerOpcionesDashboard()
     {
-        $preguntas = $this->preguntasDao->getPreguntasPorCategoria($idCategoria);
 
-        if (count($preguntas) > 0) {
-            return "No se puede eliminar la categoría porque tiene preguntas asociadas.";
+        return [
+            [
+                'ancla' => 'crearPregunta',
+                'titulo' => 'Crear pregunta',
+                'descripcion' => 'Cargar nueva pregunta al sistema.'
+            ],
+            [
+                'ancla' => 'preguntasSistema',
+                'titulo' => 'Preguntas del sistema',
+                'descripcion' => 'Ver y gestionar las preguntas existentes en el sistema.'
+            ],
+            [
+                'ancla' => 'preguntasSugeridas',
+                'titulo' => 'Preguntas sugeridas',
+                'descripcion' => 'Revisar y aprobar o rechazar preguntas sugeridas por usuarios.'
+            ],
+            [
+                'ancla' => 'preguntasReportadas',
+                'titulo' => 'Preguntas reportadas',
+                'descripcion' => 'Revisar y gestionar preguntas que han sido reportadas por usuarios.'
+            ],
+            [
+                'ancla' => 'categorias',
+                'titulo' => 'Categorías',
+                'descripcion' => 'Gestionar las categorías de las preguntas.'
+            ]
+        ];
+    }
+
+    public function eliminarCategoria()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $idCategoria = filter_input(INPUT_POST, 'idCategoria', FILTER_VALIDATE_INT);
+
+            if (!$idCategoria) {
+                $_SESSION['message'] = "ID de categoría inválido.";
+                header("Location:/editor/index");
+                exit();
+            }
+            try {
+                $preguntas = $this->preguntasDao->getPreguntasPorCategoria($idCategoria);
+
+                if (count($preguntas) > 0) {
+                    $_SESSION['message'] = "No se puede eliminar la categoría porque tiene preguntas asociadas.";
+                    header("Location:/editor/index");
+                    exit();
+                }
+
+                $state = $this->categoryDao->eliminarCategoria($idCategoria);
+
+                $_SESSION['message'] = $state;
+                header("Location:/editor/index");
+                exit();
+
+            } catch (Exception $e) {
+                $_SESSION["message"] = "Error al eliminar la categoría.";
+                header("Location:/editor/index");
+                exit();
+            }
         }
-
-        return $this->categoryDao->eliminarCategoria($idCategoria);
     }
 
     public function crearCategoria()
@@ -143,35 +159,21 @@ class EditorController
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            $pregunta = $this->preguntasDao->getQuestionById($_POST["pregunta_id"]);
+            $idPreguntas = $_POST['ids'] ?? null;
 
-            if (!$pregunta) {
+            if (empty($idPreguntas)) {
+                $_SESSION['message'] = 'No se seleccionaron preguntas para aprobar.';
                 header("Location:/editor/index");
                 exit();
             }
 
-            $data = [
-                "id" => htmlspecialchars(trim($_POST["pregunta_id"]), ENT_QUOTES, 'UTF-8'),
-                "texto" => htmlspecialchars(trim($_POST["texto"]), ENT_QUOTES, 'UTF-8'),
-                "genero_id" => htmlspecialchars(trim($_POST["genero_id"]), ENT_QUOTES, 'UTF-8'),
-                "opcion_correcta" => htmlspecialchars(trim($_POST["id_correcta"]), ENT_QUOTES, 'UTF-8')
-            ];
-
-            foreach ($data as $row) {
-                if (empty($row)) {
-                    $_SESSION["message"] = "Todos los campos son obligatorios.";
-                    header("Location:/editor/index");
-                    exit();
-                }
-            }
-
             try {
-                $state = $this->preguntasDao->aprobarPregunta($pregunta['pregunta_id']);
+                $state = $this->preguntasDao->aprobarPregunta($idPreguntas);
 
                 $state == true ? $_SESSION["message"] = "Pregunta aprobada correctamente." : $_SESSION['message'] = "No se pudo aprobar la pregunta.";
 
             } catch (Exception $e) {
-                $_SESSION["message"] = "Error al aprobar la pregunta.";
+                $_SESSION["message"] = "Error al aprobar la pregunta." . $e->getMessage();
                 header("Location:/editor/index");
                 exit();
             }
@@ -180,42 +182,74 @@ class EditorController
         }
     }
 
-    public function rechazar()
+    public function eliminarPreguntas()
     {
 
-        $pregunta = $this->preguntasDao->getQuestionById($_POST["pregunta_id"]);
+        if ($_SERVER["REQUEST_METHOD"] != "POST") {
+            header("Location:/editor/index");
+            exit();
+        }
 
-        if (!$pregunta) {
+        $idPreguntas = $_POST['ids'] ?? [];
+
+        if (empty($idPreguntas)) {
+            $_SESSION['message'] = "No se seleccionaron preguntas para eliminar.";
             header("Location:/editor/index");
             exit();
         }
 
         try {
-            $state = $this->preguntasDao->rechazarPregunta($_POST["pregunta_id"]);
+            $state = $this->preguntasDao->eliminarPreguntasPorIds($idPreguntas);
 
-            $state == true ? $_SESSION["message"] = "Pregunta rechazada correctamente." : $_SESSION['message'] = "No se pudo rechazar la pregunta.";
+            if ($state) {
+                if (count($idPreguntas) > 1) {
+                    $_SESSION["message"] = "Preguntas eliminadas correctamente.";
+                } else {
+                    $_SESSION["message"] = "Pregunta eliminada correctamente.";
+                }
+            } else {
+                $_SESSION["message"] = "No se pudieron eliminar las preguntas.";
+            }
+
+            header("Location:/editor/index");
+            exit();
 
         } catch (Exception $e) {
-            $_SESSION["message"] = "Error al rechazar la pregunta.";
+            $_SESSION['message'] = "Error al eliminar las preguntas." . $e->getMessage();
             header("Location:/editor/index");
             exit();
         }
-        header("Location:/editor/index");
-        exit();
 
     }
 
+    public function editarPregunta()
+    {
+        $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+
+        $pregunta = $this->preguntasDao->obtenerPreguntaPorId($id);
+        $generos = $this->categoryDao->getAll();
+
+        foreach ($generos as &$genero) {
+            $genero['seleccionado'] = ((int) $genero['id'] === $pregunta['genero_id']);
+        }
+
+        $estadosPregunta = $this->estadoPreguntaDao->obtenerTodosLosEstados();
+
+        foreach ($estadosPregunta as &$e) {
+            $e['selected'] = ((int) $e['id'] === $pregunta['estado_id']);
+        }
+
+        $this->mustacheRenderer->render("editar", [
+            "pregunta" => $pregunta,
+            "generos" => $generos,
+            "estadosPregunta" => $estadosPregunta
+        ]);
+
+    }
+
+
     public function modificar()
     {
-
-        // 1 - Recibir datos por POST
-        // 2 - Validar y sanitizar datos
-        // 3 - Consultar en la bd si existe la pregunta
-        // 4 - Si existe validar campo a campo para actualizar unicamente el que se modifico.
-        // 5 - Guardamos en un array todos los campos actualizados.
-        // 6 - LLamar al metodo del dao para actualizar la pregunta.
-        // 7 - Redirigir con mensaje de exito o error.
-
         $errors = [];
         $inputs = [];
 
@@ -225,27 +259,31 @@ class EditorController
         }
 
         $inputs = [
-            'pregunta_id' => filter_input(INPUT_POST, 'pregunta_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'id' => filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
             'texto' => trim($_POST['texto'] ?? ''),
             'genero_id' => filter_input(INPUT_POST, 'genero_id', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
 
-            'id_correcta' => filter_input(INPUT_POST, 'id_correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
-            'respuestas' => $_POST['respuestas'] ?? []
+            'correcta' => filter_input(INPUT_POST, 'correcta', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT),
+            'respuestas' => $_POST['respuestas'] ?? [],
+            'estado_id' => filter_input(INPUT_POST, 'estado', FILTER_SANITIZE_NUMBER_INT, FILTER_VALIDATE_INT)
         ];
 
-        if (!$inputs['pregunta_id'])
+        if (!$inputs['id'])
             $errors[] = "ID de pregunta inválido.";
         if ($inputs['texto'] === '')
             $errors[] = "El texto de la pregunta no puede estar vacío.";
         if (!$inputs['genero_id'])
             $errors[] = "Categoría inválida.";
-        if (!$inputs['id_correcta'])
+        if (!$inputs['correcta'])
             $errors[] = "Debe seleccionarse una respuesta correcta.";
         if (empty($inputs['respuestas']) || count($inputs['respuestas']) < 4)
             $errors[] = "Todas las respuestas deben ser proporcionadas.";
+        if ($inputs['estado_id'] == false) {
+            $errors[] = "Estado inválido.";
+        }
 
         foreach ($inputs['respuestas'] as $respuesta) {
-            if (empty(trim($respuesta))) {
+            if (empty(trim($respuesta['texto']))) {
                 $errors[] = "Las respuestas no pueden estar vacías.";
                 break;
             }
@@ -273,29 +311,67 @@ class EditorController
         }
     }
 
-    public function procesarPregunta()
+    public function procesarSugerida()
     {
 
         if ($_SERVER["REQUEST_METHOD"] != "POST") {
             header("Location:/editor/index");
             exit();
         }
-        $accion = $_POST['accion'] ?? null;
+
+        $accion = $_POST['type'] ?? null;
 
         switch ($accion) {
             case 'aprobar':
                 $this->aprobar();
                 break;
             case 'eliminar':
-                $this->rechazar();
-                break;
-            case 'modificar':
-                $this->modificar();
+            case 'rechazar':
+                $this->eliminarPreguntas();
                 break;
             default:
                 header("Location:/editor/index");
                 exit();
         }
+    }
+
+    public function procesarReporte()
+    {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('location:/editor/index');
+            exit();
+        }
+
+        $accion = filter_input(INPUT_POST, "accion", FILTER_SANITIZE_STRING);
+
+        if ($accion === null || $accion === false || trim($accion) === "") {
+            $_SESSION["message"] = "La accion es incorrecta";
+            header("location:/editor/index");
+            exit();
+        }
+
+        $idPregunta = filter_input(INPUT_POST, "pregunta_id", FILTER_VALIDATE_INT);
+
+        if (!$idPregunta) {
+            $_SESSION["message"] = "El id de la pregunta es invalido";
+            header('location:/editor/index');
+            exit();
+        }
+
+        switch ($accion) {
+            case 'aprobar';
+                $state = $this->reporteDao->aprobarReporte($idPregunta);
+                $type = 'aprobado';
+                break;
+            case 'rechazar':
+                $state = $this->reporteDao->rechazarReporte($idPregunta);
+                $type = 'rechazado';
+                break;
+        }
+
+        $state === true ? $_SESSION['message'] = 'Reporte ' . $type . ' con exito.' : $_SESSION['message'] = 'Hubo un error al aprobar el reporte';
+        header('location:/editor/index');
+        exit();
     }
 
     public function crearPregunta()

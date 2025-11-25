@@ -1,154 +1,190 @@
-<link href="/public/assets/dashboardAdmin.css" rel="stylesheet">
-
 <div class="admin-container">
 
-    <!-- ========================= -->
-    <!--       SIDEBAR ADMIN       -->
-    <!-- ========================= -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar">
         <h2 class="sidebar-title">ADMIN</h2>
 
         <ul class="sidebar-menu">
             <li><a href="/admin/index" class="active">📊 Dashboard</a></li>
-            <li><a href="/editor/index">📝 Gestión de Preguntas</a></li>
-            <li><a href="/home/index">🏠 Volver al Lobby</a></li>
             <li><a href="/login/logout">🚪 Cerrar sesión</a></li>
         </ul>
     </aside>
 
-    <!-- ========================= -->
-    <!--        MAIN CONTENT       -->
-    <!-- ========================= -->
-    <main class="admin-main">
+    <!-- MAIN CONTENT -->
+    <main class="admin-main flex-fill">
+        <div class="content-wrapper">
 
-        <h1 class="dashboard-title">Panel Administrativo</h1>
+            <h1 class="dashboard-title">Panel Administrativo</h1>
 
-        <!-- FILTROS -->
-        <div class="filter-bar">
-            <label for="filtroPeriodo">Filtrar por:</label>
-            <select id="filtroPeriodo">
-                <option value="dia">Hoy</option>
-                <option value="semana">Última semana</option>
-                <option value="mes">Último mes</option>
-                <option value="anio">Último año</option>
-            </select>
+            <!-- FILTRO -->
+            <form method="GET" action="/admin/index" class="filter-bar">
+                <label for="filtroPeriodo">Filtrar por:</label>
+
+                <select id="filtroPeriodo" name="periodo" onchange="this.form.submit()">
+                    <option value="dia" {{#isDia}}selected{{/isDia}}>Hoy</option>
+                    <option value="semana" {{#isSemana}}selected{{/isSemana}}>Última semana</option>
+                    <option value="mes" {{#isMes}}selected{{/isMes}}>Último mes</option>
+                    <option value="anio" {{#isAnio}}selected{{/isAnio}}>Último año</option>
+                </select>
+            </form>
+
+            <!-- BOTÓN IMPRIMIR -->
+            <button onclick="window.print()" class="btn-print">🖨️ Imprimir Reportes</button>
+
+            <!-- KPI GRID -->
+            <div class="kpi-grid">
+
+                <div class="kpi-card">
+                    <h4>Usuarios Registrados</h4>
+                    <p>{{totalUsuarios}}</p>
+                </div>
+
+                <div class="kpi-card">
+                    <h4>Partidas Jugadas</h4>
+                    <p>{{totalPartidas}}</p>
+                </div>
+
+                <div class="kpi-card">
+                    <h4>Preguntas Aprobadas</h4>
+                    <p>{{totalPreguntas}}</p>
+                </div>
+
+                <div class="kpi-card">
+                    <h4>Preguntas de Usuarios</h4>
+                    <p>{{totalPreguntasUsuarios}}</p>
+                </div>
+
+            </div>
+
+            <!-- GRAFICOS -->
+            <div class="charts-grid">
+
+                <div class="chart-box">
+                    <h3>Usuarios por País</h3>
+                    <canvas id="chartPais"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Distribución por Sexo</h3>
+                    <canvas id="chartSexo"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Distribución por Edad</h3>
+                    <canvas id="chartEdad"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>% de Respuestas Correctas por Usuario</h3>
+                    <canvas id="chartPrecision"></canvas>
+                </div>
+
+            </div>
+
+            <!-- =======================
+                  TABLAS PARA IMPRIMIR
+            ========================== -->
+            <div class="tables-section">
+
+                <!-- Usuarios por País -->
+                <div class="table-box">
+                    <h3>Usuarios por País (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>País</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#usuariosPorPaisTable}}
+                            <tr>
+                                <td>{{pais}}</td>
+                                <td>{{cantidad}}</td>
+                            </tr>
+                            {{/usuariosPorPaisTable}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sexo -->
+                <div class="table-box">
+                    <h3>Distribución por Sexo (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Sexo</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#usuariosPorSexoTable}}
+                            <tr>
+                                <td>{{sexo}}</td>
+                                <td>{{cantidad}}</td>
+                            </tr>
+                            {{/usuariosPorSexoTable}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Edad -->
+                <div class="table-box">
+                    <h3>Distribución por Edad (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Grupo</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#usuariosPorEdadTable}}
+                            <tr>
+                                <td>{{grupo}}</td>
+                                <td>{{cantidad}}</td>
+                            </tr>
+                            {{/usuariosPorEdadTable}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Precisión -->
+                <div class="table-box">
+                    <h3>% de Respuestas Correctas por Usuario (Tabla)</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Precisión (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#precisionUsuariosTable}}
+                            <tr>
+                                <td>{{nombre_usuario}}</td>
+                                <td>{{porcentaje}}</td>
+                            </tr>
+                            {{/precisionUsuariosTable}}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
         </div>
-
-        <!-- ========================= -->
-        <!--           KPIs            -->
-        <!-- ========================= -->
-        <div class="kpi-grid">
-
-            <div class="kpi-card">
-                <h4>Usuarios Registrados</h4>
-                <p>{{totalUsuarios}}</p>
-            </div>
-
-            <div class="kpi-card">
-                <h4>Partidas Jugadas</h4>
-                <p>{{totalPartidas}}</p>
-            </div>
-
-            <div class="kpi-card">
-                <h4>Preguntas Aprobadas</h4>
-                <p>{{totalPreguntas}}</p>
-            </div>
-
-            <div class="kpi-card">
-                <h4>Preguntas de Usuarios</h4>
-                <p>{{totalPreguntasUsuarios}}</p>
-            </div>
-
-        </div>
-
-        <!-- ========================= -->
-        <!--         GRÁFICOS          -->
-        <!-- ========================= -->
-
-        <div class="charts-grid">
-
-            <div class="chart-box">
-                <h3>Usuarios por País</h3>
-                <canvas id="chartPais"></canvas>
-            </div>
-
-            <div class="chart-box">
-                <h3>Distribución por Sexo</h3>
-                <canvas id="chartSexo"></canvas>
-            </div>
-
-            <div class="chart-box">
-                <h3>Distribución por Edad</h3>
-                <canvas id="chartEdad"></canvas>
-            </div>
-
-            <div class="chart-box">
-                <h3>% de Respuestas Correctas por Usuario</h3>
-                <canvas id="chartPrecision"></canvas>
-            </div>
-
-        </div>
-
     </main>
+
 </div>
 
-<!-- ========================= -->
-<!--        CHART JS CDN       -->
-<!-- ========================= -->
+<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // País
-    new Chart(document.getElementById("chartPais"), {
-        type: 'bar',
-        data: {
-            labels: dataPais.map(i => i.pais),
-            datasets: [{
-                label: "Usuarios",
-                data: dataPais.map(i => i.cantidad),
-                backgroundColor: '#1fb286'
-            }]
-        },
-    });
-
-    // Sexo
-    new Chart(document.getElementById("chartSexo"), {
-        type: 'pie',
-        data: {
-            labels: dataSexo.map(i => i.sexo),
-            datasets: [{
-                data: dataSexo.map(i => i.cantidad),
-                backgroundColor: ["#1fb286", "#5a4ee3", "#f6c344"]
-            }]
-        }
-    });
-
-    // Edad
-    new Chart(document.getElementById("chartEdad"), {
-        type: 'bar',
-        data: {
-            labels: dataEdad.map(i => i.grupo),
-            datasets: [{
-                label: "Usuarios",
-                data: dataEdad.map(i => i.cantidad),
-                backgroundColor: "#5a4ee3"
-            }]
-        }
-    });
-
-    // Precisión
-    new Chart(document.getElementById("chartPrecision"), {
-        type: 'line',
-        data: {
-            labels: dataPrecision.map(i => i.nombre_usuario),
-            datasets: [{
-                label: "% correctas",
-                data: dataPrecision.map(i => i.porcentaje),
-                borderColor: '#1fb286',
-                borderWidth: 3,
-                fill: false,
-                tension: 0.3
-            }]
-        }
-    });
+    window.dataPais = {{{usuariosPorPais}}};
+    window.dataSexo = {{{usuariosPorSexo}}};
+    window.dataEdad = {{{usuariosPorEdad}}};
+    window.dataPrecision = {{{porcentajeCorrectasPorUsuario}}};
 </script>
+
+<script src="/public/js/adminDashboardCharts.js"></script>

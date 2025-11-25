@@ -9,6 +9,71 @@ class UsuarioDao
         $this->dbConnection = $dbConnection;
     }
 
+    public function actualizarPerfil($data)
+    {
+        $idForm = $data["id"];
+        $nombreForm = $data["nombre"];
+        $apellidoForm = $data["apellido"];
+        $emailForm = $data["email"];
+        $usuarioForm = $data["nombre_usuario"];
+
+        $userBd = $this->findById($idForm);
+
+        if (!$userBd) {
+            throw new Exception("Usuario no encontrado.");
+        }
+
+        $nombreBd = $userBd['nombre'];
+        $apellidoBd = $userBd['apellido'];
+        $emailBd = $userBd['email'];
+        $usuarioBd = $userBd['nombre_usuario'];
+
+
+        $cambios = [];
+        $types = '';
+        $params = [];
+
+        if ($nombreForm !== $nombreBd) {
+            $cambios[] = 'nombre = ?';
+            $types .= 's';
+            $params[] = $nombreForm;
+        }
+        if ($apellidoForm !== $apellidoBd) {
+            $cambios[] = 'apellido = ?';
+            $types .= 's';
+            $params[] = $apellidoForm;
+        }
+        if ($emailForm !== $emailBd) {
+            $yaExisteEmail = $this->findByEmail($emailForm);
+            if ($yaExisteEmail) {
+                throw new Exception("El email ya está en uso.");
+            }
+            $cambios[] = 'email = ?';
+            $types .= 's';
+            $params[] = $emailForm;
+        }
+
+        if ($usuarioForm !== $usuarioBd) {
+            $yaExisteUsuario = $this->findByUsername($usuarioForm);
+            if ($yaExisteUsuario) {
+                throw new Exception("El nombre de usuario ya está en uso.");
+            }
+            $cambios[] = 'nombre_usuario = ?';
+            $types .= 's';
+            $params[] = $usuarioForm;
+        }
+
+        if (empty($params)) {
+            throw new Exception("No se realizaron cambios en el perfil.");
+        }
+        $sql = "UPDATE usuario SET " . implode(", ", $cambios) . " WHERE id = ?";
+        $params[] = $idForm;
+        $types .= 'i';
+
+        $this->dbConnection->executePrepared($sql, $types, $params);
+        return "Perfil actualizado correctamente.";
+    }
+
     public function createUser($params)
     {
         $sql = "INSERT INTO usuario (
@@ -114,6 +179,17 @@ class UsuarioDao
         return $result === 1;
     }
 
+    public function obtenerUsuarioPorId($id)
+    {
+        $sql = "SELECT * FROM usuario WHERE id = ?";
+        $types = "s";
+        $params = [$id];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        return $this->dbConnection->processData($result)[0] ?? null;
+    }
+
     public function updateUserToken($username, $token)
     {
         $sql = "UPDATE usuario SET token_verificacion = ? WHERE nombre_usuario = ?";
@@ -134,6 +210,17 @@ class UsuarioDao
 
         return $this->dbConnection->processData($result);
     }
+
+    /* public function findById($id) //cambiar este metodo 🔋🔋🔋🔋🔋🔋
+     {
+         $sql = "SELECT id,nombre,apellido,email,nombre_usuario,foto_perfil,nivel_id,puntos FROM usuario WHERE id = ? and rol_id = ?";
+         $types = "ii";
+         $params = [$id, UserRole::JUGADOR];
+
+         $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+         return $this->dbConnection->processData($result)[0] ?? null;
+     }*/
 
     public function findById($id)
     {

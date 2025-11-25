@@ -10,16 +10,15 @@ class AdminController
         $this->mustacheRenderer = $mustacheRenderer;
         $this->conexion = $conexion;
     }
-
+    
     public function index(): void
     {
-        // Verificar login
+        /* VALIDACIÓN DE LOGIN */
         if (!IsLogged::isLogged()) {
             header("Location:/login/index");
             exit();
         }
 
-        // Verificar rol admin
         $role = $_SESSION['user']['rol_id'] ?? null;
 
         if ($role != UserRole::ADMIN) {
@@ -27,38 +26,63 @@ class AdminController
             exit();
         }
 
-        // Cargar el modelo con la conexión REAL del sistema
+        
         require_once __DIR__ . "/../model/ReporteAdmin.php";
         $reporte = new ReporteAdmin($this->conexion);
 
-        //Obtener datos para el dashboard
-$data = [
-            "totalUsuarios"           => $reporte->getTotalUsuarios(),
-            "totalPartidas"           => $reporte->getTotalPartidas(),
-            "totalPreguntas"          => $reporte->getTotalPreguntas(),
-            "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
 
-            // Gráficos
-            "usuariosPorPais" => $reporte->getUsuariosPorPais(),
-            "usuariosPorSexo" => $reporte->getUsuariosPorSexo(),
-            "usuariosPorEdad" => [],
-            "porcentajeCorrectas" => []
-        ];
+        /* MANEJO SEGURO DEL PERIODO*/
+        $periodo = $_GET['periodo'] ?? 'dia';
 
-       /*$data = [
-            "totalUsuarios"           => $reporte->getTotalUsuarios(),
-            "totalPartidas"           => $reporte->getTotalPartidas(),
-            "totalPreguntas"          => $reporte->getTotalPreguntas(),
-            "totalPreguntasUsuarios"  => $reporte->getTotalPreguntasUsuarios(),
+        switch ($periodo) {
+    case "dia":
+        $fechaDesde = date("Y-m-d 00:00:00");
+        break;
 
-            // Gráficos (IMPORTANTE: json_encode)
-            "usuariosPorPais"         => json_encode($reporte->getUsuariosPorPais()),
-            "usuariosPorSexo"         => json_encode($reporte->getUsuariosPorSexo()),
-            "usuariosPorEdad"         => json_encode([]),
-            "porcentajeCorrectas"     => json_encode([])
-        ];*/
+    case "semana":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-7 days"));
+        break;
 
-        // Renderizar la vista del dashboard
+    case "mes":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-1 month"));
+        break;
+
+    case "anio":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-1 year"));
+        break;
+
+    default:
+        $fechaDesde = date("Y-m-d 00:00:00");
+        break;
+}
+
+
+
+    $data = [
+    "isDia" => $periodo === "dia",
+    "isSemana" => $periodo === "semana",
+    "isMes" => $periodo === "mes",
+    "isAnio" => $periodo === "anio",
+
+    "totalUsuarios" => $reporte->getTotalUsuarios($fechaDesde),
+    "totalPartidas" => $reporte->getTotalPartidas($fechaDesde),
+    "totalPreguntas" => $reporte->getTotalPreguntas(),
+    "totalPreguntasUsuarios" => $reporte->getTotalPreguntasUsuarios(),
+
+    // JSON PARA LOS GRÁFICOS
+    "usuariosPorPais" => json_encode($reporte->getUsuariosPorPais($fechaDesde)),
+    "usuariosPorSexo" => json_encode($reporte->getUsuariosPorSexo($fechaDesde)),
+    "usuariosPorEdad" => json_encode($reporte->getUsuariosPorEdad($fechaDesde)),
+    "porcentajeCorrectasPorUsuario" => json_encode($reporte->getPorcentajeCorrectasPorUsuario($fechaDesde)),
+
+    // ARRAYS PARA LAS TABLAS
+    "usuariosPorPaisTable" => $reporte->getUsuariosPorPais($fechaDesde),
+    "usuariosPorSexoTable" => $reporte->getUsuariosPorSexo($fechaDesde),
+    "usuariosPorEdadTable" => $reporte->getUsuariosPorEdad($fechaDesde),
+    "precisionUsuariosTable" => $reporte->getPorcentajeCorrectasPorUsuario($fechaDesde),
+];
+
+
         $this->mustacheRenderer->render("admin", $data);
     }
 }

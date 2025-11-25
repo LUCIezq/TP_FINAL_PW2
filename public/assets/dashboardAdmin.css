@@ -25,9 +25,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
 }
 
 .sidebar-title {
@@ -54,14 +51,13 @@ body {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.2s ease-in-out;
+    transition: 0.2s;
 }
 
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
     background-color: white;
     color: #1fb286;
-    font-weight: 600;
 }
 
 /* ================================
@@ -76,21 +72,16 @@ body {
     font-size: 32px;
     font-weight: 600;
     color: #333;
-    margin-bottom: 20px;
 }
 
 /* ================================
-   BARRA DE FILTRO
+   FILTER BAR
 ================================ */
 .filter-bar {
-    margin-bottom: 30px;
+    margin: 20px 0;
     display: flex;
     align-items: center;
     gap: 15px;
-}
-
-.filter-bar label {
-    font-weight: 600;
 }
 
 .filter-bar select {
@@ -98,18 +89,35 @@ body {
     border-radius: 10px;
     border: 2px solid #1fb286;
     background: white;
-    font-size: 15px;
     cursor: pointer;
 }
 
-/* ================================
-   KPI CARDS
-================================ */
+/* 
+BOTÓN IMPRIMIR
+ */
+.btn-print {
+    background-color: #5a4ee3;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.btn-print:hover {
+    background-color: #1fb286;
+}
+
+/* 
+KPI CARDS
+ */
 .kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
-    margin-bottom: 40px;
 }
 
 .kpi-card {
@@ -118,33 +126,28 @@ body {
     border-radius: 18px;
     box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
     border-left: 6px solid #5a4ee3;
-    transition: transform .2s;
-}
-
-.kpi-card:hover {
-    transform: translateY(-4px);
 }
 
 .kpi-card h4 {
     font-size: 18px;
-    margin-bottom: 10px;
     color: #555;
+    margin-bottom: 10px;
 }
 
 .kpi-card p {
     font-size: 32px;
-    font-weight: bold;
     color: #1fb286;
+    font-weight: bold;
 }
 
-/* ================================
-   GRAFICOS
-================================ */
+/* 
+GRAFICOS
+ */
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 35px;
-    margin-bottom: 60px;
+    margin-top: 40px;
 }
 
 .chart-box {
@@ -155,25 +158,42 @@ body {
     border-top: 5px solid #5a4ee3;
 }
 
-.chart-box h3 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    color: #333;
-    font-weight: 600;
+/* 
+TABLAS
+*/
+.table-box {
+    margin-top: 40px;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    border-top: 5px solid #5a4ee3;
 }
 
-/* CUANDO NO HAY DATOS */
-.nodata {
-    text-align: center;
-    font-size: 18px;
-    color: #777;
-    padding: 40px 0;
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
+.report-table th,
+.report-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.report-table th {
+    background-color: #1fb286;
+    color: white;
+}
+
+
 @media (max-width: 1100px) {
+
+    .admin-sidebar {
+        width: 200px;
+    }
+
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -181,13 +201,13 @@ body {
     .charts-grid {
         grid-template-columns: 1fr;
     }
-
-    .admin-sidebar {
-        width: 200px;
-    }
 }
 
-@media (max-width: 780px) {
+/* 
+RESPONSIVE — MÓVIL
+ */
+@media (max-width: 768px) {
+
     .admin-container {
         flex-direction: column;
     }
@@ -195,10 +215,123 @@ body {
     .admin-sidebar {
         width: 100%;
         height: auto;
-        position: relative;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px;
+        gap: 10px;
+    }
+
+    .sidebar-title {
+        display: none; /* Ocultamos "ADMIN" en móvil */
+    }
+
+    .sidebar-menu {
+        display: flex;
+        gap: 10px;
+    }
+
+    .sidebar-menu li {
+        margin: 0;
+    }
+
+    .admin-main {
+        padding: 25px;
     }
 
     .kpi-grid {
         grid-template-columns: 1fr;
+    }
+
+    .btn-print {
+        width: 100%;
+        text-align: center;
+    }
+
+    .chart-box {
+        padding: 15px;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .filter-bar select {
+        width: 100%;
+    }
+}
+
+/* 
+ */
+@media (max-width: 480px) {
+
+    .kpi-card p {
+        font-size: 26px;
+    }
+
+    .chart-box h3,
+    .table-box h3 {
+        font-size: 18px;
+    }
+}
+
+@media print {
+
+    .admin-sidebar,
+    .dashboard-title,
+    .filter-bar,
+    .kpi-grid,
+    .btn-print,
+    header,
+    nav,
+    footer {
+        display: none ;
+        visibility: hidden ;
+    }
+
+    body, .admin-main, .content-wrapper {
+        background: #ffffff ;
+        box-shadow: none ;
+        padding: 0 ;
+        margin: 0 ;
+    }
+
+    .chart-box,
+    .table-box {
+        display: block ;
+        page-break-inside: avoid;
+        box-shadow: none ;
+        border: none ;
+        margin: 0 0 25px 0 ;
+        padding: 0 ;
+    }
+
+
+    canvas {
+        display: block ;
+        max-width: 100% ;
+        height: auto ;
+        margin: 0 auto 20px auto ;
+    }
+
+    .report-table {
+        width: 100% ;
+        border-collapse: collapse ;
+        font-size: 14px ;
+        margin-top: 10px ;
+    }
+
+    .report-table th,
+    .report-table td {
+        border: 1px solid #000 ;
+        padding: 6px ;
+        color: #000 ;
+    }
+
+    .report-table th {
+        background: #e8e8e8 ;
+        -webkit-print-color-adjust: exact ;
+        print-color-adjust: exact ;
     }
 }

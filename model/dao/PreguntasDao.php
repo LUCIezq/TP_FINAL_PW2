@@ -4,11 +4,13 @@ class PreguntasDao
 {
     private MyConexion $conexion;
     private CategoryDao $categoryDao;
+    private EstadoPreguntaDao $estadoPreguntaDao;
 
-    public function __construct(MyConexion $conexion, CategoryDao $categoryDao)
+    public function __construct(MyConexion $conexion, CategoryDao $categoryDao, EstadoPreguntaDao $estadoPreguntaDao)
     {
         $this->conexion = $conexion;
         $this->categoryDao = $categoryDao;
+        $this->estadoPreguntaDao = $estadoPreguntaDao;
     }
 
     public function getPreguntasPorCategoria($idCategoria)
@@ -25,33 +27,34 @@ class PreguntasDao
     public function createQuestion($data)
     {
 
-        foreach ($data as $value) {
-            if (empty($value)) {
-                return [
-                    "created" => false,
-                    "lastInsertId" => null
-                ];
-            }
-        }
+        $genero_id = $data["categoriaId"];
+        $texto = $data["pregunta"];
+        $usuario_id = $data["usuarioId"];
+        $estado_id = $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::SUGERIDA->value);
+        $respuestas = $data['respuestas'];
 
-        $sql = "INSERT INTO pregunta (genero_id,dificultad_id,texto,activa,usuario_id) VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO pregunta (genero_id,dificultad_id,texto,usuario_id,estado_id) VALUES (?,?,?,?,?)";
 
         $params = [
-            $data["categoriaId"],
+            $genero_id,
             1,
-            $data["pregunta"],
-            0,
-            $data["usuarioId"]
+            $texto,
+            $usuario_id,
+            $estado_id
         ];
 
         $types = "iisii";
 
-        $result = $this->conexion->executePrepared($sql, $types, $params);
+        $idPregunta = $this->conexion->executePrepared($sql, $types, $params);
 
-        return [
-            "created" => $result != 0,
-            "lastInsertId" => $result
-        ];
+        $result = null;
+
+        foreach ($respuestas as $index => $text) {
+            $isCorrect = ($index === $data["indiceCorrecta"]) ? 1 : 0;
+
+            $result = $this->createAnswer($text, $isCorrect, $idPregunta);
+        }
+        return $idPregunta > 0 && $result != null;
     }
 
     public function createAnswer($text, $isCorrect, $questionId)
@@ -67,120 +70,59 @@ class PreguntasDao
 
         $types = "sii";
 
-        $this->conexion->executePrepared($sql, $types, $params);
+        return $this->conexion->executePrepared($sql, $types, $params);
     }
 
-    public function getQuestionsWithFilter($filters)
+    public function obtenerPreguntasSugeridas()
     {
-        $category = $filters['category_name'] ?? 'todas';
-
-        if (!$category || $category === 'todas') {
-            $filter = '1=1';
-            $types = '';
-            $params = [];
-        } else {
-            $filter = 'g.nombre = ?';
-            $types = 's';
-            $params = [$category];
-        }
-
-        $sql = "SELECT 
+        $sql = " SELECT 
             u.nombre_usuario AS usuario,
-            p.texto          AS pregunta,
-            p.id             AS pregunta_id,
-            r.texto          AS respuesta,
-            r.id             AS respuesta_id,
-            p.genero_id      AS genero_id,
-            r.es_correcta    AS es_correcta,
-            rep.id_reporte
-        FROM pregunta p
-        JOIN usuario u       ON p.usuario_id = u.id
-        JOIN genero g        ON g.id = p.genero_id
-        LEFT JOIN respuesta r ON r.pregunta_id = p.id
-        LEFT JOIN reporte rep ON rep.id_reporte = (
-            SELECT r2.id_reporte
-            FROM reporte r2
-            WHERE r2.id_pregunta = p.id
-            ORDER BY r2.id_reporte DESC
-                LIMIT 1
-            )
-            WHERE $filter
-            ORDER BY rep.id_reporte DESC, p.id DESC";
+            p.texto AS enunciado,
+            p.id AS pregunta_id,
+            r.texto as respuesta,
+            r.es_correcta,
+            g.nombre as genero_nombre,
+            p.estado_id,
+            r.id AS respuesta_id
+                FROM pregunta p
+                JOIN usuario u ON p.usuario_id = u.id
+                LEFT JOIN respuesta r ON r.pregunta_id = p.id
+                join genero g on g.id = p.genero_id
+            WHERE p.estado_id = ?";
 
-        $result = $this->conexion->executePrepared($sql, $types, $params);
+        $params = [$this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::SUGERIDA->value)];
+        $types = "i";
 
+        $result = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        );
         $questions = [];
 
         foreach ($result as $row) {
+
             $id = $row['pregunta_id'];
 
             if (!isset($questions[$id])) {
                 $questions[$id] = [
                     'pregunta_id' => $row['pregunta_id'],
-                    'pregunta' => $row['pregunta'],
-                    'genero_id' => $row['genero_id'],
+                    'enunciado' => $row['enunciado'],
+                    'genero_nombre' => $row['genero_nombre'],
                     'usuario' => $row['usuario'],
+                    'activa' => (int) $row['estado_id'] === $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::ACTIVA->value) ? true : false,
                     'respuestas' => [],
-                    'id_reporte' => $row['id_reporte'] ?? null,
                 ];
             }
+
             if (!empty($row['respuesta_id'])) {
                 $questions[$id]['respuestas'][] = [
-                    'respuesta' => $row['respuesta'],
                     'respuesta_id' => $row['respuesta_id'],
+                    'respuesta' => $row['respuesta'],
                     'es_correcta' => $row['es_correcta']
                 ];
             }
         }
+
         return array_values($questions);
-    }
-
-    public function getAllQuestionByUsers()
-    {
-        $sql = "SELECT u.nombre_usuario as usuario,
-        p.texto as pregunta,
-        p.id as pregunta_id,
-        r.texto as respuesta,
-        r.id as respuesta_id,
-        p.genero_id as genero_id,
-        r.es_correcta as es_correcta
-        from pregunta p
-        JOIN usuario u ON p.usuario_id = u.id
-        LEFT JOIN respuesta r ON r.pregunta_id = p.id
-        WHERE p.usuario_id != 2 and p.activa != 1"; // 2 es el id del admin
-
-        $result = $this->conexion->query($sql);
-
-        if (empty($result))
-            return [];
-
-        $questions = [];
-
-        foreach ($result as $row) {
-            $pid = $row['pregunta_id'];
-
-            if (!isset($questions[$pid])) {
-                $questions[$pid] = [
-                    'usuario' => $row['usuario'],
-                    'pregunta' => $row['pregunta'],
-                    'pregunta_id' => $pid,
-                    'genero_id' => $row['genero_id'],
-                    'genero_name' => $this->categoryDao->getById($row['genero_id'])['nombre'],
-                    'respuestas' => [],
-                ];
-            }
-
-            if (!empty($row['respuesta_id'])) {
-                $questions[$pid]['respuestas'][] = [
-                    'respuesta' => $row['respuesta'],
-                    'respuesta_id' => $row['respuesta_id'],
-                    'es_correcta' => $row['es_correcta']
-                ];
-            }
-        }
-        //array values es util para pasar a mustache ya que este no maneja bien los arrays asociativos
-        return array_values($questions);
-
     }
 
     public function obtenerPreguntaPorId($id)
@@ -188,13 +130,17 @@ class PreguntasDao
         $sql = "SELECT 
                 p.id AS pregunta_id,
                 p.texto AS pregunta_texto,
-                p.activa,
+                ep.nombre as estado_nombre,
                 g.id AS genero_id,
                 g.nombre AS genero_nombre,
                 r.id AS respuesta_id,
-                r.texto AS respuesta_texto
+                r.texto AS respuesta_texto,
+                r.es_correcta AS correcta,
+                ep.id as estado_id
+                
             FROM pregunta p
             JOIN genero g ON g.id = p.genero_id
+            JOIN estado_pregunta ep on ep.id = p.estado_id
             JOIN respuesta r ON r.pregunta_id = p.id
             WHERE p.id = ?";
 
@@ -212,16 +158,17 @@ class PreguntasDao
         $pregunta = [
             'id' => $rows[0]['pregunta_id'],
             'texto' => $rows[0]['pregunta_texto'],
-            'activa' => $rows[0]['activa'],
             'genero_id' => $rows[0]['genero_id'],
             'genero_nombre' => $rows[0]['genero_nombre'],
+            'estado_id' => $rows[0]['estado_id'],
             'respuestas' => []
         ];
 
         foreach ($rows as $row) {
             $pregunta['respuestas'][] = [
                 'id' => $row['respuesta_id'],
-                'texto' => $row['respuesta_texto']
+                'texto' => $row['respuesta_texto'],
+                'correcta' => $row['correcta']
             ];
         }
 
@@ -267,13 +214,39 @@ class PreguntasDao
         return array_values($questions)[0] ?? null;
     }
 
-    public function aprobarPregunta($id)
+    public function aprobarPregunta($preguntas)
     {
-        $sql = 'UPDATE pregunta set activa=1 where id = ?';
-        $params = [$id];
-        $types = 'i';
-        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+        $cantidad = count($preguntas);
+
+        if ($cantidad === 0)
+            return false;
+
+        $placeholders = implode(',', array_fill(0, $cantidad, '?'));
+
+        $types = 'i' . str_repeat('i', $cantidad);
+
+        $sql = "
+        UPDATE pregunta
+        SET estado_id = (
+            SELECT id FROM estado_pregunta 
+            WHERE nombre = ?
+        )
+        WHERE id IN ($placeholders)
+    ";
+
+        $params = [
+            $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(
+                EstadoPreguntaNombre::ACTIVA->value
+            )
+        ];
+
+        foreach ($preguntas as $p) {
+            $params[] = $p;
+        }
+
+        return $this->conexion->executePrepared($sql, $types, $params) > 0;
     }
+
 
     public function actualizarPregunta($data)
     {
@@ -282,11 +255,12 @@ class PreguntasDao
         $types = '';
         $hayCambios = false;
 
-        $preguntaForm_id = $data['pregunta_id'];
+        $preguntaForm_id = $data['id'];
         $textoForm = $data['texto'];
         $genero_idForm = $data['genero_id'];
-        $id_correctaForm = $data['id_correcta'];
+        $id_correctaForm = $data['correcta'];
         $respuestasForm = $data['respuestas'];
+        $estadoIdForm = $data['estado_id'];
 
         $preguntaEnBd = $this->obtenerPreguntaPorId($preguntaForm_id);
 
@@ -300,14 +274,12 @@ class PreguntasDao
             $types .= 's';
         }
 
-        $generoPreguntaBd = $preguntaEnBd['genero_id'];
         $generos = $this->categoryDao->getAll();
-
         if (!in_array($genero_idForm, array_column($generos, 'id'))) {
             return 'Genero invalido.';
         }
 
-        if ($generoPreguntaBd !== (int) $genero_idForm) {
+        if ($preguntaEnBd['genero_id'] !== (int) $genero_idForm) {
             $cambios[] = 'genero_id = ?';
             $params[] = $genero_idForm;
             $types .= 'i';
@@ -323,35 +295,45 @@ class PreguntasDao
         $respuestasBd = $this->obtenerRespuestasPorId($preguntaEnBd['id']);
 
         foreach ($respuestasBd as $respuestaBd) {
-            $respuestaId = $respuestaBd['id'];
-            if (isset($respuestasForm[$respuestaId]) && $respuestasForm[$respuestaId] !== $respuestaBd['texto']) {
-                $this->actualizarEnunciadoRespuesta($respuestaId, $respuestasForm[$respuestaId]);
+            $rid = $respuestaBd['id'];
+
+            if (
+                isset($respuestasForm[$rid]) &&
+                $respuestasForm[$rid]['texto'] !== $respuestaBd['texto']
+            ) {
+
+                $this->actualizarEnunciadoRespuesta($rid, $respuestasForm[$rid]['texto']);
                 $hayCambios = true;
             }
         }
 
+        if ($preguntaEnBd['estado_id'] !== (int) $estadoIdForm) {
+            $cambios[] = 'estado_id = ?';
+            $params[] = $estadoIdForm;
+            $types .= 'i';
+        }
         if (empty($cambios) && !$hayCambios) {
             return 'No hay cambios para actualizar.';
         }
 
         if (count($cambios) > 0) {
+            $sql = 'UPDATE pregunta SET ' . implode(',', $cambios) . ' WHERE id = ?';
 
-            $sql = 'UPDATE pregunta set ' . implode(',', $cambios) . ' where id = ?';
+            $params[] = $preguntaForm_id;
+            $types .= 'i';
 
-            $this->conexion->executePrepared($sql, $types . 'i', [...$params, $preguntaForm_id]);
+            $this->conexion->executePrepared($sql, $types, $params);
         }
 
         return "Pregunta actualizada correctamente.";
     }
-
     public function inactivarPregunta($id)
     {
-        $sql = 'UPDATE pregunta set activa=0 where id = ?';
+        $sql = 'UPDATE pregunta set estado_id=2 where id = ?';
         $params = [$id];
         $types = 'i';
         return $this->conexion->executePrepared($sql, $types, $params) === 1;
     }
-
 
     public function actualizarEnunciadoRespuesta($respuestaId, $nuevoTexto)
     {
@@ -406,44 +388,60 @@ class PreguntasDao
         )[0] ?? null;
     }
 
-    public function rechazarPregunta($id)
+    public function eliminarPreguntasPorIds($ids)
     {
-        $sql = "DELETE FROM pregunta WHERE id = ?";
-        $params = [$id];
-        $types = "i";
-        return $this->conexion->executePrepared($sql, $types, $params) === 1;
+        if (empty($ids)) {
+            return false;
+        }
+
+        $placeholders = implode(',', array_fill(0, count(value: $ids), '?'));
+
+        $sql = "DELETE FROM pregunta WHERE id IN ($placeholders)";
+
+        $types = str_repeat('i', count($ids));
+
+        return $this->conexion->executePrepared($sql, $types, $ids) > 0;
     }
 
     public function getAllSystemQuestions()
     {
-        $sql = "SELECT p.id as pregunta_id,
-        p.texto as pregunta,
+        $sql = "SELECT 
+        p.id as pregunta_id,
+        p.texto as enunciado,
         u.nombre_usuario as usuario,
         p.genero_id,
         r.texto as respuesta,
         r.id as respuesta_id,
-        r.es_correcta
+        r.es_correcta,
+        g.nombre as genero_nombre,
+        p.estado_id
+        
         FROM pregunta p 
+        
         JOIN usuario u ON p.usuario_id = u.id
-        LEFT JOIN respuesta r on r.pregunta_id = p.id
-        WHERE p.activa=true";
+        JOIN genero g ON g.id = p.genero_id
+        LEFT JOIN respuesta r on r.pregunta_id = p.id";
 
         $data = $this->conexion->query($sql);
 
         $questions = [];
 
         foreach ($data as $row) {
+
             $id = $row['pregunta_id'];
 
             if (!isset($questions[$id])) {
                 $questions[$id] = [
                     'pregunta_id' => $row['pregunta_id'],
-                    'pregunta' => $row['pregunta'],
+                    'enunciado' => $row['enunciado'],
                     'genero_id' => $row['genero_id'],
+                    'genero_nombre' => $row['genero_nombre'],
                     'usuario' => $row['usuario'],
+                    'activa' => (int) $row['estado_id'] === $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::ACTIVA->value) ? true : false,
                     'respuestas' => [],
                 ];
             }
+
             if (!empty($row['respuesta_id'])) {
                 $questions[$id]['respuestas'][] = [
                     'respuesta' => $row['respuesta'],
@@ -452,6 +450,7 @@ class PreguntasDao
                 ];
             }
         }
+
         return array_values($questions);
     }
 }

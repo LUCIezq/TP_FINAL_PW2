@@ -48,8 +48,9 @@
             <span class="panel-sky__title">Juego</span>
           </header>
 
-          <ul class="panel-sky__list">
-            <li class="sky-item text-center py-4">
+          <ul class="panel-sky__list w-100">
+            <li
+              class="sky-item text-center py-4 w-full d-flex gap-2 flex-column align-items-center justify-content-center">
               <h3 class="mb-4">¡Bienvenido a Questify!</h3>
 
               <form action="index.php" method="get">
@@ -64,29 +65,8 @@
         </section>
 
 
-        <!-- ============ Partidas (izquierda) ============ -->
-        <section class="panel-sky shadow-sm">
-          <header class="panel-sky__header">
-            <span class="panel-sky__title">Partidas</span>
-          </header>
 
-          <!-- Lista de partidas -->
-          <ul class="panel-sky__list">
-
-              <li class="sky-item d-flex justify-content-between">
-                <span>Partidas jugadas</span>
-                <span class="badge bg-primary">{{estadisticas.partidas_jugadas}}</span>
-              </li>
-
-              <li class="sky-item d-flex justify-content-between">
-                <span>Partidas ganadas</span>
-                <span class="badge bg-success">{{estadisticas.partidas_ganadas}}</span>
-              </li>
-
-              <li class="sky-item d-flex justify-content-between">
-                <span>Partidas perdidas</span>
-                <span class="badge bg-danger">{{estadisticas.partidas_perdidas}}</span>
-              </li>
+        </section>
 
           </ul>
 
