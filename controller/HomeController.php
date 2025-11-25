@@ -31,6 +31,19 @@ class HomeController
         if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
             $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
+            $ranking = $this->usuarioDao->getRankingPromedio();
+
+            foreach ($ranking as $i => &$jugador) {
+                $jugador['posicion'] = $i + 1;  
+
+                // Colores especiales
+                if ($jugador['posicion'] == 1) $jugador['clase_top'] = "top1";
+                elseif ($jugador['posicion'] == 2) $jugador['clase_top'] = "top2";
+                elseif ($jugador['posicion'] == 3) $jugador['clase_top'] = "top3";
+                else $jugador['clase_top'] = "topN";
+            }
+            unset($jugador);
+
             $this->mustacheRenderer->render(
                 "home",
 
@@ -38,6 +51,8 @@ class HomeController
                     "usuario" => $_SESSION['user'],
                     "isLogged" => $_SESSION['logged_in'],
                     "jugadores" => $players,
+                    "ranking_promedio" => [
+                        "lista" => $ranking],
                     "isPlayer" => $_SESSION["user"]["rol_id"] === UserRole::JUGADOR
                     /*
                     "solicitud_errors" => $error_solicitud,
@@ -49,6 +64,9 @@ class HomeController
         if ($_SESSION['user']['rol_id'] == UserRole::EDITOR) {
             header("location: /editor/index");
             exit();
-        }
+     
+       }
+
     }
+
 }

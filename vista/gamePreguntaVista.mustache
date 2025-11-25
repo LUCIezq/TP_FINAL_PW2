@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/public/assets/barraTiempo.css">
 {{#message}}
 <div class="alert alert-info alert-dismissible fade show" role="alert">
     {{message}}
@@ -6,8 +7,12 @@
 {{/message}}
 
 <div class="container text-center py-5">
-    <div class="bg-light p-4 rounded-3 mb-4" style="display: flex; flex-direction: column; align-items: center;">
+    <div class="barra-tiempo-container">
+    <div id="barra-tiempo"></div>
+</div>
 
+<div id="timer" class="timer-display">20s</div>
+    <div class="bg-light p-4 rounded-3 mb-4" style="display: flex; flex-direction: column; align-items: center;">
         <div class="dropdown" style="align-self: flex-end;">
             <button type="button" style="border: none; background: transparent;" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -65,11 +70,11 @@
         </div>
         <p class="fs-5 font-weight-bold">{{pregunta.texto}}</p>
     </div>
-
+ 
     <form id="formPregunta" method="POST" action="/game/respuesta">
         <input type="hidden" name="partida_id" value="{{partida_id}}">
         <input type="hidden" name="pregunta_id" value="{{pregunta.id}}">
-
+        
         <div class="d-grid gap-3 col-6 mx-auto mt-4">
             {{#respuestas}}
             <button type="button" class="btn btn-outline-primary btn-lg opcion-respuesta" data-id="{{id}}"
@@ -84,13 +89,75 @@
 </div>
 
 <script>
-    const botones = document.querySelectorAll(".opcion-respuesta");
+    let tiempo = 20;
+    const DURACION = 20;
+
+    const tiempoDiv = document.getElementById("timer");
+    const barraTiempo = document.getElementById("barra-tiempo");
+    const botonesRespuestas = document.querySelectorAll(".opcion-respuesta");
     const form = document.getElementById("formPregunta");
     const mensajeDiv = document.getElementById("mensaje");
 
+    function actualizarTimer() {
+
+        // Mostrar texto del cronómetro
+        tiempoDiv.innerText = tiempo + "s";
+
+        // ---- BARRA ----
+        let porcentaje = (tiempo / DURACION) * 100;
+        barraTiempo.style.width = porcentaje + "%";
+
+        // Color dinámico
+        if (tiempo > 10) {
+            barraTiempo.style.background = "#28a745"; // verde
+        } else if (tiempo > 5) {
+            barraTiempo.style.background = "#ffc107"; // amarillo
+        } else {
+            barraTiempo.style.background = "#dc3545"; // rojo
+        }
+
+        // ---- TIEMPO AGOTADO ----
+        if (tiempo <= 0) {
+
+            barraTiempo.style.width = "0%";
+            tiempoDiv.innerText = "⏳ Tiempo agotado";
+
+            botonesRespuestas.forEach(b => b.disabled = true);
+
+            const formData = new FormData(form);
+            formData.append("respuesta_id", -1);
+            formData.append("timeout", 1);  // 🔥 Correcto ahora
+
+            fetch("/game/respuesta", {
+                method: "POST",
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                mensajeDiv.innerHTML =
+                    "⏳ Se acabó el tiempo.<br>La respuesta correcta era:<br><strong>" +
+                    data.correcta_texto +
+                    "</strong>";
+
+                setTimeout(() => window.location.href = "/home", 3000);
+            });
+
+            clearInterval(intervalo);
+        }
+
+        tiempo--;
+    }
+
+    const intervalo = setInterval(actualizarTimer, 1000);
+
+    // ===== CLICK EN RESPUESTAS =====
+    const botones = document.querySelectorAll(".opcion-respuesta");
+
     botones.forEach(btn => {
         btn.addEventListener("click", () => {
+
             botones.forEach(b => b.disabled = true);
+            clearInterval(intervalo);
 
             const formData = new FormData(form);
             formData.append("respuesta_id", btn.dataset.id);
@@ -99,7 +166,97 @@
                 method: "POST",
                 body: formData
             })
-                .then (response => response.json())
+            .then(r => r.json())
+            .then(data => {
+
+                if (data.fin) {
+                    mensajeDiv.innerHTML = "🎉 ¡Partida completada!";
+                    setTimeout(() => window.location.href = "/home", 2500);
+                    return;
+                }
+
+                if (data.correcta === true && data.continuar) {
+                    btn.classList.add("btn-success");
+                    mensajeDiv.innerHTML = "✅ ¡Correcto!";
+                    setTimeout(() => window.location.href = "/game/siguientePregunta", 1500);
+                    return;
+                }
+
+                if (data.correcta === false) {
+                    btn.classList.add("btn-danger");
+                    mensajeDiv.innerHTML =
+                        "❌ Incorrecto.<br>La respuesta correcta era:<br><strong>" +
+                        data.correcta_texto +
+                        "</strong>";
+                    setTimeout(() => window.location.href = "/home", 3000);
+                    return;
+                }
+
+                mensajeDiv.innerHTML = "⚠ Error inesperado.";
+            })
+            .catch(() => mensajeDiv.innerHTML = "Error con el servidor");
+        });
+    });
+</script>
+
+
+<!--<script>
+    let tiempo = 20;
+    const tiempoDiv = document.getElementById("timer");
+    const botonesRespuestas = document.querySelectorAll(".opcion-respuesta");
+
+    function actualizarTimer() {
+        tiempoDiv.innerText = tiempo + "s";
+
+        if (tiempo <= 0) {
+            botonesRespuestas.forEach(b => b.disabled = true);
+
+            tiempoDiv.innerText = "⏳ Tiempo agotado";
+
+            const form = document.getElementById("formPregunta");
+            const formData = new FormData(form);
+            formData.append("respuesta_id", 0); 
+
+            fetch("/game/respuesta", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const mensajeDiv = document.getElementById("mensaje");
+                mensajeDiv.innerHTML =
+                    "⏳ Se acabó el tiempo.<br>La respuesta correcta era:<br><strong>" +
+                    data.correcta_texto +
+                    "</strong>";
+
+                setTimeout(() => window.location.href = "/home", 3000);
+            });
+
+            clearInterval(intervalo);
+        }
+
+        tiempo--;
+    }
+
+    const intervalo = setInterval(actualizarTimer, 1000);
+
+    const botones = document.querySelectorAll(".opcion-respuesta");
+    const form = document.getElementById("formPregunta");
+    const mensajeDiv = document.getElementById("mensaje");
+
+    botones.forEach(btn => {
+        btn.addEventListener("click", () => {
+            botones.forEach(b => b.disabled = true);
+            clearInterval(intervalo); 
+
+            const formData = new FormData(form);
+            formData.append("respuesta_id", btn.dataset.id);
+
+            fetch("/game/respuesta", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())
                 .then(data => {
                     if (data.fin) {
                         mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
@@ -123,12 +280,13 @@
                         setTimeout(() => window.location.href = "/home", 3000);
                         return;
                     }
-                mensajeDiv.innerHTML = "⚠ Error inesperado. Respuesta no reconocida.";
+                    mensajeDiv.innerHTML = "⚠ Error inesperado. Respuesta no reconocida.";
                 })
                 .catch(err => {
-                    consolo.error(err);
+                    console.error(err);
                     mensajeDiv.innerHTML = "Error con el servidor";
-                })
+                });
         });
     });
-</script>
+<link rel="stylesheet" href="/public/assets/barraTiempo.css">
+</script> -->

@@ -195,3 +195,22 @@
   outline: 3px solid rgba(34,154,151,.35);
   outline-offset: 2px;
 }
+
+.ranking-item {
+  cursor: pointer;
+}
+.ranking-item.top1 {
+  border-left: 6px solid #FFD700;
+}
+
+.ranking-item.top2 {
+  border-left: 6px solid #C0C0C0;
+}
+
+.ranking-item.top3 {
+  border-left: 6px solid #CD7F32;
+}
+
+.ranking-item.topN {
+  border-left: 6px solid rgba(0,0,0,.15);
+}

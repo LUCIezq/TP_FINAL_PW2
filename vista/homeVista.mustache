@@ -41,7 +41,7 @@
 
     <div class="container my-5">
 
-      <div class="grid-home">
+     <div class="grid-home">
 
         <section class="panel-sky shadow-sm">
           <header class="panel-sky__header">
@@ -71,8 +71,6 @@
           </header>
 
 
-
-
           <!-- Herramientas opcionales -->
           <div class="panel-sky__tools">
             <!-- ejemplo opcional de filtros -->
@@ -85,8 +83,6 @@
             </select>
             -->
           </div>
-
-
 
           <!-- Lista de partidas -->
           <ul class="panel-sky__list">
@@ -130,76 +126,67 @@
 
         <!-- = Últimos jugadores (derecha) = -->
         <section class="panel-beige shadow-sm">
-          <header class="panel-beige__header">
+        <header class="panel-beige__header">
             <span class="panel-beige__title">Jugadores Disponibles</span>
-          </header>
+        </header>
 
-          <ul class="panel-beige__list">
+        <ul class="panel-beige__list">
             {{#jugadores}}
-
-
-
-            <li class="panel-beige__item ">
-              <a class="panel-beige__avatar" href="/usuario/perfil/{{id_usuario}}">
-                <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
-              </a>
-
-              <div class="panel-beige__body">
-                <a class="panel-beige__name" href="/usuario/perfil/{{id_usuario}}">
-                  {{nombre}} {{apellido}}
+            <li class="panel-beige__item">
+                <a class="panel-beige__avatar" href="/usuario/perfil/{{id_usuario}}">
+                    <img src="{{foto_perfil}}" alt="{{nombre}} {{apellido}}">
                 </a>
-                <div class="panel-beige__meta">@{{nombre_usuario}}</div>
-              </div>
 
-              {{#puede_desafiar}}
-              <button type="button" class="btn btn-peach btn-sm panel-beige__action btn-desafiar"
-                data-destinatario-id="{{id_usuario}}">
-                Desafiar
-              </button>
-              {{/puede_desafiar}}
-
-              {{#solicitud_enviada}}
-              <span class="badge bg-warning text-dark panel-beige__status">
-                Solicitud Enviada
-                <i class="bi bi-clock-history"></i>
-              </span>
-              {{/solicitud_enviada}}
-
-              {{#solicitud_recibida}}
-
-              <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
-                <span class="badge bg-success text-white panel-beige__status">
-                  Solicitud Recibida
-                  <i class="bi bi-check-circle"></i>
-                </span>
-
-                <div style="display: flex; gap: 5px;align-items: center;">
-                  <form action="/solicitudPartida/aceptar" method="POST" class="panel-beige__form-aceptar">
-                    <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
-                    <button type="submit" class="btn btn-success btn-sm">
-                      <i class="bi bi-check"></i>
-                    </button>
-                  </form>
-
-                  <form action="/solicitudPartida/rechazar" method="POST" class="panel-beige__form-rechazar">
-                    <input type="hidden" name="solicitud_id" value="{{id_solicitud}}">
-                    <button type="submit" class="btn btn-danger btn-sm">
-                      <i class="bi bi-x"></i>
-                    </button>
-                  </form>
+                <div class="panel-beige__body">
+                    <a class="panel-beige__name" href="/usuario/perfil/{{id_usuario}}">
+                        {{nombre}} {{apellido}}
+                    </a>
+                    <div class="panel-beige__meta">@{{nombre_usuario}}</div>
                 </div>
-              </div>
-              {{/solicitud_recibida}}
             </li>
             {{/jugadores}}
 
             {{^jugadores}}
-            <li class="panel-beige__empty">
-              <i class="bi bi-info-circle"></i> No hay jugadores disponibles en este momento.
-            </li>
+            <li class="panel-beige__empty">No hay jugadores disponibles.</li>
             {{/jugadores}}
-          </ul>
-        </section>
+        </ul>
+    </section>
+
+    <section class="panel-sky shadow-sm">
+      <header class="panel-sky__header">
+        <span class="panel-sky__title">🏆 Ranking por Promedio</span>
+      </header>
+
+      <ul class="panel-sky__list">
+
+        {{#ranking_promedio.lista}}
+          <li class="sky-item ranking-item {{clase_top}}" onclick="location.href='/usuario/perfil/{{id}}'">
+
+            <div class="sky-item__avatar">
+              <img src="{{foto_perfil}}" alt="{{nombre}}">
+            </div>
+
+            <div class="sky-item__body">
+              <div class="sky-item__title">
+                {{posicion}}° — {{nombre}} {{apellido}}
+              </div>
+              <div class="text-muted">
+                Promedio: <strong>{{promedio}}</strong>
+              </div>
+            </div>
+
+          </li>
+        {{/ranking_promedio.lista}}
+
+        {{^ranking_promedio.lista}}
+          <li class="sky-empty">No hay datos aún.</li>
+        {{/ranking_promedio.lista}}
+
+      </ul>
+    </section>
+
+        
+
       </div>
 
       <!-- botón inferior crear preguntas -->
