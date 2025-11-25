@@ -100,23 +100,19 @@
 
     function actualizarTimer() {
 
-        // Mostrar texto del cronómetro
         tiempoDiv.innerText = tiempo + "s";
 
-        // ---- BARRA ----
         let porcentaje = (tiempo / DURACION) * 100;
         barraTiempo.style.width = porcentaje + "%";
 
-        // Color dinámico
         if (tiempo > 10) {
-            barraTiempo.style.background = "#28a745"; // verde
+            barraTiempo.style.background = "#28a745"; 
         } else if (tiempo > 5) {
-            barraTiempo.style.background = "#ffc107"; // amarillo
+            barraTiempo.style.background = "#ffc107"; 
         } else {
-            barraTiempo.style.background = "#dc3545"; // rojo
+            barraTiempo.style.background = "#dc3545"; 
         }
 
-        // ---- TIEMPO AGOTADO ----
         if (tiempo <= 0) {
 
             barraTiempo.style.width = "0%";
@@ -126,7 +122,7 @@
 
             const formData = new FormData(form);
             formData.append("respuesta_id", -1);
-            formData.append("timeout", 1);  // 🔥 Correcto ahora
+            formData.append("timeout", 1);  
 
             fetch("/game/respuesta", {
                 method: "POST",
@@ -150,7 +146,6 @@
 
     const intervalo = setInterval(actualizarTimer, 1000);
 
-    // ===== CLICK EN RESPUESTAS =====
     const botones = document.querySelectorAll(".opcion-respuesta");
 
     botones.forEach(btn => {
@@ -200,93 +195,3 @@
 </script>
 
 
-<!--<script>
-    let tiempo = 20;
-    const tiempoDiv = document.getElementById("timer");
-    const botonesRespuestas = document.querySelectorAll(".opcion-respuesta");
-
-    function actualizarTimer() {
-        tiempoDiv.innerText = tiempo + "s";
-
-        if (tiempo <= 0) {
-            botonesRespuestas.forEach(b => b.disabled = true);
-
-            tiempoDiv.innerText = "⏳ Tiempo agotado";
-
-            const form = document.getElementById("formPregunta");
-            const formData = new FormData(form);
-            formData.append("respuesta_id", 0); 
-
-            fetch("/game/respuesta", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const mensajeDiv = document.getElementById("mensaje");
-                mensajeDiv.innerHTML =
-                    "⏳ Se acabó el tiempo.<br>La respuesta correcta era:<br><strong>" +
-                    data.correcta_texto +
-                    "</strong>";
-
-                setTimeout(() => window.location.href = "/home", 3000);
-            });
-
-            clearInterval(intervalo);
-        }
-
-        tiempo--;
-    }
-
-    const intervalo = setInterval(actualizarTimer, 1000);
-
-    const botones = document.querySelectorAll(".opcion-respuesta");
-    const form = document.getElementById("formPregunta");
-    const mensajeDiv = document.getElementById("mensaje");
-
-    botones.forEach(btn => {
-        btn.addEventListener("click", () => {
-            botones.forEach(b => b.disabled = true);
-            clearInterval(intervalo); 
-
-            const formData = new FormData(form);
-            formData.append("respuesta_id", btn.dataset.id);
-
-            fetch("/game/respuesta", {
-                method: "POST",
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.fin) {
-                        mensajeDiv.innerHTML = "🎉 ¡Partida completada! Felicitaciones.";
-                        setTimeout(() => window.location.href = "/home", 2500);
-                        return;
-                    }
-                    if (data.correcta === true && data.continuar) {
-                        btn.classList.remove("btn-outline-primary");
-                        btn.classList.add("btn-success");
-                        mensajeDiv.innerHTML = "✅ ¡Correcto!";
-                        setTimeout(() => {
-                            window.location.href = "/game/siguientePregunta";
-                        }, 1500);
-                        return;
-                    }
-                    if (data.correcta === false) {
-                        btn.classList.remove("btn-outline-primary");
-                        btn.classList.add("btn-danger");
-                        mensajeDiv.innerHTML = "❌ Incorrecto. La respuesta correcta era:<br><strong>" 
-                                                + data.correcta_texto + "</strong>";
-                        setTimeout(() => window.location.href = "/home", 3000);
-                        return;
-                    }
-                    mensajeDiv.innerHTML = "⚠ Error inesperado. Respuesta no reconocida.";
-                })
-                .catch(err => {
-                    console.error(err);
-                    mensajeDiv.innerHTML = "Error con el servidor";
-                });
-        });
-    });
-<link rel="stylesheet" href="/public/assets/barraTiempo.css">
-</script> -->
