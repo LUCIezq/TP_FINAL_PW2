@@ -9,9 +9,7 @@ class ReporteAdmin
         $this->db = $conexion;
     }
 
-    /* ============================================
-       FUNCIÓN SEGURA PARA FECHAS (evita errores 500)
-    ============================================ */
+    /*  Validacion para fechas*/
     private function safeDate(?string $fecha): string
     {
         if (!$fecha || trim($fecha) === "" || strtolower($fecha) === "null") {
@@ -20,9 +18,7 @@ class ReporteAdmin
         return $fecha;
     }
 
-    /* --------------------------------------------
-                MÉTRICAS
-    -------------------------------------------- */
+    
 
     public function getTotalUsuarios(string $fechaDesde): int
     {
@@ -67,9 +63,8 @@ class ReporteAdmin
         return $result[0]['total'] ?? 0;
     }
 
-    /* --------------------------------------------
-                GRÁFICOS
-    -------------------------------------------- */
+    
+    /* GRÁFICOS */
 
     public function getUsuariosPorPais(string $fechaDesde): array
     {

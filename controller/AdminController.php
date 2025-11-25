@@ -13,9 +13,7 @@ class AdminController
     
     public function index(): void
     {
-        /* =============================
-              VALIDACIÓN DE LOGIN
-        ============================== */
+        /* VALIDACIÓN DE LOGIN */
         if (!IsLogged::isLogged()) {
             header("Location:/login/index");
             exit();
@@ -28,24 +26,36 @@ class AdminController
             exit();
         }
 
-        /* =============================
-              CARGAR MODELO
-        ============================== */
+        
         require_once __DIR__ . "/../model/ReporteAdmin.php";
         $reporte = new ReporteAdmin($this->conexion);
 
-        /* =============================
-           MANEJO SEGURO DEL PERIODO
-        ============================== */
+
+        /* MANEJO SEGURO DEL PERIODO*/
         $periodo = $_GET['periodo'] ?? 'dia';
 
-        $fechaDesde = match ($periodo) {
-            "dia"    => date("Y-m-d 00:00:00"),
-            "semana" => date("Y-m-d H:i:s", strtotime("-7 days")),
-            "mes"    => date("Y-m-d H:i:s", strtotime("-1 month")),
-            "anio"   => date("Y-m-d H:i:s", strtotime("-1 year")),
-            default  => date("Y-m-d 00:00:00")
-        };
+        switch ($periodo) {
+    case "dia":
+        $fechaDesde = date("Y-m-d 00:00:00");
+        break;
+
+    case "semana":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-7 days"));
+        break;
+
+    case "mes":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-1 month"));
+        break;
+
+    case "anio":
+        $fechaDesde = date("Y-m-d H:i:s", strtotime("-1 year"));
+        break;
+
+    default:
+        $fechaDesde = date("Y-m-d 00:00:00");
+        break;
+}
+
 
 
     $data = [
@@ -73,7 +83,6 @@ class AdminController
 ];
 
 
-        /*  RENDERIZAR VISTA */
         $this->mustacheRenderer->render("admin", $data);
     }
 }
