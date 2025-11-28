@@ -41,9 +41,9 @@
 
     <div class="container my-5">
 
-     <div class="grid-home">
-
+      <div class="grid-home">
         <section class="panel-sky shadow-sm">
+
           <header class="panel-sky__header">
             <span class="panel-sky__title">Juego</span>
           </header>
@@ -62,57 +62,49 @@
               </form>
             </li>
           </ul>
-        </section>
-
-
 
         </section>
+
+        <section class="panel-sky shadow-sm">
+          <header class="panel-sky__header">
+            <span class="panel-sky__title">🏆 Ranking por Promedio</span>
+          </header>
+
+          <ul class="panel-sky__list">
+
+            {{#ranking_promedio.lista}}
+            <li class="sky-item ranking-item {{clase_top}}" onclick="location.href='/usuario/perfil/{{id}}'">
+
+              <div class="sky-item__avatar">
+                <img src="{{foto_perfil}}" alt="{{nombre}}">
+              </div>
+
+              <div class="sky-item__body">
+                <div class="sky-item__title">
+                  {{posicion}}° — {{nombre}} {{apellido}}
+                </div>
+                <div class="text-muted">
+                  Promedio: <strong>{{promedio}}</strong>
+                </div>
+              </div>
+
+            </li>
+            {{/ranking_promedio.lista}}
+
+            {{^ranking_promedio.lista}}
+            <li class="sky-empty">No hay datos aún.</li>
+            {{/ranking_promedio.lista}}
 
           </ul>
-
         </section>
+        
+      </div>
 
-    <section class="panel-sky shadow-sm">
-      <header class="panel-sky__header">
-        <span class="panel-sky__title">🏆 Ranking por Promedio</span>
-      </header>
-
-      <ul class="panel-sky__list">
-
-        {{#ranking_promedio.lista}}
-          <li class="sky-item ranking-item {{clase_top}}" onclick="location.href='/usuario/perfil/{{id}}'">
-
-            <div class="sky-item__avatar">
-              <img src="{{foto_perfil}}" alt="{{nombre}}">
-            </div>
-
-            <div class="sky-item__body">
-              <div class="sky-item__title">
-                {{posicion}}° — {{nombre}} {{apellido}}
-              </div>
-              <div class="text-muted">
-                Promedio: <strong>{{promedio}}</strong>
-              </div>
-            </div>
-
-          </li>
-        {{/ranking_promedio.lista}}
-
-        {{^ranking_promedio.lista}}
-          <li class="sky-empty">No hay datos aún.</li>
-        {{/ranking_promedio.lista}}
-
-      </ul>
-    </section>
-    </div>
-
-      <!-- botón inferior crear preguntas -->
       <div class="mt-3">
         <a href="/preguntas/index" class="btn btn-outline-primary btn-lg btn-create">
           <i class="bi bi-plus-circle"></i> Sugerir preguntas
         </a>
       </div>
-
 
       <form action="/solicitudPartida/crearSolicitudPartida" method="POST" class="form-desafiar">
         <input type="hidden" name="destinatario_id" id="destinatario_id">

@@ -1,11 +1,10 @@
 <?php
-require_once __DIR__ . "/../model/dao/ReporteDao.php";
-require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no me lo corria en el xampp
-require_once __DIR__ . "/../model/dao/CategoryDao.php";
-require_once __DIR__ . "/../model/dao/EstadoPreguntaDao.php";
-require_once __DIR__ . "/../controller/ReporteController.php";
-require_once __DIR__ . '/../model/dao/EstadisticasDao.php';
-require_once __DIR__ . '/../model/dao/GameDao.php';
+// require_once __DIR__ . "/../model/dao/ReporteDao.php";
+// require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no me lo corria en el xampp
+// require_once __DIR__ . "/../model/dao/CategoryDao.php";
+// require_once __DIR__ . "/../model/dao/EstadoPreguntaDao.php";
+// require_once __DIR__ . "/../controller/ReporteController.php";
+// require_once __DIR__ . '/../model/dao/GameDao.php';
 
 class ConfigFactory
 {
@@ -53,19 +52,19 @@ class ConfigFactory
             new ValidatorModelDao(new UsuarioDao($this->conexion))
         );
 
-        //$this->objetos['HomeController'] = new HomeController($this->renderer, new UsuarioDao($this->conexion), new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
-
-        $this->objetos['HomeController'] = new HomeController($this->renderer,new UsuarioDao($this->conexion),new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)),
-            new GameDao($this->conexion)   // ste es el cuarto parámetro nuevo
+        $this->objetos['HomeController'] = new HomeController(
+            $this->renderer,
+            new UsuarioDao($this->conexion),
+            new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)),
+            new GameDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)))
         );
         $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
 
-        $this->objetos['EstadisticasDao'] = new EstadisticasDao($this->conexion);
 
         $this->objetos['UsuarioController'] = new UsuarioController(
             new UsuarioDao($this->conexion),
-            $this->objetos['EstadisticasDao'],
-            $this->renderer
+            $this->renderer,
+            new PartidaDao($this->conexion)
         );
 
 
@@ -94,8 +93,6 @@ class ConfigFactory
             $this->conexion
         );
 
-        // $this->objetos['ReporteController'] = new ReporteController(new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion))));
-
         $this->objetos['ReporteController'] = new ReporteController(
             new ReporteDao(
                 $this->conexion,
@@ -109,10 +106,11 @@ class ConfigFactory
         require_once 'controller/GameController.php';
         $this->objetos['GameController'] = new GameController(
             $this->renderer,
-            new GameDao($this->conexion)
+            new GameDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))),
+            new GeneroDao($this->conexion)
         );
 
-        
+
     }
 
 

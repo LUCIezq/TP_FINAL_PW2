@@ -49,7 +49,6 @@ class FileUploader
     {
         $dir = self::$uploadFileDir;
 
-
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 return false;

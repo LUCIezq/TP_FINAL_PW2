@@ -6,6 +6,8 @@ class HomeController
     private UsuarioDao $usuarioDao;
     private SolicitudPartidaDao $solicitudPartidaDao;
 
+    private GameDao $gameDao;
+
     public function __construct(MustacheRenderer $mustacheRenderer, UsuarioDao $usuarioDao, SolicitudPartidaDao $solicitudPartidaDao, GameDao $gameDao)
     {
         $this->mustacheRenderer = $mustacheRenderer;
@@ -16,13 +18,6 @@ class HomeController
 
     public function index(): void
     {
-        /*
-        $error_solicitud = $_SESSION['solicitud_errors'];
-        $success_solicitud = $_SESSION['solicitud_success'];
-
-        unset($_SESSION['solicitud_errors']);
-        unset($_SESSION['solicitud_success']);
-        */
 
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
@@ -33,7 +28,7 @@ class HomeController
             $partidaId = $_SESSION['partida']['id'];
 
             // Marcar como perdida
-            $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
+            // $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
 
             // Borrar sesión
             unset($_SESSION['partida']);
@@ -42,21 +37,26 @@ class HomeController
 
         if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
             $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
-            
-            $ranking = $this->usuarioDao->getRankingPromedio();
 
-            foreach ($ranking as $i => &$jugador) {
-                $jugador['posicion'] = $i + 1;  
+            // $ranking = $this->usuarioDao->getRankingPromedio();
 
-                // Colores especiales
-                if ($jugador['posicion'] == 1) $jugador['clase_top'] = "top1";
-                elseif ($jugador['posicion'] == 2) $jugador['clase_top'] = "top2";
-                elseif ($jugador['posicion'] == 3) $jugador['clase_top'] = "top3";
-                else $jugador['clase_top'] = "topN";
-            }
+            // foreach ($ranking as $i => &$jugador) {
+            //     $jugador['posicion'] = $i + 1;
+
+            //     // Colores especiales
+            //     if ($jugador['posicion'] == 1)
+            //         $jugador['clase_top'] = "top1";
+            //     elseif ($jugador['posicion'] == 2)
+            //         $jugador['clase_top'] = "top2";
+            //     elseif ($jugador['posicion'] == 3)
+            //         $jugador['clase_top'] = "top3";
+            //     else
+            //         $jugador['clase_top'] = "topN";
+            // }
+
             unset($jugador);
 
-            $estadisticas = $this->gameDao->obtenerEstadisticasUsuario($_SESSION['user']['id']);
+            // $estadisticas = $this->gameDao->obtenerEstadisticasUsuario($_SESSION['user']['id']);
 
             $this->mustacheRenderer->render(
                 "home",
@@ -65,21 +65,17 @@ class HomeController
                     "usuario" => $_SESSION['user'],
                     "isLogged" => $_SESSION['logged_in'],
                     "jugadores" => $players,
-                    "ranking_promedio" => ["lista" => $ranking],
-                    "estadisticas" => $estadisticas,
+                    //"ranking_promedio" => ["lista" => $ranking],
+                    //"estadisticas" => $estadisticas,
                     "isPlayer" => $_SESSION["user"]["rol_id"] === UserRole::JUGADOR
-                    /*
-                    "solicitud_errors" => $error_solicitud,
-                    "solicitud_success" => $success_solicitud,
-                    */
                 ]
             );
         }
         if ($_SESSION['user']['rol_id'] == UserRole::EDITOR) {
             header("location: /editor/index");
             exit();
-     
-       }
+
+        }
 
     }
 

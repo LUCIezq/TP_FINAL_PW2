@@ -57,6 +57,20 @@ class PreguntasDao
         return $idPregunta > 0 && $result != null;
     }
 
+    public function obtenerRespuestaCorrecta($preguntaId)
+    {
+        $sql = "SELECT texto 
+                FROM respuesta 
+                WHERE pregunta_id = ? 
+                AND es_correcta = 1";
+
+        $data = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, "i", [$preguntaId])
+        );
+
+        return $data[0]['texto'] ?? '';
+    }
+
     public function createAnswer($text, $isCorrect, $questionId)
     {
         $sql = "INSERT into respuesta (texto,es_correcta,pregunta_id)
@@ -247,7 +261,6 @@ class PreguntasDao
         return $this->conexion->executePrepared($sql, $types, $params) > 0;
     }
 
-
     public function actualizarPregunta($data)
     {
         $cambios = [];
@@ -368,10 +381,8 @@ class PreguntasDao
         from respuesta 
         where pregunta_id = ?";
 
-        $params = [$preguntaId];
-        $types = "i";
         return $this->conexion->processData(
-            $this->conexion->executePrepared($sql, $types, $params)
+            $this->conexion->executePrepared($sql, 'i', [$preguntaId])
         );
     }
 
@@ -402,7 +413,6 @@ class PreguntasDao
 
         return $this->conexion->executePrepared($sql, $types, $ids) > 0;
     }
-
     public function getAllSystemQuestions()
     {
         $sql = "SELECT 
@@ -452,5 +462,19 @@ class PreguntasDao
         }
 
         return array_values($questions);
+    }
+
+    public function verificarRespuesta($respuestaId, $preguntaId)
+    {
+        $sql = "SELECT es_correcta 
+                FROM respuesta 
+                WHERE id = ? 
+                AND pregunta_id = ?";
+
+        $data = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, "ii", [$respuestaId, $preguntaId])
+        );
+
+        return $data[0]['es_correcta'] ?? null;
     }
 }

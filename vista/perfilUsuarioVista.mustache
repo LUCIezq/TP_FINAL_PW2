@@ -16,106 +16,156 @@
 
 <body class="layout">
 
-  <main class="container py-4">
-    <div class="row justify-content-center">
-      <div class="col-12 col-lg-10">
+  <main class="container py-4 width-100">
+    <div class="row justify-content-center w-100 max-width-500">
+
+      <div class="col-12">
 
         <div class="mb-3">
           <a href="/home/index" class="btn-ghost back-link">
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
             Volver al inicio
           </a>
         </div>
 
-        <section class="card perfil-card p-3 p-md-4">
-          <div class="d-flex align-items-center gap-3">
-            <div class="avatar-wrap">
-              <img src="{{{usuario.foto_perfil}}}" alt="Foto de perfil"
-                class="avatar-img" width="96" height="96"
-                onerror="this.src='/public/assets/img/default-avatar.png'">
-            </div>
+        <div class="d-flex align-items-center gap-3">
 
-            <div class="flex-grow-1">
-              <h2 class="m-0 nombre">{{usuario.nombre}} {{usuario.apellido}}</h2>
-              <div class="texto-usuario">@{{usuario.nombre_usuario}}</div>
-
-              <img src="{{qr}}" alt="QR" class="qr-code mt-2" width="96" height="96">
-
-              <p class="m-0 mt-2 fs-5 text-primary">
-                Puntos totales: <strong>{{usuario.puntos}}</strong>
-              </p>
-
-              <!--<span class="chip chip-info mt-2">
-                Aciertos: {{usuario.porcentaje_acierto}}%
-              </span>-->
-            </div>
-
-            </div>
+          <div class="avatar-wrap">
+            <img src="{{{usuario.foto_perfil}}}" alt="Foto de perfil" class="avatar-img" width="96" height="96"
+              onerror="this.src='/public/assets/img/default-avatar.png'">
           </div>
 
-          <div id="map" class="w-100" style="height: 200px; margin-top: 20px;">
+          <div class="flex-grow-1">
+            <h2 class="m-0 nombre">{{usuario.nombre}} {{usuario.apellido}}</h2>
+            <div class="texto-usuario">@{{usuario.nombre_usuario}}</div>
+
+
+            <p class="m-0 mt-2 fs-5 text-primary">
+              Puntos: <strong>{{usuario.puntos}}</strong>
+            </p>
 
           </div>
+          <img src="{{qr}}" alt="QR" class="qr-code mt-2" width="96" height="96">
 
-          <div class="mt-4">
-            <h5 class="seccion-titulo">Historial de partidas</h5>
-
-            <ul class="list-group perfil-lista">
-              <li class="list-group-item d-flex justify-content-between">
-                Partidas jugadas
-                <span class="badge rounded-pill stat">{{usuario.partidas_jugadas}}</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between">
-                Partidas ganadas
-                <span class="badge rounded-pill stat">{{usuario.partidas_ganadas}}</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between">
-                Partidas perdidas
-                <span class="badge rounded-pill stat">{{usuario.partidas_perdidas}}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="mt-4">
-            <h5 class="seccion-titulo">Rendimiento</h5>
-
-            <ul class="list-group perfil-lista">
-              <li class="list-group-item d-flex justify-content-between">
-                Preguntas respondidas
-                <span class="badge rounded-pill stat">{{usuario.total_respondidas}}</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between">
-                Preguntas correctas
-                <span class="badge rounded-pill stat">{{usuario.total_correctas}}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="row g-2 mt-4 align-items-center">
-            {{#isOwner}}
-            <div class="col-12 col-sm-auto">
-              <a href="/usuario/editar/{{usuario.id}}" 
-                class="btn btn-outline-primary-soft w-100">Editar perfil</a>
-            </div>
-            {{/isOwner}}
-
-            <!--<div class="col-12 col-sm-auto">
-              <a href="/partidas/mis-partidas" 
-                class="btn btn-primary-soft w-100">Ver partidas</a>
-            </div>-->
-
-            <div class="col-12 col-sm-auto ms-sm-auto">
-              <a href="/login/logout" class="btn btn-danger-soft w-100">Cerrar sesión</a>
-            </div>
-          </div>
-        </section>
+        </div>
 
       </div>
+
+      <div id="map" style="height: 200px; margin: 2rem 0; width: 100%;">
+      </div>
+
+      <div class="mt-4">
+        <div class="container my-4">
+
+          <div class="text-center mb-4">
+            <h3 class="mb-3 text-center">Tus mejores partidas</h3>
+          </div>
+
+
+          {{#partidasDelUsuario}}
+          <div class="card shadow-sm mb-3 border-0 rounded-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+              <div>
+                <div class="d-flex gap-2 align-items-center">
+                  <span class="badge bg-primary">#{{posicion}}</span>
+                  <h5 class="mb-1 fw-semibold" style="font-size: 1.2rem; text-decoration: underline;">{{genero_nombre}}
+                  </h5>
+                </div>
+
+                <small class="text-muted">
+                  Duración: {{duracion}}
+                </small>
+              </div>
+
+              <div class="text-end">
+                <span class="badge bg-primary fs-6 px-3 py-2">
+                  {{puntos}} pts
+                </span>
+              </div>
+
+            </div>
+          </div>
+          {{/partidasDelUsuario}}
+
+          {{^partidasDelUsuario}}
+          <div class="alert alert-light text-center border">
+            <p class="mb-0">Todavía no jugaste ninguna partida.</p>
+          </div>
+          {{/partidasDelUsuario}}
+
+          <div class="container mt-4">
+            <h3 class="mb-3 text-center">Géneros más jugados</h3>
+
+            <ul class="list-group">
+              {{#generosMasJugados}}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <strong>#{{indice}}</strong> {{nombre}}
+                </span>
+                <span class="badge bg-primary rounded-pill">
+                  {{veces_jugado}} partidas
+                </span>
+              </li>
+              {{/generosMasJugados}}
+
+              {{^generosMasJugados}}
+              <li class="list-group-item text-center">Todavía no jugaste ningún género.</li>
+              {{/generosMasJugados}}
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="mt-4">
+        <h5 class="seccion-titulo">Rendimiento</h5>
+
+        <ul class="list-group perfil-lista">
+          <li class="list-group-item d-flex justify-content-between">
+            Partidas jugadas
+            <span class="badge rounded-pill stat">{{cantidad_partidas_jugadas}}</span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between">
+            Preguntas respondidas
+            <span class="badge rounded-pill stat">{{cantidad_preguntas_respondidas}}</span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between">
+            Preguntas acertadas
+            <span class="badge rounded-pill stat">{{cantidad_preguntas_correctas}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            Promedio de acierto
+            <span class="badge rounded-pill stat">{{promedio_acierto}}%</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="row g-2 mt-4 align-items-center">
+        {{#isOwner}}
+        <div class="col-12 col-sm-auto">
+          <a href="/usuario/editar/{{usuario.id}}" class="btn btn-outline-primary-soft w-100">Editar perfil</a>
+        </div>
+        {{/isOwner}}
+
+        <div class="col-12 col-sm-auto ms-sm-auto">
+          <a href="/login/logout" class="btn btn-danger-soft w-100">Cerrar sesión</a>
+        </div>
+
+      </div>
+
+      </section>
+
+    </div>
     </div>
   </main>
 
 </body>
+
 </html>

@@ -18,7 +18,7 @@ class ReporteAdmin
         return $fecha;
     }
 
-    
+
 
     public function getTotalUsuarios(string $fechaDesde): int
     {
@@ -48,7 +48,7 @@ class ReporteAdmin
     {
         $sql = "SELECT COUNT(*) AS total 
                 FROM pregunta 
-                WHERE activa = 1";
+                WHERE estado_id = 1";
 
         $result = $this->db->query($sql);
         return $result[0]['total'] ?? 0;
@@ -63,7 +63,7 @@ class ReporteAdmin
         return $result[0]['total'] ?? 0;
     }
 
-    
+
     /* GRÁFICOS */
 
     public function getUsuariosPorPais(string $fechaDesde): array
