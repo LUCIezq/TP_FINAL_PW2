@@ -30,29 +30,33 @@ class MyConexion
     }
 
     public function executePrepared($sql, $types, $params)
-    {
-        $stmt = $this->conexion->prepare($sql);
+{
+    $stmt = $this->conexion->prepare($sql);
 
-        if (!$stmt) {
-            throw new Exception("Error en la preparación de la consulta: " . $this->conexion->error);
-        }
-
-        if ($types !== '' && !empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-
-        $stmt->execute();
-
-        if (str_starts_with(strtoupper(trim($sql)), 'SELECT')) {
-            return $stmt->get_result();
-        }
-
-        if (str_starts_with(strtoupper(trim($sql)), 'INSERT')) {
-            return $stmt->insert_id;
-        }
-
-        return $stmt->affected_rows;
+    if (!$stmt) {
+        throw new Exception("Error en la preparación de la consulta: " . $this->conexion->error);
     }
+
+    if ($types !== '' && !empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+
+    // SELECT
+    if (str_starts_with(strtoupper(trim($sql)), 'SELECT')) {
+        return $stmt->get_result();
+    }
+
+    // INSERT (FIX REAL)
+    if (str_starts_with(strtoupper(trim($sql)), 'INSERT')) {
+        return $this->conexion->insert_id;
+    }
+
+    // UPDATE / DELETE
+    return $stmt->affected_rows;
+}
+
     public function close()
     {
         $this->conexion ?? $this->conexion->close();
@@ -80,3 +84,4 @@ class MyConexion
         return $data;
     }
 }
+
