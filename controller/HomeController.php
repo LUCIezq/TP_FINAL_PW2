@@ -27,6 +27,8 @@ class HomeController
 
             $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
+            $ranking = $this->usuarioDao->calcularRankingDeUsuarios();
+
             $this->mustacheRenderer->render(
                 "home",
 
@@ -34,6 +36,7 @@ class HomeController
                     "usuario" => $_SESSION['user'],
                     "isLogged" => $_SESSION['logged_in'],
                     "jugadores" => $players,
+                    'ranking' => $ranking,
                     "isPlayer" => $_SESSION["user"]["rol_id"] === UserRole::JUGADOR
                 ]
             );

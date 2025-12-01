@@ -2,7 +2,7 @@
 
 class UsuarioDao
 {
-    private $dbConnection;
+    private MyConexion $dbConnection;
     private NivelDao $nivelDao;
 
     public function __construct($dbConnection, NivelDao $nivelDao)
@@ -335,6 +335,33 @@ class UsuarioDao
 
         return $this->dbConnection->processData($result)[0] ?? null;
 
+    }
+
+    public function calcularRankingDeUsuarios()
+    {
+        $sql = 'SELECT 
+                u.id,
+                u.nombre,
+                u.foto_perfil,
+                u.apellido,
+                    SUM(h.respondida_correctamente) AS total_aciertos,
+                    COUNT(*) AS total_respondidas,
+                    ROUND((SUM(h.respondida_correctamente) / COUNT(*))*100,1) AS ratio
+                FROM historial_partida h
+                JOIN usuario u ON u.id = h.usuario_id
+                GROUP BY u.id
+                ORDER BY ratio DESC';
+
+        $data = $this->dbConnection->query($sql);
+
+        if (!empty($data)) {
+            for ($i = 0; $i < count($data); $i++) {
+                $data[0]['indice'] = $i + 1;
+            }
+            return $data;
+        }
+
+        return [];
     }
 
     public function getAllUserAndRequests($userLoggedId)

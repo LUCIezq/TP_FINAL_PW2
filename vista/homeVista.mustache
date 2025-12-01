@@ -53,8 +53,11 @@
               class="sky-item text-center py-4 w-full d-flex gap-2 flex-column align-items-center justify-content-center">
               <h3 class="mb-4">¡Bienvenido a Questify!</h3>
 
-              <a href="/game/ruleta">
-                🎡 Jugar
+              <a href="/game/ruleta"
+                class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2 rounded-pill shadow-sm"
+                role="button" aria-label="Jugar Ruleta">
+                <span class="fs-5">🎡</span>
+                <span class="fw-semibold">Jugar</span>
               </a>
             </li>
           </ul>
@@ -68,8 +71,8 @@
 
           <ul class="panel-sky__list">
 
-            {{#ranking_promedio.lista}}
-            <li class="sky-item ranking-item {{clase_top}}" onclick="location.href='/usuario/perfil/{{id}}'">
+            {{#ranking}}
+            <li class="sky-item ranking-item">
 
               <div class="sky-item__avatar">
                 <img src="{{foto_perfil}}" alt="{{nombre}}">
@@ -77,19 +80,19 @@
 
               <div class="sky-item__body">
                 <div class="sky-item__title">
-                  {{posicion}}° — {{nombre}} {{apellido}}
+                  {{indice}}° — {{nombre}} {{apellido}}
                 </div>
                 <div class="text-muted">
-                  Promedio: <strong>{{promedio}}</strong>
+                  Promedio: <strong>{{ratio}} %</strong>
                 </div>
               </div>
 
             </li>
-            {{/ranking_promedio.lista}}
+            {{/ranking}}
 
-            {{^ranking_promedio.lista}}
+            {{^ranking}}
             <li class="sky-empty">No hay datos aún.</li>
-            {{/ranking_promedio.lista}}
+            {{/ranking}}
 
           </ul>
         </section>
