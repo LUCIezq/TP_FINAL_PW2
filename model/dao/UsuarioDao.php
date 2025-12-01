@@ -340,7 +340,7 @@ class UsuarioDao
     public function calcularRankingDeUsuarios()
     {
         $sql = 'SELECT 
-                u.id,
+                u.id as usuario_id,
                 u.nombre,
                 u.foto_perfil,
                 u.apellido,
@@ -350,13 +350,13 @@ class UsuarioDao
                 FROM historial_partida h
                 JOIN usuario u ON u.id = h.usuario_id
                 GROUP BY u.id
-                ORDER BY ratio DESC';
+                ORDER BY ratio DESC, total_respondidas DESC';
 
         $data = $this->dbConnection->query($sql);
 
         if (!empty($data)) {
             for ($i = 0; $i < count($data); $i++) {
-                $data[0]['indice'] = $i + 1;
+                $data[$i]['indice'] = $i + 1;
             }
             return $data;
         }

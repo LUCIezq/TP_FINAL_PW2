@@ -63,7 +63,7 @@ class UsuarioController
                 'cantidad_preguntas_respondidas' => $this->partidaDao->obtenerTotalDePreguntasRespondidas($usuario['id']),
                 'cantidad_preguntas_correctas' => $this->partidaDao->obtenerTotalDePreguntasCorrectas($usuario['id']),
                 'promedio_acierto' => $this->partidaDao->calcularPromedioDeAcierto($usuario['id']),
-                'puntos' => $this->usuarioDao->obtenerPuntosDelUsuario($_SESSION['user']['id'])
+                'puntos' => $this->usuarioDao->obtenerPuntosDelUsuario($usuario['id'])
             ]
         );
     }

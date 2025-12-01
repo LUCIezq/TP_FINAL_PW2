@@ -72,22 +72,26 @@
           <ul class="panel-sky__list">
 
             {{#ranking}}
-            <li class="sky-item ranking-item">
 
-              <div class="sky-item__avatar">
-                <img src="{{foto_perfil}}" alt="{{nombre}}">
-              </div>
+            <a href="/usuario/perfil/{{usuario_id}}" style="text-decoration: none;">
+              <li class="sky-item ranking-item">
 
-              <div class="sky-item__body">
-                <div class="sky-item__title">
-                  {{indice}}° — {{nombre}} {{apellido}}
+                <div class="sky-item__avatar">
+                  <img src="{{foto_perfil}}" alt="{{nombre}}">
                 </div>
-                <div class="text-muted">
-                  Promedio: <strong>{{ratio}} %</strong>
-                </div>
-              </div>
 
-            </li>
+                <div class="sky-item__body">
+                  <div class="sky-item__title">
+                    {{indice}}° — {{nombre}} {{apellido}}
+                  </div>
+                  <div class="text-muted">
+                    Promedio: <strong>{{ratio}} %</strong>
+                  </div>
+                </div>
+
+              </li>
+            </a>
+
             {{/ranking}}
 
             {{^ranking}}
