@@ -121,7 +121,6 @@ class GameController
                 return SendJSON::procesarJSON([
                     "status" => "time_out",
                     "correcta" => $correcta,
-                    'mensaje' => 'Tiempo agotado',
                     'redirect' => '/home/index'
                 ]);
             }

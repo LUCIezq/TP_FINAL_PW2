@@ -37,9 +37,8 @@ class ReporteController
         $motivo = trim($_POST['motivo'] ?? '');
         $detalle = trim($_POST['detalle'] ?? '');
         $pregunta_id = filter_input(INPUT_POST, 'pregunta_id', FILTER_VALIDATE_INT);
-        $usuario_id = filter_input(INPUT_POST, 'usuario_id', FILTER_VALIDATE_INT);
 
-        if (empty($motivo) || !$pregunta_id || !$usuario_id) {
+        if (empty($motivo) || !$pregunta_id || !$_SESSION['user']['id']) {
             $_SESSION['message'] = "Hubo un error al enviar el reporte. Por favor, complete todos los campos.";
             header("Location: /game/start");
             exit();
@@ -51,12 +50,12 @@ class ReporteController
                 $motivo,
                 $detalle,
                 $pregunta_id,
-                $usuario_id
+                $_SESSION['user']['id']
             );
 
             $state = $this->reporteDao->guardarReporte($reporte);
-            $_SESSION['message'] = $state;
-            header("Location: /game/start");
+
+            header('location:/game/start');
             exit();
 
         } catch (Exception $e) {

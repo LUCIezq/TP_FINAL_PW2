@@ -3,7 +3,7 @@
 class ReporteDao
 {
     private MyConexion $db;
-    private const CANTIDAD_MAXIMA_REPORTE = 1;
+    private const CANTIDAD_MAXIMA_REPORTE = 5;
     private PreguntasDao $preguntasDao;
     public function __construct(MyConexion $db, PreguntasDao $preguntasDao)
     {
@@ -99,7 +99,7 @@ class ReporteDao
             $reporte->getDetalle()
         ];
 
-        $types = "ssiss";
+        $types = "iiiss";
 
         $result = $this->db->executePrepared($sql, $types, $params) > 0;
 

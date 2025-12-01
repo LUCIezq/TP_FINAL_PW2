@@ -28,7 +28,7 @@ class ConfigFactory
 
         $this->renderer = new MustacheRenderer("vista");
 
-        $this->objetos["router"] = new NewRouter($this, "HomeController", "index");
+        $this->objetos["router"] = new NewRouter($this, "LoginController", "index");
 
         $this->objetos["RegisterController"] = new RegisterController(
             new GeneroDao($this->conexion),

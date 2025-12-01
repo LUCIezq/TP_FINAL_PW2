@@ -3,7 +3,6 @@ class AuthMiddleware
 {
     public static function verificar($controlador, $metodo)
     {
-        session_start();
 
         if (!isset($_SESSION['usuario'])) {
             header('Location: /login/index');

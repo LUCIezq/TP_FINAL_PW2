@@ -59,11 +59,12 @@ async function procesarRespuestaUsuario(respuesta_id = null) {
         pintarRespuestas(result.correcta, respuesta_id);
 
         if (result.status === 'time_out' || result.status === 'incorrecta' || result.status === 'finalizada' || result.status === 'no_more_questions') {
-            mensajeDiv.innerText = result.mensaje || "Fin de la partida.";
+            if (result.mensaje) {
+                mensajeDiv.innerText = result.mensaje;
+            }
             setTimeout(() => window.location.href = result.redirect || '/home/index', 2000);
 
         } else if (result.status === 'correcta') {
-            mensajeDiv.innerText = "✅ Respuesta correcta!";
             setTimeout(() => actualizarPregunta(result.siguiente_pregunta), 500)
         }
 

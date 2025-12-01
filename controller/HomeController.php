@@ -22,21 +22,9 @@ class HomeController
             header("location: /login/index");
             exit();
         }
-        if (isset($_SESSION['partida'])) {
-
-            $partidaId = $_SESSION['partida']['partida_id'];
-            $usuarioId = $_SESSION['user']['id'];
-            $puntaje = $_SESSION['partida']['puntaje'];
-            $ultimoId = $_SESSION['partida']['pregunta_actual_id'];
-
-            $this->gameDao->finalizarPartida($partidaId, $puntaje);
-            $this->gameDao->actualizarNivelUsuario($usuarioId);
-            $this->gameDao->actualizarDificultadDePregunta($ultimoId);
-
-            unset($_SESSION['partida']);
-        }
 
         if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
+
             $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
 
             $this->mustacheRenderer->render(
