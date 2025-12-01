@@ -1,10 +1,4 @@
 <?php
-// require_once __DIR__ . "/../model/dao/ReporteDao.php";
-// require_once __DIR__ . "/../model/dao/PreguntasDao.php"; // puse esto porque no me lo corria en el xampp
-// require_once __DIR__ . "/../model/dao/CategoryDao.php";
-// require_once __DIR__ . "/../model/dao/EstadoPreguntaDao.php";
-// require_once __DIR__ . "/../controller/ReporteController.php";
-// require_once __DIR__ . '/../model/dao/GameDao.php';
 
 class ConfigFactory
 {
@@ -34,35 +28,42 @@ class ConfigFactory
 
         $this->renderer = new MustacheRenderer("vista");
 
-        $this->objetos["router"] = new NewRouter($this, "PokemonController", "base");
+        $this->objetos["router"] = new NewRouter($this, "HomeController", "index");
 
         $this->objetos["RegisterController"] = new RegisterController(
             new GeneroDao($this->conexion),
-            new UsuarioDao($this->conexion),
+            new UsuarioDao($this->conexion, new NivelDao($this->conexion)),
             $this->renderer,
-            new RegisterModelDao($this->conexion, new UsuarioDao($this->conexion))
+            new RegisterModelDao($this->conexion, new UsuarioDao($this->conexion, new NivelDao($this->conexion)))
         );
         $this->objetos['LoginController'] = new LoginController(
             $this->renderer,
-            new LoginModelDao(new UsuarioDao($this->conexion)),
-            new UsuarioDao($this->conexion)
+            new LoginModelDao(new UsuarioDao($this->conexion, new NivelDao($this->conexion))),
+            new UsuarioDao($this->conexion, new NivelDao($this->conexion))
         );
 
         $this->objetos['ValidatorController'] = new ValidatorController(
-            new ValidatorModelDao(new UsuarioDao($this->conexion))
+            new ValidatorModelDao(new UsuarioDao($this->conexion, new NivelDao($this->conexion)))
         );
 
         $this->objetos['HomeController'] = new HomeController(
             $this->renderer,
-            new UsuarioDao($this->conexion),
-            new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)),
-            new GameDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)))
+            new UsuarioDao($this->conexion, new NivelDao($this->conexion)),
+            new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion, new NivelDao($this->conexion))),
+            new GameDao(
+                $this->conexion,
+                new CategoryDao($this->conexion),
+                new UsuarioDao($this->conexion, new NivelDao($this->conexion)),
+                new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion)),
+                new PartidaDao($this->conexion),
+                new HistorialPartidaDao($this->conexion)
+            )
         );
-        $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion)));
+        $this->objetos['SolicitudPartidaController'] = new SolicitudPartidaController(new SolicitudPartidaDao($this->conexion, new UsuarioDao($this->conexion, new NivelDao($this->conexion))));
 
 
         $this->objetos['UsuarioController'] = new UsuarioController(
-            new UsuarioDao($this->conexion),
+            new UsuarioDao($this->conexion, new NivelDao($this->conexion)),
             $this->renderer,
             new PartidaDao($this->conexion)
         );
@@ -71,11 +72,7 @@ class ConfigFactory
         $this->objetos['PreguntasController'] = new PreguntasController(
             $this->renderer,
             new CategoryDao($this->conexion),
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))
-        );
-
-        $this->objetos['CategoriaController'] = new CategoriaController(
-            new CategoryDao($this->conexion)
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion))
         );
 
         $this->objetos['EditorController'] = new EditorController(
@@ -83,9 +80,9 @@ class ConfigFactory
                 $this->conexion,
             ),
             $this->renderer,
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion)),
             new CategoryDao($this->conexion),
-            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))),
+            new ReporteDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion))),
             new EstadoPreguntaDao($this->conexion)
         );
         $this->objetos['AdminController'] = new AdminController(
@@ -96,23 +93,30 @@ class ConfigFactory
         $this->objetos['ReporteController'] = new ReporteController(
             new ReporteDao(
                 $this->conexion,
-                new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))
+                new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion))
             ),
             $this->renderer,
-            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion)),
+            new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion)),
         );
 
-        require_once 'model/dao/GameDao.php';
-        require_once 'controller/GameController.php';
+
         $this->objetos['GameController'] = new GameController(
             $this->renderer,
-            new GameDao($this->conexion, new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion))),
-            new GeneroDao($this->conexion)
+            new GameDao(
+                $this->conexion,
+                new CategoryDao($this->conexion),
+                new UsuarioDao($this->conexion, new NivelDao($this->conexion)),
+                new PreguntasDao($this->conexion, new CategoryDao($this->conexion), new EstadoPreguntaDao($this->conexion), new NivelDao($this->conexion)),
+                new PartidaDao($this->conexion),
+                new HistorialPartidaDao($this->conexion)
+            )
         );
 
+        $this->objetos['GeneroController'] = new GeneroController(
+            new CategoryDao($this->conexion)
+        );
 
     }
-
 
     public function get($objectName)
     {

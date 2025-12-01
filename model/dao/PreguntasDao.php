@@ -5,12 +5,14 @@ class PreguntasDao
     private MyConexion $conexion;
     private CategoryDao $categoryDao;
     private EstadoPreguntaDao $estadoPreguntaDao;
+    private NivelDao $nivelDao;
 
-    public function __construct(MyConexion $conexion, CategoryDao $categoryDao, EstadoPreguntaDao $estadoPreguntaDao)
+    public function __construct(MyConexion $conexion, CategoryDao $categoryDao, EstadoPreguntaDao $estadoPreguntaDao, NivelDao $nivelDao)
     {
         $this->conexion = $conexion;
         $this->categoryDao = $categoryDao;
         $this->estadoPreguntaDao = $estadoPreguntaDao;
+        $this->nivelDao = $nivelDao;
     }
 
     public function getPreguntasPorCategoria($idCategoria)
@@ -22,6 +24,30 @@ class PreguntasDao
         $result = $this->conexion->executePrepared($sql, $types, $params);
 
         return $this->conexion->processData($result);
+    }
+
+    public function obtenerPreguntaParaPartidaEnCurso($genero_id, $nivelUsuarioId, $preguntasUsadas)
+    {
+        $placeholders = count($preguntasUsadas) ? rtrim(str_repeat('?,', count($preguntasUsadas)), ',') : null;
+        $sql = "SELECT p.id, p.genero_id, p.texto
+            FROM pregunta p
+            WHERE p.genero_id = ?
+            AND p.nivel_id = ?
+            AND p.estado_id = 1"
+            . ($placeholders ? " AND p.id NOT IN ($placeholders)" : "") .
+            " ORDER BY RAND() LIMIT 1";
+
+        $types = 'ii' . str_repeat('i', count($preguntasUsadas));
+        $params = [$genero_id, $nivelUsuarioId, ...$preguntasUsadas];
+
+        $data = $this->conexion->processData($this->conexion->executePrepared($sql, $types, $params));
+
+        if (!empty($data)) {
+            $data[0]['respuestas'] = $this->obtenerRespuestasPorIdPregunta($data[0]['id']);
+            return $data[0];
+        }
+
+        return null;
     }
 
     public function createQuestion($data)
@@ -56,10 +82,9 @@ class PreguntasDao
         }
         return $idPregunta > 0 && $result != null;
     }
-
     public function obtenerRespuestaCorrecta($preguntaId)
     {
-        $sql = "SELECT texto 
+        $sql = "SELECT *
                 FROM respuesta 
                 WHERE pregunta_id = ? 
                 AND es_correcta = 1";
@@ -68,9 +93,8 @@ class PreguntasDao
             $this->conexion->executePrepared($sql, "i", [$preguntaId])
         );
 
-        return $data[0]['texto'] ?? '';
+        return $data[0];
     }
-
     public function createAnswer($text, $isCorrect, $questionId)
     {
         $sql = "INSERT into respuesta (texto,es_correcta,pregunta_id)
@@ -86,7 +110,6 @@ class PreguntasDao
 
         return $this->conexion->executePrepared($sql, $types, $params);
     }
-
     public function obtenerPreguntasSugeridas()
     {
         $sql = " SELECT 
@@ -139,6 +162,20 @@ class PreguntasDao
         return array_values($questions);
     }
 
+    public function obtenerPreguntaPorIdParaPartida($idPregunta)
+    {
+        $sql = 'SELECT * FROM pregunta WHERE id = ?';
+        $params = [$idPregunta];
+        $types = 'i';
+
+        $data = $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        )[0];
+
+        $data['respuestas'] = $this->obtenerRespuestasPorIdPregunta($data['id']);
+
+        return $data;
+    }
     public function obtenerPreguntaPorId($id)
     {
         $sql = "SELECT 
@@ -188,7 +225,6 @@ class PreguntasDao
 
         return $pregunta;
     }
-
     public function getQuestionById($id)
     {
 
@@ -227,7 +263,6 @@ class PreguntasDao
         }
         return array_values($questions)[0] ?? null;
     }
-
     public function aprobarPregunta($preguntas)
     {
         $cantidad = count($preguntas);
@@ -260,7 +295,6 @@ class PreguntasDao
 
         return $this->conexion->executePrepared($sql, $types, $params) > 0;
     }
-
     public function actualizarPregunta($data)
     {
         $cambios = [];
@@ -305,7 +339,7 @@ class PreguntasDao
             $hayCambios = true;
         }
 
-        $respuestasBd = $this->obtenerRespuestasPorId($preguntaEnBd['id']);
+        $respuestasBd = $this->obtenerRespuestasPorIdPregunta($preguntaEnBd['id']);
 
         foreach ($respuestasBd as $respuestaBd) {
             $rid = $respuestaBd['id'];
@@ -358,7 +392,6 @@ class PreguntasDao
         $typesUpdate = 'si';
         $this->conexion->executePrepared($sql, $typesUpdate, $paramsUpdate);
     }
-
     public function actualizarRespuestaCorrecta($idCorrecta, $idPregunta)
     {
         $sql = 'UPDATE respuesta
@@ -374,16 +407,26 @@ class PreguntasDao
         $types = 'ii';
         $this->conexion->executePrepared($sql, $types, $params);
     }
-
-    public function obtenerRespuestasPorId($preguntaId)
+    public function obtenerRespuestasPorIdPregunta($preguntaId)
     {
-        $sql = "SELECT id,texto
+        $sql = "SELECT id,texto,es_correcta
         from respuesta 
         where pregunta_id = ?";
 
         return $this->conexion->processData(
             $this->conexion->executePrepared($sql, 'i', [$preguntaId])
         );
+    }
+
+    public function obtenerRespuestasPorIdRespuesta($idRespuesta)
+    {
+        $sql = "SELECT *
+        from respuesta 
+        where id = ?";
+
+        return $this->conexion->processData(
+            $this->conexion->executePrepared($sql, 'i', [$idRespuesta])
+        )[0];
     }
 
     public function obtenerRespuestaCorrectaPorIdPregunta($preguntaId)
@@ -398,7 +441,6 @@ class PreguntasDao
             $this->conexion->executePrepared($sql, $types, $params)
         )[0] ?? null;
     }
-
     public function eliminarPreguntasPorIds($ids)
     {
         if (empty($ids)) {
@@ -463,7 +505,6 @@ class PreguntasDao
 
         return array_values($questions);
     }
-
     public function verificarRespuesta($respuestaId, $preguntaId)
     {
         $sql = "SELECT es_correcta 
@@ -476,5 +517,89 @@ class PreguntasDao
         );
 
         return $data[0]['es_correcta'] ?? null;
+    }
+    public function obtenerPreguntaInicial($generoId, $nivelUsuarioId)
+    {
+
+        $sql = "SELECT id,genero_id,texto 
+            FROM pregunta 
+            WHERE genero_id = ? 
+            AND nivel_id = ?
+            AND estado_id = 1
+            ORDER BY RAND() LIMIT 1";
+
+        $data = $this->conexion->processData(
+            $this->conexion->executePrepared(
+                $sql,
+                "ii",
+                [$generoId, $nivelUsuarioId]
+            )
+        );
+
+        $data[0]['respuestas'] = $this->obtenerRespuestasPorIdPregunta($data[0]['id']);
+
+        return $data[0];
+    }
+    public function obtenerVecesMostradaUnaPregunta($idPregunta)
+    {
+        $sql = 'SELECT COUNT(*) as veces_mostrada
+                FROM historial_partida
+                where pregunta_id = ?';
+
+        $types = 'i';
+        $params = [$idPregunta];
+
+        return $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        )[0]['veces_mostrada'];
+    }
+    public function obtenerVecesCorrectaUnaPregunta($idPregunta)
+    {
+        $sql = 'SELECT COUNT(*) as veces_correcta
+                FROM historial_partida
+                where pregunta_id = ?
+                and respondida_correctamente = ?';
+
+        $types = 'ii';
+        $params = [$idPregunta, 1];
+
+        return $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        )[0]['veces_correcta'];
+    }
+    public function calcularRatioDePregunta($idPregunta)
+    {
+        $vecesCorrecta = $this->obtenerVecesCorrectaUnaPregunta($idPregunta);
+        $vecesMostrada = $this->obtenerVecesMostradaUnaPregunta($idPregunta);
+
+        if ($vecesMostrada === 0) {
+            return 0;
+        }
+        return 1 - $vecesCorrecta / $vecesMostrada;
+    }
+    public function actualizarDificultadDePregunta($idPregunta)
+    {
+        $ratio = $this->calcularRatioDePregunta($idPregunta);
+        $nuevoNivelId = $this->nivelDao->obtenerIdNivelSegunRatio($ratio);
+
+        $sql = 'UPDATE pregunta 
+                SET nivel_id = ?
+                WHERE id = ?';
+
+        $types = 'ii';
+        $params = [$nuevoNivelId, $idPregunta];
+
+        return $this->conexion->executePrepared($sql, $types, $params) > 0;
+    }
+    public function obtenerRespuestaPorIdDeRespuesta($idRespuesta)
+    {
+        $sql = 'SELECT * FROM respuesta
+                WHERE id = ?';
+        $types = 'i';
+        $params = [$idRespuesta];
+
+        return $this->conexion->processData(
+            $this->conexion->executePrepared($sql, $types, $params)
+        )[0];
     }
 }

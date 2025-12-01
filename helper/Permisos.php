@@ -8,9 +8,6 @@ return [
         'perfil' => [UserRole::JUGADOR],
         'getCountryAndCity' => [UserRole::ADMIN],
     ],
-    'CategoriaController' => [
-        'getAll' => [UserRole::ADMIN],
-    ],
     'AdminController' => [
         'index' => [UserRole::ADMIN],
     ],

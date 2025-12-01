@@ -5,16 +5,12 @@ class GameController
     private MustacheRenderer $renderer;
     private GameDao $gameDao;
 
-    private GeneroDao $generoDao;
-
-    public function __construct(MustacheRenderer $renderer, GameDao $gameDao, GeneroDao $generoDao)
+    public function __construct(MustacheRenderer $renderer, GameDao $gameDao)
     {
         $this->renderer = $renderer;
         $this->gameDao = $gameDao;
-        $this->generoDao = $generoDao;
     }
-
-    public function base()
+    public function ruleta()
     {
         if (!IsLogged::isLogged()) {
             header("location: /login/index");
@@ -26,281 +22,215 @@ class GameController
 
     public function start()
     {
-
         if (!IsLogged::isLogged()) {
-            header("location: /login/index");
+            header('location:/login/index');
             exit();
         }
-
-        $usuarioId = $_SESSION['user']['id'];
 
         if (isset($_SESSION['partida'])) {
-
-            $p = $_SESSION['partida'];
-            $info = $this->gameDao->obtenerPreguntaEnCurso($p['id']);// aca deberia obtener la pregunta actual que se manda por session (id de pregunta)
-
-            if ($info && !empty($info["pregunta_actual_id"])) {
-
-                $preguntaId = $info["pregunta_actual_id"];
-
-                $pregunta = $this->gameDao->obtenerPreguntaPorId($preguntaId);
-
-                $tiempo = $this->gameDao->obtenerTiempoRestante($p['id']);
-
-                if ($tiempo["tiempo_agotado"]) {
-
-                    $correcta = $this->gameDao->obtenerRespuestaCorrecta($preguntaId);
-                    $this->gameDao->actualizarEstadoPartida($p['id'], "PERDIDA");
-                    unset($_SESSION['partida']);
-
-                    $this->renderer->render("gameTiempoVencido", [
-                        "correcta" => $correcta
-                    ]);
-                    return;
-                }
-
-                $respuestas = $this->gameDao->obtenerRespuestas($preguntaId);
-
-                $this->renderer->render("gamePregunta", [
-                    "partida_id" => $p['id'],
-                    "pregunta" => $pregunta,
-                    "respuestas" => $respuestas,
-                    "usuario_id" => $usuarioId,
-                    "tiempo_restante" => $tiempo["segundos_restantes"]
-                ]);
-                return;
-            }
-        }
-
-        $generoNombre = $_POST['genero'] ?? null;
-
-        if (!$generoNombre) {
-            header("location: /game");
-            exit();
-        }
-
-        $genero = $this->generoDao->obtenerGeneroPorNombre($generoNombre);
-
-        if (!$genero) {
-            $this->renderer->render("gameRuleta", [
-                "mensaje_error" => "No se encontró el género seleccionado."
-            ]);
+            $this->cargarPartidaEnCurso();
             return;
         }
 
-        $generoId = (int) $genero['id'];
+        $genero_id = $this->obtenerGeneroId();
 
-        $tipoDificultad = $this->gameDao->obtenerDificultadIdealUsuario($usuarioId);
+        if (!$genero_id) {
+            header('location:/game/ruleta');
+            exit();
+        }
 
-        $partidaId = $this->gameDao->crearPartida($usuarioId, $generoId);
+        try {
+            $data = $this->gameDao->inicializarJuego($genero_id, $_SESSION['user']);
+            $_SESSION['partida'] = $data;
 
-        $_SESSION['partida'] = [
-            'id' => $partidaId,
-            'usuario_id' => $usuarioId,
-            'genero_id' => $generoId,
-            'preguntas_respondidas' => 0
+            header('location:/game/start');
+            exit();
+
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+
+    private function cargarPartidaEnCurso()
+    {
+        $partida = $_SESSION['partida'];
+
+        $preguntaId = $partida['pregunta_actual_id'];
+        $pregunta = $this->gameDao->obtenerPreguntaPorIdParaPartida($preguntaId);
+
+        $transcurrido = time() - $partida['tiempo_inicio'];
+
+        $this->renderer->render("gamePregunta", [
+            "pregunta" => $pregunta,
+            "usuario" => $_SESSION['user'],
+            "tiempo_restante" => $partida['tiempo_limite'] - $transcurrido,
+            "tiempo_limite" => $partida['tiempo_limite'],
+            "partida_id" => $partida['partida_id']
+        ]);
+    }
+
+    private function obtenerGeneroId()
+    {
+        $options = [
+            "options" => [
+                "min_range" => 1,
+                "max_range" => PHP_INT_MAX
+            ]
         ];
 
-        $pregunta = $this->gameDao->obtenerPreguntaSegunDificultad(
-            $generoId,
-            $usuarioId,
-            $tipoDificultad
-        );
-
-        if (!$pregunta) {
-            $pregunta = $this->gameDao->obtenerPreguntaSimple($generoId, $usuarioId);
-        }
-
-        if (!$pregunta) {
-            unset($_SESSION['partida']);
-            header("location: /home/index");
-            exit();
-        }
-
-        $this->gameDao->marcarInicioPregunta($partidaId, $pregunta['id']);
-
-        $tiempo = $this->gameDao->obtenerTiempoRestante($partidaId);
-
-        if ($tiempo["tiempo_agotado"]) {
-
-            $textoCorrecta = $this->gameDao->obtenerRespuestaCorrecta($pregunta['id']);
-            $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
-            unset($_SESSION['partida']);
-
-            $this->renderer->render("gameTiempoVencido", [
-                "correcta" => $textoCorrecta
-            ]);
-            return;
-        }
-
-        $respuestas = $this->gameDao->obtenerRespuestas($pregunta['id']);
-
-        $this->renderer->render("gamePregunta", [
-            "partida_id" => $partidaId,
-            "pregunta" => $pregunta,
-            "respuestas" => $respuestas,
-            "usuario_id" => $usuarioId,
-            "tiempo_restante" => $tiempo["segundos_restantes"]
-        ]);
+        $idSanitizado = filter_input(INPUT_POST, 'genero', FILTER_SANITIZE_NUMBER_INT);
+        return filter_var($idSanitizado, FILTER_VALIDATE_INT, $options);
     }
 
-    public function respuesta()
+    public function responder()
     {
-        header('Content-Type: application/json');
-
         if (!IsLogged::isLogged()) {
-            echo json_encode(["error" => "No autorizado"]);
-            exit();
-        }
-
-        $respuestaId = $_POST['respuesta_id'] ?? null;
-        $preguntaId = $_POST['pregunta_id'] ?? null;
-        $partidaId = $_POST['partida_id'] ?? null;
-        $usuarioId = $_SESSION['user']['id'] ?? null;
-
-        if (!$respuestaId || !$preguntaId || !$partidaId || !$usuarioId) {
-            echo json_encode(["error" => "Datos incompletos"]);
-            exit();
-        }
-
-        //$tiempo = $this->gameDao->obtenerTiempoRestante($partidaId);
-
-        /*if ($tiempo["tiempo_agotado"]) {
-
-            $textoCorrecta = $this->gameDao->obtenerRespuestaCorrecta($preguntaId);
-            $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
-
-            unset($_SESSION['partida']);
-
-            echo json_encode([
-                "correcta" => false,
-                "correcta_texto" => $textoCorrecta,
-                "tiempo_agotado" => true
+            return SendJSON::procesarJSON([
+                "status" => "no_auth",
+                "redirect" => "/login/index"
             ]);
-            exit();
-        }*/
-
-        $esCorrecta = $this->gameDao->verificarRespuesta($respuestaId, $preguntaId);
-
-        if ($esCorrecta === null) {
-            echo json_encode(["error" => "Error al validar"]);
-            exit();
         }
 
-        $this->gameDao->insertarHistorial(
-            $usuarioId,
-            $partidaId,
-            $preguntaId,
-            (int) $esCorrecta === 1
+        if (!isset($_SESSION['partida'])) {
+            return SendJSON::procesarJSON([
+                "status" => "no_game",
+                "redirect" => "/home/index"
+            ]);
+        }
+
+        $json = file_get_contents("php://input");
+        $data = json_decode($json, true);
+
+        if (!isset($data['pregunta_id'])) {
+            return SendJSON::procesarJSON([
+                "status" => "invalid_request",
+                "message" => "Datos incompletos."
+            ]);
+        }
+
+        $preguntaId = (int) $data['pregunta_id'];
+        $respuestaId = $data['respuesta_id'] ?? null;
+
+        if ($respuestaId === null) {
+            if ($this->tiempoExpirado()) {
+
+                $correcta = $_SESSION['partida']['respuesta_correcta_id'];
+
+                $this->finalizarPartidaSinRedirect();
+
+                return SendJSON::procesarJSON([
+                    "status" => "time_out",
+                    "correcta" => $correcta,
+                    'mensaje' => 'Tiempo agotado',
+                    'redirect' => '/home/index'
+                ]);
+            }
+        }
+
+        $respuestaId = (int) $respuestaId;
+
+        $this->validarPreguntaYRespuesta($preguntaId, $respuestaId);
+
+        $esCorrecta = $respuestaId === $_SESSION['partida']['respuesta_correcta_id'];
+
+        $this->gameDao->guardarRespuestaEnHistorial($_SESSION['user']['id'], $_SESSION['partida']['partida_id'], $preguntaId, $esCorrecta ? 1 : 0);
+
+        if (!$esCorrecta) {
+            $correcta = $_SESSION['partida']['respuesta_correcta_id'];
+
+            $this->finalizarPartidaSinRedirect();
+            return SendJSON::procesarJSON([
+                "status" => "incorrecta",
+                "correcta" => $correcta,
+                "respuesta_usuario" => $respuestaId
+            ]);
+        }
+        $this->procesarRespuestaCorrecta();
+    }
+    private function tiempoExpirado()
+    {
+        $inicio = $_SESSION['partida']['tiempo_inicio'];
+        $limite = $_SESSION['partida']['tiempo_limite'];
+
+        return time() - $inicio >= $limite;
+    }
+    private function validarPreguntaYRespuesta($idPregunta, $idRespuesta)
+    {
+        if (!is_numeric($idPregunta) || !is_numeric($idRespuesta)) {
+            SendJSON::procesarJSON(["mensaje" => "Datos inválidos."]);
+        }
+
+        if ($idPregunta != $_SESSION['partida']['pregunta_actual_id']) {
+            SendJSON::procesarJSON(["mensaje" => "Pregunta fuera de contexto."]);
+        }
+
+        $respuesta = $this->gameDao->obtenerRespuestaPorIdRespuesta($idRespuesta);
+
+        if (!$respuesta) {
+            SendJSON::procesarJSON(["mensaje" => "Respuesta inexistente."]);
+        }
+
+        if ($respuesta['pregunta_id'] != $idPregunta) {
+            SendJSON::procesarJSON(["mensaje" => "La respuesta no corresponde a la pregunta."]);
+        }
+    }
+    private function procesarRespuestaCorrecta()
+    {
+        $usuarioId = $_SESSION['user']['id'];
+        $preguntaId = $_SESSION['partida']['pregunta_actual_id'];
+        $correctaAnterior = $_SESSION['partida']['respuesta_correcta_id'];
+        $_SESSION['partida']['puntaje']++;
+
+        $this->gameDao->actualizarDificultadDePregunta($preguntaId);
+
+        $nivelUsuario = $this->gameDao->obtenerNivelIdUsuario($usuarioId);
+
+        $nuevaPregunta = $this->gameDao->obtenerPreguntaParaPartidaEnCurso(
+            $_SESSION['partida']['genero_id'],
+            $nivelUsuario,
+            $_SESSION['partida']['preguntas_usadas']
         );
 
-        if ((int) $esCorrecta === 1) {
+        if (!$nuevaPregunta) {
+            $this->finalizarPartidaSinRedirect();
 
-            $this->gameDao->sumarPunto($usuarioId);
-
-            $_SESSION['partida']['preguntas_respondidas']++;
-
-            if ($_SESSION['partida']['preguntas_respondidas'] >= 5) {
-                $this->gameDao->actualizarEstadoPartida($partidaId, "COMPLETADA");
-                unset($_SESSION['partida']);
-
-                echo json_encode([
-                    "fin" => true,
-                    "mensaje" => "🎉 ¡Partida completada!"
-                ]);
-                exit();
-            }
-
-            echo json_encode([
-                "correcta" => true,
-                "continuar" => true
+            return SendJSON::procesarJSON([
+                "status" => "no_more_questions",
+                'mensaje' => '¡Increíble! 🎉 Has respondido a TODAS las preguntas de esta categoría!',
+                "correcta" => $correctaAnterior
             ]);
-            exit();
         }
 
-        $textoCorrecta = $this->gameDao->obtenerRespuestaCorrecta($preguntaId);
+        $respuestaCorrecta = $this->gameDao->obtenerRespuestaCorrecta($nuevaPregunta['id']);
 
-        $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
-        unset($_SESSION['partida']);
+        $_SESSION['partida']['pregunta_actual_id'] = $nuevaPregunta['id'];
+        $_SESSION['partida']['respuesta_correcta_id'] = $respuestaCorrecta['id'];
+        $_SESSION['partida']['tiempo_inicio'] = time();
+        $_SESSION['partida']['preguntas_usadas'][] = $nuevaPregunta['id'];
 
-        echo json_encode([
-            "correcta" => false,
-            "correcta_texto" => $textoCorrecta
+        return SendJSON::procesarJSON([
+            'status' => 'correcta',
+            'mensaje' => 'correcta',
+            'siguiente_pregunta' => $nuevaPregunta,
+            "correcta" => $correctaAnterior,
+            'preguntas_usadas' => $_SESSION['partida']['preguntas_usadas']
         ]);
     }
-
-
-    public function siguientePregunta()
+    private function finalizarPartidaSinRedirect()
     {
-        if (!IsLogged::isLogged() || !isset($_SESSION['partida'])) {
-            header("location: /home/index");
-            exit();
-        }
-
-        $p = $_SESSION['partida'];
-
-        $info = $this->gameDao->obtenerPreguntaEnCurso($p['id']);
-
-        if ($info && !empty($info["pregunta_actual_id"])) {
-
-            $preguntaId = $info["pregunta_actual_id"];
-            $pregunta = $this->gameDao->obtenerTextoPregunta($preguntaId);
-
-            $tiempo = $this->gameDao->obtenerTiempoRestante($p['id']);
-
-            if ($tiempo["tiempo_agotado"]) {
-                $correcta = $this->gameDao->obtenerRespuestaCorrecta($preguntaId);
-                $this->gameDao->actualizarEstadoPartida($p['id'], "PERDIDA");
-                unset($_SESSION['partida']);
-
-                $this->renderer->render("gameTiempoVencido", [
-                    "correcta" => $correcta
-                ]);
-                return;
-            }
-
-            $respuestas = $this->gameDao->obtenerRespuestas($preguntaId);
-
-            $this->renderer->render("gamePregunta", [
-                "partida_id" => $p['id'],
-                "pregunta" => $pregunta,
-                "respuestas" => $respuestas,
-                "tiempo_restante" => $tiempo["segundos_restantes"]
-            ]);
-
+        if (!isset($_SESSION['partida'])) {
             return;
         }
 
-        $tipoDificultad = $this->gameDao->obtenerDificultadIdealUsuario($p['usuario_id']);
+        $partidaId = $_SESSION['partida']['partida_id'];
+        $usuarioId = $_SESSION['user']['id'];
+        $puntaje = $_SESSION['partida']['puntaje'];
+        $ultimoId = $_SESSION['partida']['pregunta_actual_id'];
 
-        $pregunta = $this->gameDao->obtenerPreguntaSegunDificultad(
-            $p['genero_id'],
-            $p['usuario_id'],
-            $tipoDificultad
-        );
+        $this->gameDao->finalizarPartida($partidaId, $puntaje);
+        $this->gameDao->actualizarNivelUsuario($usuarioId);
+        $this->gameDao->actualizarDificultadDePregunta($ultimoId);
 
-        if (!$pregunta) {
-            $pregunta = $this->gameDao->obtenerPreguntaSimple($p['genero_id'], $p['usuario_id']);
-        }
-
-        if (!$pregunta) {
-            unset($_SESSION['partida']);
-            header("location: /home/index");
-            exit();
-        }
-
-        $this->gameDao->marcarInicioPregunta($p['id'], $pregunta['id']);
-
-        $tiempo = $this->gameDao->obtenerTiempoRestante($p['id']);
-
-        $respuestas = $this->gameDao->obtenerRespuestas($pregunta['id']);
-
-        $this->renderer->render("gamePregunta", [
-            "partida_id" => $p['id'],
-            "pregunta" => $pregunta,
-            "respuestas" => $respuestas,
-            "tiempo_restante" => $tiempo["segundos_restantes"]
-        ]);
+        unset($_SESSION['partida']);
     }
-
 }

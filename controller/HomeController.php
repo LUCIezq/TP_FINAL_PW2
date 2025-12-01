@@ -24,15 +24,15 @@ class HomeController
             exit();
         }
         // Si existe una partida en curso y el usuario volvió al Home → PERDIDA
-        if (isset($_SESSION['partida'])) {
-            $partidaId = $_SESSION['partida']['id'];
+        // if (isset($_SESSION['partida'])) {
+        //     $partidaId = $_SESSION['partida']['id'];
 
-            // Marcar como perdida
-            // $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
+        //     // Marcar como perdida
+        //     // $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
 
-            // Borrar sesión
-            unset($_SESSION['partida']);
-        }
+        //     // Borrar sesión
+        //     unset($_SESSION['partida']);
+        // }
 
 
         if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
@@ -54,7 +54,7 @@ class HomeController
             //         $jugador['clase_top'] = "topN";
             // }
 
-            unset($jugador);
+            // unset($jugador);
 
             // $estadisticas = $this->gameDao->obtenerEstadisticasUsuario($_SESSION['user']['id']);
 
@@ -74,7 +74,6 @@ class HomeController
         if ($_SESSION['user']['rol_id'] == UserRole::EDITOR) {
             header("location: /editor/index");
             exit();
-
         }
 
     }

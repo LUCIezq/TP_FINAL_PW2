@@ -3,10 +3,102 @@
 class UsuarioDao
 {
     private $dbConnection;
+    private NivelDao $nivelDao;
 
-    public function __construct($dbConnection)
+    public function __construct($dbConnection, NivelDao $nivelDao)
     {
         $this->dbConnection = $dbConnection;
+        $this->nivelDao = $nivelDao;
+    }
+
+    public function obtenerNivelUsuario($usuarioId)
+    {
+        $sql = "SELECT nivel_id FROM usuario WHERE id = ?";
+        $types = "i";
+        $params = [$usuarioId];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        $data = $this->dbConnection->processData($result);
+
+        return $data[0]['nivel_id'] ?? null;
+    }
+
+    public function obtenerPuntosDelUsuario($idUsuario)
+    {
+        $sql = 'SELECT SUM(puntos_alcanzados) AS total_puntos
+            FROM partida 
+            WHERE usuario_id = ?';
+        $types = 'i';
+        $params = [$idUsuario];
+
+        $result = $this->dbConnection->executePrepared($sql, $types, $params);
+
+        $data = $this->dbConnection->processData($result);
+
+
+        if (!empty($data)) {
+            return $data[0]['total_puntos'] ?? 0;
+        }
+
+        return 0;
+    }
+
+    public function obtenerCantidadDePreguntasRespondidasPorElUsuario($idUsuario)
+    {
+        $sql = 'SELECT COUNT(*) as preguntas_respondidas
+                FROM historial_partida
+                where usuario_id = ?';
+
+        $types = 'i';
+        $params = [$idUsuario];
+
+        return $this->dbConnection->processData(
+            $this->dbConnection->executePrepared($sql, $types, $params)
+        )[0]['preguntas_respondidas'];
+    }
+
+    public function obtenerCantidadDeRespuestasCorrectas($idUsuario)
+    {
+        $sql = 'SELECT COUNT(*) as preguntas_correctas
+                FROM historial_partida
+                where usuario_id = ?
+                and respondida_correctamente = ?';
+
+        $types = 'ii';
+        $params = [$idUsuario, 1];
+
+        return $this->dbConnection->processData(
+            $this->dbConnection->executePrepared($sql, $types, $params)
+        )[0]['preguntas_correctas'];
+    }
+
+    public function calcularRatioDeUsuario($idUsuario)
+    {
+        $respuestas_correctas = $this->obtenerCantidadDeRespuestasCorrectas($idUsuario);
+        $respuestas_jugadas = $this->obtenerCantidadDePreguntasRespondidasPorElUsuario($idUsuario);
+
+        if ($respuestas_jugadas === 0) {
+            return 0.0;
+        }
+
+        return $respuestas_correctas / $respuestas_jugadas;
+    }
+
+    //Este es el metodo que tengo que ejecutar cada vez que el usuario responde
+    public function actualizarNivelUsuario($idUsuario)
+    {
+        $ratio = $this->calcularRatioDeUsuario($idUsuario);
+        $nuevoNivelId = $this->nivelDao->obtenerIdNivelSegunRatio($ratio);
+
+        $sql = 'UPDATE usuario 
+                SET nivel_id = ?
+                WHERE id = ?';
+
+        $types = 'ii';
+        $params = [$nuevoNivelId, $idUsuario];
+
+        return $this->dbConnection->executePrepared($sql, $types, $params) > 0;
     }
 
     public function actualizarPerfil($data)
@@ -182,7 +274,7 @@ class UsuarioDao
     public function obtenerUsuarioPorId($id)
     {
         $sql = "SELECT * FROM usuario WHERE id = ?";
-        $types = "s";
+        $types = "i";
         $params = [$id];
 
         $result = $this->dbConnection->executePrepared($sql, $types, $params);

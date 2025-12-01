@@ -18,7 +18,7 @@ class HistorialPartidaDao
         return $this->conexion->executePrepared(
             $sql,
             "iiii",
-            [$usuarioId, $partidaId, $preguntaId, $esCorrecta ? 1 : 0]
+            [$usuarioId, $partidaId, $preguntaId, $esCorrecta]
         );
     }
 }

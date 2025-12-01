@@ -11,11 +11,19 @@ class PartidaDao
 
     public function crearPartida($usuarioId, $generoId)
     {
-        $sql = "INSERT INTO partida 
-        (usuario_id, genero_actual_id,estado_partida_id)
-        VALUES (?,?,?)";
 
-        return $this->conexion->executePrepared($sql, "iii", [$usuarioId, $generoId, EstadoPartida::EN_PROGRESO->value]);
+        $sql = "INSERT INTO partida 
+        (usuario_id, genero_id,estado_partida_id,puntos_alcanzados,fecha_inicio)
+        VALUES (?,?,?,?,NOW())";
+
+        $params = [
+            $usuarioId,
+            $generoId,
+            EstadoPartida::EN_PROGRESO->value,
+            0
+        ];
+
+        return $this->conexion->executePrepared($sql, 'iiii', $params);
     }
 
     public function actualizarEstadoPartida($partidaId, $estadoId)

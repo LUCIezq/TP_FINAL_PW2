@@ -1,31 +1,22 @@
-# --- Seguridad básica (compatible con InfinityFree) ---
-# No usar Options o deny, porque InfinityFree lo bloquea
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # Página de inicio (por defecto al controlador login)
+    # Página de inicio
     RewriteRule ^$ index.php?controller=login&method=index [L,QSA]
 
-    # Permitir acceso directo a recursos estáticos
+    # Permitir archivos estáticos
     RewriteRule ^(public|service|uploads)($|/) - [L,NC]
 
-    # Rutas tipo /controller/method/id
+    # /controller/method/id
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^([^/]+)/([^/]+)/([^/]+)/?$ index.php?controller=$1&method=$2&id=$3 [L,QSA]
 
-    # Rutas tipo /controller/method
+    # /controller/method
     RewriteRule ^([^/]+)/([^/]+)/?$ index.php?controller=$1&method=$2 [L,QSA]
 
-    RewriteRule ^home$ index.php?controller=Home&method=index [L,QSA]
-    RewriteRule ^game$ index.php?controller=Game&method=base [L,QSA]
-    RewriteRule ^game/start$ index.php?controller=Game&method=start [L,QSA]
-    RewriteRule ^game/respuesta$ index.php?controller=Game&method=respuesta [L,QSA]
-    RewriteRule ^game/siguientePregunta$ index.php?controller=Game&method=siguientePregunta [L,QSA]
-
-            
-    # Rutas tipo /controller
+    # /controller
     RewriteRule ^([^/]+)/?$ index.php?controller=$1 [L,QSA]
 </IfModule>
+
