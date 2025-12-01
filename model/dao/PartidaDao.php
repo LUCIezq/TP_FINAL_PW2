@@ -46,12 +46,13 @@ class PartidaDao
         JOIN genero g ON p.genero_id = g.id
         
         WHERE usuario_id = ?
+        and puntos_alcanzados > ?
         ORDER BY p.puntos_alcanzados DESC
         LIMIT 3
         ";
 
         $data = $this->conexion->processData(
-            $this->conexion->executePrepared($sql, "i", [$usuarioId])
+            $this->conexion->executePrepared($sql, "ii", [$usuarioId, 0])
         );
 
         foreach ($data as $i => &$row) {
@@ -105,7 +106,7 @@ class PartidaDao
         $sql = "SELECT 
         COUNT(*) AS partidas_jugadas
         FROM partida
-        WHERE usuario_id = ?;";
+        WHERE usuario_id = ?";
 
         $data = $this->conexion->processData(
             $this->conexion->executePrepared($sql, "i", [$usuarioId])

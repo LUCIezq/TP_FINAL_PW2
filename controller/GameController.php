@@ -112,7 +112,7 @@ class GameController
 
                 $correcta = $_SESSION['partida']['respuesta_correcta_id'];
 
-                $this->finalizarPartidaSinRedirect();
+                $this->finalizarPartida();
 
                 return SendJSON::procesarJSON([
                     "status" => "time_out",
@@ -135,7 +135,7 @@ class GameController
         if (!$esCorrecta) {
             $correcta = $_SESSION['partida']['respuesta_correcta_id'];
 
-            $this->finalizarPartidaSinRedirect();
+            $this->finalizarPartida();
             return SendJSON::procesarJSON([
                 "status" => "incorrecta",
                 "correcta" => $correcta,
@@ -145,6 +145,7 @@ class GameController
 
         $this->procesarRespuestaCorrecta();
     }
+
     private function tiempoExpirado()
     {
         $inicio = $_SESSION['partida']['tiempo_inicio'];
@@ -192,7 +193,7 @@ class GameController
         );
 
         if (!$nuevaPregunta) {
-            $this->finalizarPartidaSinRedirect();
+            $this->finalizarPartida();
 
             return SendJSON::procesarJSON([
                 "status" => "no_more_questions",
@@ -216,7 +217,7 @@ class GameController
             'preguntas_usadas' => $_SESSION['partida']['preguntas_usadas']
         ]);
     }
-    private function finalizarPartidaSinRedirect()
+    private function finalizarPartida()
     {
         if (!isset($_SESSION['partida'])) {
             return;
