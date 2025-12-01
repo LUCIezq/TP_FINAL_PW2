@@ -134,6 +134,7 @@ class GameController
         $esCorrecta = $respuestaId === $_SESSION['partida']['respuesta_correcta_id'];
 
         $this->gameDao->guardarRespuestaEnHistorial($_SESSION['user']['id'], $_SESSION['partida']['partida_id'], $preguntaId, $esCorrecta ? 1 : 0);
+        $this->gameDao->actualizarDificultadDePregunta($preguntaId);
 
         if (!$esCorrecta) {
             $correcta = $_SESSION['partida']['respuesta_correcta_id'];
@@ -145,6 +146,7 @@ class GameController
                 "respuesta_usuario" => $respuestaId
             ]);
         }
+
         $this->procesarRespuestaCorrecta();
     }
     private function tiempoExpirado()
@@ -180,8 +182,6 @@ class GameController
         $preguntaId = $_SESSION['partida']['pregunta_actual_id'];
         $correctaAnterior = $_SESSION['partida']['respuesta_correcta_id'];
         $_SESSION['partida']['puntaje']++;
-
-        $this->gameDao->actualizarDificultadDePregunta($preguntaId);
 
         $nivelUsuario = $this->gameDao->obtenerNivelIdUsuario($usuarioId);
 
@@ -229,7 +229,6 @@ class GameController
 
         $this->gameDao->finalizarPartida($partidaId, $puntaje);
         $this->gameDao->actualizarNivelUsuario($usuarioId);
-        $this->gameDao->actualizarDificultadDePregunta($ultimoId);
 
         unset($_SESSION['partida']);
     }
