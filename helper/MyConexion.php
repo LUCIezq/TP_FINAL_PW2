@@ -53,6 +53,7 @@ class MyConexion
 
         return $stmt->affected_rows;
     }
+
     public function close()
     {
         $this->conexion ?? $this->conexion->close();
@@ -80,3 +81,4 @@ class MyConexion
         return $data;
     }
 }
+
