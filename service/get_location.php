@@ -36,6 +36,7 @@ if ($err || $code !== 200 || !$resp) {
 }
 
 $data = json_decode($resp, true);
+
 echo json_encode([
     'address' => [
         'country' => $data['address']['country'] ?? null,

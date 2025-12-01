@@ -19,7 +19,6 @@ class GameController
 
         $this->renderer->render("gameRuleta");
     }
-
     public function start()
     {
         if (!IsLogged::isLogged()) {
@@ -50,7 +49,6 @@ class GameController
             echo "Error: " . $e->getMessage();
         }
     }
-
     private function cargarPartidaEnCurso()
     {
         $partida = $_SESSION['partida'];
@@ -68,7 +66,6 @@ class GameController
             "partida_id" => $partida['partida_id']
         ]);
     }
-
     private function obtenerGeneroId()
     {
         $options = [
@@ -81,7 +78,6 @@ class GameController
         $idSanitizado = filter_input(INPUT_POST, 'genero', FILTER_SANITIZE_NUMBER_INT);
         return filter_var($idSanitizado, FILTER_VALIDATE_INT, $options);
     }
-
     public function responder()
     {
         if (!IsLogged::isLogged()) {
@@ -133,6 +129,7 @@ class GameController
         $esCorrecta = $respuestaId === $_SESSION['partida']['respuesta_correcta_id'];
 
         $this->gameDao->guardarRespuestaEnHistorial($_SESSION['user']['id'], $_SESSION['partida']['partida_id'], $preguntaId, $esCorrecta ? 1 : 0);
+
         $this->gameDao->actualizarDificultadDePregunta($preguntaId);
 
         if (!$esCorrecta) {
@@ -157,20 +154,24 @@ class GameController
     }
     private function validarPreguntaYRespuesta($idPregunta, $idRespuesta)
     {
+        //valida que sea un numero
         if (!is_numeric($idPregunta) || !is_numeric($idRespuesta)) {
             SendJSON::procesarJSON(["mensaje" => "Datos inválidos."]);
         }
 
+        //valida que se este respondiendo a la pregunta correcta
         if ($idPregunta != $_SESSION['partida']['pregunta_actual_id']) {
             SendJSON::procesarJSON(["mensaje" => "Pregunta fuera de contexto."]);
         }
 
         $respuesta = $this->gameDao->obtenerRespuestaPorIdRespuesta($idRespuesta);
 
+        //se valida que exista ese id de respuesta en la bd
         if (!$respuesta) {
             SendJSON::procesarJSON(["mensaje" => "Respuesta inexistente."]);
         }
 
+        // se valida que la respuesta sea una respuesta de esa pregunta
         if ($respuesta['pregunta_id'] != $idPregunta) {
             SendJSON::procesarJSON(["mensaje" => "La respuesta no corresponde a la pregunta."]);
         }

@@ -29,26 +29,38 @@ class PreguntasDao
     public function obtenerPreguntaParaPartidaEnCurso($genero_id, $nivelUsuarioId, $preguntasUsadas)
     {
         $placeholders = count($preguntasUsadas) ? rtrim(str_repeat('?,', count($preguntasUsadas)), ',') : null;
-        $sql = "SELECT p.id, p.genero_id, p.texto
-            FROM pregunta p
-            WHERE p.genero_id = ?
-            AND p.nivel_id = ?
-            AND p.estado_id = 1"
-            . ($placeholders ? " AND p.id NOT IN ($placeholders)" : "") .
-            " ORDER BY RAND() LIMIT 1";
 
-        $types = 'ii' . str_repeat('i', count($preguntasUsadas));
+        $sql = "SELECT p.id, p.genero_id, p.texto, p.nivel_id
+            FROM pregunta p
+            WHERE p.genero_id = ? 
+            AND p.nivel_id = ? 
+            AND p.estado_id = 1"
+            . ($placeholders ? " AND p.id NOT IN ($placeholders)" : "")
+            . " ORDER BY RAND() LIMIT 1";
+
         $params = [$genero_id, $nivelUsuarioId, ...$preguntasUsadas];
+        $types = 'ii' . str_repeat('i', count($preguntasUsadas));
 
         $data = $this->conexion->processData($this->conexion->executePrepared($sql, $types, $params));
 
-        if (!empty($data)) {
-            $data[0]['respuestas'] = $this->obtenerRespuestasPorIdPregunta($data[0]['id']);
-            return $data[0];
+        $nivelTemp = $nivelUsuarioId;
+
+        while (empty($data[0]) && $nivelTemp > 1) {
+            $nivelTemp--;
+            $params = [$genero_id, $nivelTemp, ...$preguntasUsadas];
+            $types = 'ii' . str_repeat('i', count($preguntasUsadas));
+            $data = $this->conexion->processData($this->conexion->executePrepared($sql, $types, $params));
         }
 
-        return null;
+        if (empty($data[0])) {
+            return null;
+        }
+
+        $data[0]['respuestas'] = $this->obtenerRespuestasPorIdPregunta($data[0]['id']);
+
+        return $data[0];
     }
+
 
     public function createQuestion($data)
     {
@@ -411,7 +423,8 @@ class PreguntasDao
     {
         $sql = "SELECT id,texto,es_correcta
         from respuesta 
-        where pregunta_id = ?";
+        where pregunta_id = ?
+        ORDER BY RAND()";
 
         return $this->conexion->processData(
             $this->conexion->executePrepared($sql, 'i', [$preguntaId])
@@ -535,6 +548,17 @@ class PreguntasDao
                 [$generoId, $nivelUsuarioId]
             )
         );
+
+        if (empty($data[0])) {
+            while ($nivelUsuarioId > 1) {
+                $nivelUsuarioId--;
+                $data = $this->conexion->processData(
+                    $this->conexion->executePrepared($sql, 'ii', [$generoId, $nivelUsuarioId])
+                );
+                if ($data)
+                    break;
+            }
+        }
 
         $data[0]['respuestas'] = $this->obtenerRespuestasPorIdPregunta($data[0]['id']);
 

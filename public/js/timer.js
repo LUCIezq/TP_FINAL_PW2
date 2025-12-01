@@ -10,7 +10,6 @@ const barraTiempo = document.getElementById("barra-tiempo");
 const mensajeDiv = document.getElementById("mensaje");
 let intervalo;
 
-
 function actualizarTimer() {
     tiempoDiv.innerText = tiempo + "s";
     let porcentaje = (tiempo / duracion) * 100;
@@ -30,7 +29,6 @@ function actualizarTimer() {
 
 intervalo = setInterval(actualizarTimer, 1000);
 actualizarTimer();
-
 
 function desactivarBotones() {
     botones.forEach(b => b.disabled = true);
@@ -100,30 +98,34 @@ function pintarRespuestas(idCorrecta, respuestaUsuario = null) {
 }
 
 function actualizarPregunta(pregunta) {
-    document.getElementById('pregunta_id').value = pregunta.id;
-
-    const preguntaTexto = document.getElementById('preguntaTexto');
-
-    preguntaTexto.innerText = pregunta.texto;
-
-    const container = document.getElementById('respuestas-container');
-    container.innerHTML = pregunta.respuestas.map(r => `
-        <button type="button" class="btn btn-outline-primary btn-lg opcion-respuesta botones-respuesta" data-id="${r.id}">
-            ${r.texto}
-        </button>
-    `).join('');
-
-    mensajeDiv.innerText = "";
 
     tiempo = duracion;
     clearInterval(intervalo);
     intervalo = setInterval(actualizarTimer, 1000);
 
-    botones = Array.from(document.querySelectorAll(".botones-respuesta"));
+    setTimeout(() => {
+        document.getElementById('pregunta_id').value = pregunta.id;
 
-    botones.forEach(boton => {
-        boton.addEventListener('click', () => procesarRespuestaUsuario(boton.dataset.id));
-    });
+        const preguntaTexto = document.getElementById('preguntaTexto');
+
+        preguntaTexto.innerText = pregunta.texto;
+
+        const container = document.getElementById('respuestas-container');
+
+        container.innerHTML = pregunta.respuestas.map(r => `
+        <button type="button" class="btn btn-outline-primary btn-lg opcion-respuesta botones-respuesta" data-id="${r.id}">
+            ${r.texto}
+        </button>
+    `).join('');
+
+        mensajeDiv.innerText = "";
+
+        botones = Array.from(document.querySelectorAll(".botones-respuesta"));
+
+        botones.forEach(boton => {
+            boton.addEventListener('click', () => procesarRespuestaUsuario(boton.dataset.id));
+        });
+    }, 1000)
 }
 
 botones.forEach(boton => {
