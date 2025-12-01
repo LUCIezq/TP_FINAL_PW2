@@ -35,7 +35,6 @@ class GameDao
         return $this->dbConnection->executePrepared($sql, $types, $params);
     }
 
-
     public function inicializarJuego($genero_id, $user)
     {
         $genero = $this->categoryDao->buscarCategoriaPorId($genero_id);

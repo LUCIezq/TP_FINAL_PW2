@@ -5,7 +5,6 @@ class HomeController
     private MustacheRenderer $mustacheRenderer;
     private UsuarioDao $usuarioDao;
     private SolicitudPartidaDao $solicitudPartidaDao;
-
     private GameDao $gameDao;
 
     public function __construct(MustacheRenderer $mustacheRenderer, UsuarioDao $usuarioDao, SolicitudPartidaDao $solicitudPartidaDao, GameDao $gameDao)
@@ -23,17 +22,19 @@ class HomeController
             header("location: /login/index");
             exit();
         }
-        // Si existe una partida en curso y el usuario volvió al Home → PERDIDA
-        // if (isset($_SESSION['partida'])) {
-        //     $partidaId = $_SESSION['partida']['id'];
+        if (isset($_SESSION['partida'])) {
 
-        //     // Marcar como perdida
-        //     // $this->gameDao->actualizarEstadoPartida($partidaId, "PERDIDA");
+            $partidaId = $_SESSION['partida']['partida_id'];
+            $usuarioId = $_SESSION['user']['id'];
+            $puntaje = $_SESSION['partida']['puntaje'];
+            $ultimoId = $_SESSION['partida']['pregunta_actual_id'];
 
-        //     // Borrar sesión
-        //     unset($_SESSION['partida']);
-        // }
+            $this->gameDao->finalizarPartida($partidaId, $puntaje);
+            $this->gameDao->actualizarNivelUsuario($usuarioId);
+            $this->gameDao->actualizarDificultadDePregunta($ultimoId);
 
+            unset($_SESSION['partida']);
+        }
 
         if ($_SESSION['user']['rol_id'] == UserRole::JUGADOR) {
             $players = $this->solicitudPartidaDao->allUsersAndRequest($_SESSION['user']['id']);
