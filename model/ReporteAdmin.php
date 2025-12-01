@@ -19,7 +19,6 @@ class ReporteAdmin
     }
 
 
-
     public function getTotalUsuarios(string $fechaDesde): int
     {
         $fecha = $this->safeDate($fechaDesde);
@@ -38,7 +37,7 @@ class ReporteAdmin
 
         $sql = "SELECT COUNT(*) AS total 
                 FROM partida 
-                WHERE created_at >= '$fecha'";
+                WHERE fecha_inicio >= '$fecha'";
 
         $result = $this->db->query($sql);
         return $result[0]['total'] ?? 0;
