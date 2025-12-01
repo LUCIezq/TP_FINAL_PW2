@@ -59,17 +59,17 @@ class PreguntasDao
         $estado_id = $this->estadoPreguntaDao->obtenerIdDeEstadoPorNombre(EstadoPreguntaNombre::SUGERIDA->value);
         $respuestas = $data['respuestas'];
 
-        $sql = "INSERT INTO pregunta (genero_id,dificultad_id,texto,usuario_id,estado_id) VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO pregunta (genero_id,texto,usuario_id,estado_id,nivel_id) VALUES (?,?,?,?,?)";
 
         $params = [
             $genero_id,
-            1,
             $texto,
             $usuario_id,
-            $estado_id
+            $estado_id,
+            1
         ];
 
-        $types = "iisii";
+        $types = "isiii";
 
         $idPregunta = $this->conexion->executePrepared($sql, $types, $params);
 

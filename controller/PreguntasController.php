@@ -81,6 +81,8 @@ class PreguntasController
 
             $result = $this->preguntasDao->createQuestion($data);
 
+            ShowData::show($result);
+
             $result == true ? $_SESSION["message"] = "Pregunta creada exitosamente. Ya se encuentra en revision" : $_SESSION["message"] = "Error al crear la pregunta.";
             $rol = $_SESSION["user"]['rol_id'];
 
